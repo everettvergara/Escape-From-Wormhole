@@ -85,7 +85,6 @@ namespace g80 {
             target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
             target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
             quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 10 + rand() % 100);
-            std::cout << "i: " << i << "\n";
         }
         return true;
     }
@@ -99,8 +98,12 @@ namespace g80 {
     
             
         // Update and Plot
-        for (auto &qbp : quad_bezier_points_)
-            set_pixel(qbp.next(),qbp.get_color());
+        for (auto &qbp : quad_bezier_points_) {
+            if (!qbp.is_valid())
+                qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), qbp.get_color(), 10 + rand() % 100);
+            
+            set_pixel(qbp.next(), qbp.get_color());
+        }
 
         SDL_UnlockSurface(surface_);
         return true;
