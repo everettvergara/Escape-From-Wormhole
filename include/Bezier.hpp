@@ -7,25 +7,31 @@ namespace g80 {
     class QuadBezierAnim {
     public:
         QuadBezierAnim() {};
-        QuadBezierAnim(const Point &p1, const Point &p2, const Point &p3, const RGBAColor color, const Dim smax) : 
+        QuadBezierAnim(const Point &p1, const Point &p2, const Point &p3, const RGBAColor color, const Dim smax, const float TAIL_N = 10.0f) : 
         p1_(p1), p2_(p2), p3_(p3), 
         d1_(p2_ - p1_), d2_(p3_ - p2_), bz_(p1_), t_{p1_},
         size_per_step_(1.0f / (smax - 1)),
         st_{0.0f * size_per_step_},
+        TAIL_N_{TAIL_N},
         color_(color) {
 
         }
 
-        auto reset(const Point &p1, const Point &p2, const Point &p3, const RGBAColor color, const Dim smax) {
+        auto reset(const Point &p1, const Point &p2, const Point &p3, const RGBAColor color, const Dim smax, const float TAIL_N = 10.0f) {
             p1_ = {p1}, p2_ = {p2}, p3_ = {p3},
             d1_ = {p2_ - p1_}, d2_ = {p3_ - p2_}, bz_ = {p1_}, t_ = {p1_},
             size_per_step_ = {1.0f / (smax - 1)},
-            st_ = {0.0f * size_per_step_},            
+            st_ = {0.0f * size_per_step_},
+            TAIL_N_ = {TAIL_N},
             color_ = {color}, s_ = {0.0f};
         }
 
-        auto is_valid() -> bool {
+        auto is_valid_current_point() -> bool {
             return s_ <= 1.0f;
+        }
+
+        auto is_valid_tail_point() -> bool {
+            return st_ <= 1.0f;
         }
 
         auto next() -> Point & {
@@ -50,7 +56,7 @@ namespace g80 {
             Point c2 = p2_ + d2;
             Point dc = (c2 - c1) * st_;
             t_ = c1 + dc;
-            if (s_ >= size_per_step_ * 10.0f) st_ += size_per_step_;
+            if (s_ >= size_per_step_ * TAIL_N_) st_ += size_per_step_;
             return t_;
         }
 
@@ -73,7 +79,7 @@ namespace g80 {
 
     private:
         Point p1_, p2_, p3_, d1_, d2_, bz_, t_;
-        float s_{0.0f}, size_per_step_, st_;
+        float s_{0.0f}, size_per_step_, st_, TAIL_N_;
         RGBAColor color_;
     };
 }

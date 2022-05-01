@@ -99,9 +99,12 @@ namespace g80 {
             
         // Update and Plot
         for (auto &qbp : quad_bezier_points_) {
-            if (!qbp.is_valid())
+            if (!qbp.is_valid_current_point()) {
+                while (qbp.is_valid_tail_point())
+                    set_pixel(qbp.get_tail_point(), 0);
+
                 qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 100 + rand() % 100);
-            
+            }
             set_pixel(qbp.next(), qbp.get_color(surface_->format));
         }
 
