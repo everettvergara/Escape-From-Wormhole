@@ -9,22 +9,26 @@ namespace g80 {
         Dim x;
         Dim y;
 
-        auto operator+(const Point &rhs) -> Point {
-            Point p;
-            p.x = x + rhs.x;
-            p.y = y + rhs.y;
-            return p;
+        auto operator+=(const Point &rhs) -> Point & {
+            x += rhs.x;
+            y += rhs.y;
+            return *this;
         }
-        auto operator-(const Point &rhs) -> Point {
-            Point p;
-            p.x = x - rhs.x;
-            p.y = y - rhs.y;
-            return p;
-        }
-        auto operator==(const Point &rhs) -> bool {
-            return x == rhs.x && y == rhs.y;
+        auto operator-=(const Point &rhs) -> Point & {
+            x -= rhs.x;
+            y -= rhs.y;
+            return *this;
         }
     };
+
+    inline auto operator+(Point lhs, const Point &rhs) -> Point {
+        lhs += rhs;
+        return lhs;        
+    }
+    inline auto operator-(Point lhs, const Point &rhs) -> Point {
+        lhs -= rhs;
+        return lhs;        
+    }
     using Color = Uint32;
 
     class QuadBezier {
