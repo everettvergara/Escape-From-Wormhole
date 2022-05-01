@@ -43,6 +43,49 @@ namespace g80 {
                 }
             }
         }
+
+        static auto circle(SDL_Surface *surface, const Point &p, const Dim r, const RGBAColor c) {
+            
+            Uint32 *center = static_cast<Uint32 *>(surface->pixels) + p.y * surface->w + p.x;
+            Uint32 *min = static_cast<Uint32 *>(surface->pixels);
+            Uint32 *max = static_cast<Uint32 *>(surface->pixels) + surface->w * surface->h;
+            
+            Dim x = r;
+            Dim y = 0;
+            Dim bx = x * surface->w;
+            Dim by = y * surface->w;
+
+            Dim dx = 1 - (r << 1);
+            Dim dy = 1;
+            Dim re = 0;
+
+
+            while (x >= y)
+            {
+                if ((center + y - bx) >= min && (center + y - bx) < max) *(center + x - by) = c;
+                if ((center + y - bx) >= min && (center + y - bx) < max) *(center + y - bx) = c;
+                if ((center - y - bx) >= min && (center - y - bx) < max) *(center - y - bx) = c;
+                if ((center - x - by) >= min && (center - x - by) < max) *(center - x - by) = c;
+                if ((center + x + by) >= min && (center + x + by) < max) *(center + x + by) = c;
+                if ((center + y + bx) >= min && (center + y + bx) < max) *(center + y + bx) = c;
+                if ((center - y + bx) >= min && (center - y + bx) < max) *(center - y + bx) = c;
+                if ((center - x + by) >= min && (center - x + by) < max) *(center - x + by) = c;
+
+                ++y;
+                re += dy;
+                dy += 2;
+                if ((re << 1) + dx > 0)
+                {
+                    --x;
+                    bx -= surface->w;
+                    re += dx;
+                    dx += 2;
+                }
+                by += surface->w;
+            }
+        }
+
+
     };
 }
 

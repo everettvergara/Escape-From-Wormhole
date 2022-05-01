@@ -146,6 +146,9 @@ namespace g80 {
             set_pixel_strict_bounds(qbp.next(), qbp.get_color(surface_->format));
         }
 
+        // Draw Target
+        Gfx::circle(surface_, center_screen_, 300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+
         SDL_UnlockSurface(surface_);
         return true;
     }
@@ -162,7 +165,7 @@ namespace g80 {
             }
 
             else if (e.type == SDL_MOUSEMOTION) {
-                update_wormhole_angle(e.motion.xrel * e.motion.yrel);
+                update_wormhole_angle((e.motion.xrel * e.motion.yrel));
             }
         }
         return true;
