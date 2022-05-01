@@ -6,9 +6,12 @@
 namespace g80 {
     class QuadBezierAnim {
     public:
-        QuadBezierAnim(const Point &p1, const Point &p2, const Point &p3, const Dim smax) : 
+        QuadBezierAnim() {};
+        QuadBezierAnim(const Point &p1, const Point &p2, const Point &p3, const Color color, const Dim smax) : 
         p1_(p1), p2_(p2), p3_(p3), 
-        d1_(p2_ - p1_), d2_(p3_ - p2_), size_per_step_(1.0f / (smax - 1)) {}
+        d1_(p2_ - p1_), d2_(p3_ - p2_), bz_(p1_),
+        size_per_step_(1.0f / (smax - 1)),
+        color_(color) {}
 
         auto next() -> Point & {
             Point d1 = d1_ * s_;
@@ -21,10 +24,18 @@ namespace g80 {
             return bz_;
         }
 
+        auto get_current_point() -> Point & {
+            return bz_;
+        }
+
+        auto get_color() -> Color & {
+            return color_;
+        }
+
     private:
         Point p1_, p2_, p3_, d1_, d2_, bz_;
         float s_{0.0f}, size_per_step_;
-        
+        Color color_;
     };
 }
 #endif 

@@ -33,6 +33,21 @@ namespace g80 {
             delete []p;
         }
     };
+
+    // template<typename T>
+    // struct NoAlloc {
+    //     NoAlloc() = default;
+
+    //     auto allocate(size_t n) -> T *{
+    //         n *= sizeof(T);
+    //         T *p = static_cast<T *>(new(n)); 
+    //     }
+
+    //     auto deallocate(T *p, size_t n) {
+    //         delete (p);
+    //     }
+
+    // };
 }
 
 #endif 
