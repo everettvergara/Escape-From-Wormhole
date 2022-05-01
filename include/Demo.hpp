@@ -48,15 +48,16 @@ namespace g80 {
         
         QuadBeizerPoints quad_bezier_points_;
 
-        inline auto rnd() -> Sint32 {
-            static std::time_t now = time(&now);
-            static Sint32 seed = now;
-            static Sint32 a = 1103515245;
-            static Sint32 c = 12345;
-            static Sint32 m = 2147483647;
-            static Sint32 rand = (seed * a + c) % m;
-            return rand = (rand * a + c) % m; 
-        }
+        // inline auto rnd() -> Sint32 {
+        //     static std::time_t now = time(&now);
+        //     static Sint32 seed = now;
+        //     static Sint32 a = 1103515245;
+        //     static Sint32 c = 12345;
+        //     static Sint32 m = 2147483647;
+        //     static Sint32 rand = seed;
+        //     rand = (rand * a + c) % m;
+        //     return rand;
+        // }
 
     };
 
@@ -84,7 +85,19 @@ namespace g80 {
             Point target;
             target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
             target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
-            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 100 + rand() % 100);
+            Dim speed = 20 + rand() % 180;
+            RGBAColor color;
+            if (speed >= 0 && speed < 75) {
+                color = SDL_MapRGBA(surface_->format, 180, 142, 173, 255);
+            } else if (speed >= 51 && speed < 100) {
+                color = SDL_MapRGBA(surface_->format, 136, 192, 208, 255);
+            } else if (speed >= 100 && speed < 150) {
+                color = SDL_MapRGBA(surface_->format, 129, 161, 193, 255);
+            } else {
+                color = SDL_MapRGBA(surface_->format, 94, 129, 172, 255);
+            }
+
+            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, color, speed);
         }
         return true;
     }
@@ -103,7 +116,19 @@ namespace g80 {
                 while (qbp.is_valid_tail_point())
                     set_pixel(qbp.get_tail_point(), 0);
 
-                qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 100 + rand() % 100);
+                Dim speed = 20 + rand() % 180;
+                RGBAColor color;
+                if (speed >= 0 && speed < 75) {
+                    color = SDL_MapRGBA(surface_->format, 180, 142, 173, 255);
+                } else if (speed >= 51 && speed < 100) {
+                    color = SDL_MapRGBA(surface_->format, 136, 192, 208, 255);
+                } else if (speed >= 100 && speed < 150) {
+                    color = SDL_MapRGBA(surface_->format, 129, 161, 193, 255);
+                } else {
+                    color = SDL_MapRGBA(surface_->format, 94, 129, 172, 255);
+                }
+
+                qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), color, speed);
             }
             set_pixel(qbp.next(), qbp.get_color(surface_->format));
         }

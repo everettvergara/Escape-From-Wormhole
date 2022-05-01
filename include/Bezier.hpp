@@ -13,9 +13,7 @@ namespace g80 {
         size_per_step_(1.0f / (smax - 1)),
         st_{0.0f * size_per_step_},
         TAIL_N_{TAIL_N},
-        color_(color) {
-
-        }
+        color_(color) { }
 
         auto reset(const Point &p1, const Point &p2, const Point &p3, const RGBAColor color, const Dim smax, const float TAIL_N = 10.0f) {
             p1_ = {p1}, p2_ = {p2}, p3_ = {p3},
