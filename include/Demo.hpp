@@ -77,14 +77,15 @@ namespace g80 {
             sinf_.emplace_back(SDL_sinf(angle));
             angle += sz_angle;
         }
-
+        mouse_pointer = {10, 10};
         quad_bezier_points_.reserve(N_);
         center_screen = {surface_->w / 2, surface_->h / 2};
         for (Dim i = 0; i < N_; ++i) {
             Point target;
             target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
             target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
-            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 50 + rnd() % 206, 0, 0, 255), 10 + rnd() % 100);
+            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 10 + rand() % 100);
+            std::cout << "i: " << i << "\n";
         }
         return true;
     }
@@ -92,15 +93,14 @@ namespace g80 {
     auto Demo::update_states() -> bool {
         SDL_LockSurface(surface_);
         
-        // // Erase all
-        // for (auto &qbp : quad_bezier_points_)
-        //     Gfx::pset(surface_, qbp.get_current_point(), 0);
-        
-        // // Update and Ploy
-        // for (auto &qbp : quad_bezier_points_) {
-
-        //     Gfx::pset(surface_, qbp.get_current_point(), 0);
-        // }
+        // Erase all
+        for (auto &qbp : quad_bezier_points_)
+            set_pixel(qbp.get_current_point(), 0);
+    
+            
+        // Update and Plot
+        for (auto &qbp : quad_bezier_points_)
+            set_pixel(qbp.next(),qbp.get_color());
 
         SDL_UnlockSurface(surface_);
         return true;

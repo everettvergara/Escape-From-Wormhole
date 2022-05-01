@@ -21,10 +21,12 @@
 #define _VIDEO_H_
 
 #include "SDL.h"
+#include "Commons.hpp"
 #include "VideoConfig.h"
 
 namespace g80 {
 
+    using PixelBuffer = Uint32 *;
     class Video {
     
     public:
@@ -67,22 +69,21 @@ namespace g80 {
             return surface_->h;
         }
 
-        // Gfx
-        inline auto pixel_buffer(Uint32 x, Uint32 y) -> Uint32 * {
-            return static_cast<Uint32 *>(surface_->pixels) + surface_->w * y + x;
+        inline auto get_pixel_buffer(const Point &p) -> PixelBuffer {
+            return static_cast<PixelBuffer>(surface_->pixels) + surface_->w * p.y + p.x;
         }
 
-        inline auto set_pixel(Sint32 x, Sint32 y, Uint32 color) -> void {
-            Uint32 *pixel = pixel_buffer(static_cast<Uint32>(x), static_cast<Uint32>(y));
-            if (pixel >= static_cast<Uint32 *>(surface_->pixels) && pixel < pixel_end_)
-                *pixel = color;
+        inline auto set_pixel(const Point &p, Color color) -> void {
+            PixelBuffer pixel_buffer = get_pixel_buffer(p);
+            if (pixel_buffer >= static_cast<PixelBuffer>(surface_->pixels) && pixel_buffer < pixel_end_)
+                *pixel_buffer = color;
         }
 
         // User Def Functions
         virtual auto preprocess_states() -> bool;
         virtual auto update_states() -> bool;
         virtual auto capture_events() -> bool;
-        auto run() -> bool;
+        virtual auto run() -> bool;
 
     protected:
         bool is_init_;
