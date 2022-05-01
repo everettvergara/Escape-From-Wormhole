@@ -9,26 +9,14 @@ namespace g80 {
         Dim x;
         Dim y;
 
-        auto operator+=(const Point &rhs) -> Point & {
-            x += rhs.x;
-            y += rhs.y;
-            return *this;
-        }
-        auto operator-=(const Point &rhs) -> Point & {
-            x -= rhs.x;
-            y -= rhs.y;
-            return *this;
-        }
+        auto operator+=(const Point &rhs) -> Point & {x += rhs.x; y += rhs.y; return *this;}
+        auto operator-=(const Point &rhs) -> Point & {x -= rhs.x; y -= rhs.y; return *this;}
     };
 
-    inline auto operator+(Point lhs, const Point &rhs) -> Point {
-        lhs += rhs;
-        return lhs;        
-    }
-    inline auto operator-(Point lhs, const Point &rhs) -> Point {
-        lhs -= rhs;
-        return lhs;        
-    }
+    inline auto operator+(Point lhs, const Point &rhs) -> Point {lhs += rhs; return lhs;}
+    inline auto operator-(Point lhs, const Point &rhs) -> Point {lhs -= rhs; return lhs;}
+    inline auto operator==(const Point &lhs, const Point &rhs) -> bool {return lhs.x == rhs.x && lhs.y == rhs.y;}
+    inline auto operator!=(const Point &lhs, const Point &rhs) -> bool {return lhs.x != rhs.x || lhs.y != rhs.y;}
     using Color = Uint32;
 
     class QuadBezier {
@@ -38,24 +26,23 @@ namespace g80 {
 
         auto next() -> Point & {
             Point c1, c2;
-            c1.x = p1.x + d1.x * s / smax;
-            c1.y = p1.y + d1.y * s / smax;
-            c2.x = p2.x + d2.x * s / smax;
-            c2.y = p2.y + d2.y * s / smax;
+            c1.x = p1_.x + d1_.x * s_ / smax_;
+            c1.y = p1_.y + d1_.y * s_ / smax_;
+            c2.x = p2_.x + d2_.x * s_ / smax_;
+            c2.y = p2_.y + d2_.y * s_ / smax_;
             
             Point dc = c2 - c1;
-            Point bz;
-            bz.x = c1.x + dc.x * s / smax;
-            bz.y = c1.x + dc.y * s / smax;
-            ++s;
-            return bz;
+            bz_.x = c1.x + dc.x * s_ / smax_;
+            bz_.y = c1.x + dc.y * s_ / smax_;
+            ++s_;
+            return bz_;
         }
 
     private:
         Point p1_, p2_, p3_;
         Dim s_{0}, smax_;
-        Point d1_, d2_;
+        Point d1_, d2_, bz_;
         
-    }
+    };
 }
 #endif 
