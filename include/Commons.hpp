@@ -2,6 +2,7 @@
 #define _COMMONS_HPP_
 
 #include <SDL.h>
+#include "EmptyAllocator.hpp"
 
 namespace g80 {
 
@@ -26,7 +27,8 @@ namespace g80 {
     
     using RGBAColor = Uint32;
     using Color = Uint8;
-
+    using Floats = std::vector<float, EmptyAllocator<float>>; 
+    
 }
 
 #endif

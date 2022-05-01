@@ -21,15 +21,15 @@
 #define _DEMO_HPP_
 
 #include <vector>
+#include "Commons.hpp"
 #include "Video.h"
 #include "Gfx.hpp"
-#include "Bezier.hpp"
-#include "EmptyAllocator.hpp"
+#include "QuadBezierAnim.hpp"
 
 namespace g80 {
 
     using QuadBeizerPoints = std::vector<QuadBezierAnim, EmptyAllocator<QuadBezierAnim>>;
-    using Floats = std::vector<float, EmptyAllocator<float>>; 
+    
     class Demo : public Video {
 
     public: 
@@ -43,9 +43,13 @@ namespace g80 {
     private:
         Dim N_;
         float SZ_WORMHOLE_;
-        Point mouse_pointer, center_screen;
         Floats sinf_, cosf_;
         
+        Point wormhole_origin_;
+        float wormhole_radius_from_center{750.0f};
+        Dim wormhole_angle_{0};
+        Point center_screen_;
+
         QuadBeizerPoints quad_bezier_points_;
 
         inline auto rnd() -> UDim {
@@ -74,6 +78,16 @@ namespace g80 {
                 color = SDL_MapRGBA(surface_->format, 94, 129, 172, 255);
             return color;
         }
+
+        auto update_wormhole_angle(Dim direction) -> void {
+            wormhole_angle_ = wormhole_angle_ + direction;
+            if (wormhole_angle_ >= N_) wormhole_angle_ = wormhole_angle_ - N_;
+            else if (wormhole_angle_ < 0) wormhole_angle_ = N_ + wormhole_angle_;
+            wormhole_origin_ = {
+                center_screen_.x + static_cast<Dim>(cosf_[wormhole_angle_] * wormhole_radius_from_center), 
+                center_screen_.y + static_cast<Dim>(sinf_[wormhole_angle_] * wormhole_radius_from_center)};
+        }
+
     };
 
     auto Demo::create_window(const VideoConfig &video_config) -> bool {
@@ -82,7 +96,6 @@ namespace g80 {
     }
 
     auto Demo::preprocess_states() -> bool {
-        
         float angle = 0.0f;
         float sz_angle = M_PI * 2 / N_;
         sinf_.reserve(N_);
@@ -92,16 +105,20 @@ namespace g80 {
             sinf_.emplace_back(SDL_sinf(angle));
             angle += sz_angle;
         }
-        mouse_pointer = {10, 10};
+       
         quad_bezier_points_.reserve(N_);
-        center_screen = {surface_->w / 2, surface_->h / 2};
+        center_screen_ = {surface_->w / 2, surface_->h / 2};
+
+        update_wormhole_angle(+1);
+
         for (Dim i = 0; i < N_; ++i) {
+
             Point target;
-            target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
-            target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
+            target.x = center_screen_.x + SZ_WORMHOLE_ * cosf_[i];
+            target.y = center_screen_.y + SZ_WORMHOLE_ * sinf_[i];
             Dim speed = get_wormhole_speed(20, 200);
             RGBAColor color = get_wormhole_color(speed);
-            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, color, speed);
+            quad_bezier_points_.emplace_back(surface_->format, wormhole_origin_, center_screen_, target, color, speed);
         }
         return true;
     }
@@ -124,7 +141,7 @@ namespace g80 {
 
                 Dim speed = get_wormhole_speed(20, 200);
                 RGBAColor color = get_wormhole_color(speed);
-                qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), color, speed);
+                qbp.reset(surface_->format, wormhole_origin_, center_screen_, qbp.get_p3(), color, speed);
             }
             set_pixel_strict_bounds(qbp.next(), qbp.get_color(surface_->format));
         }
@@ -145,7 +162,7 @@ namespace g80 {
             }
 
             else if (e.type == SDL_MOUSEMOTION) {
-                mouse_pointer = {e.motion.x, e.motion.y};  
+                update_wormhole_angle(e.motion.xrel * e.motion.yrel);
             }
         }
         return true;

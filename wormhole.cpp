@@ -2,7 +2,6 @@
 
 #include "VideoConfig.h"
 #include "Demo.hpp"
-#include "Bezier.hpp"
 
 using namespace g80;
 
@@ -15,7 +14,6 @@ auto main(int argc, const char *argv[]) -> int {
     demo.preprocess_states();
     demo.run();
 }
-
 
 auto set_default_video_config() -> VideoConfig {
     VideoConfig vconfig {
