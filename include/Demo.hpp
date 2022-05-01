@@ -73,8 +73,8 @@ namespace g80 {
         sinf_.reserve(N_);
         cosf_.reserve(N_);        
         for (Dim i = 0; i < N_; ++i) {
+            cosf_.emplace_back(SDL_cosf(angle));
             sinf_.emplace_back(SDL_sinf(angle));
-            cosf_.emplace_back(SDL_sinf(angle));
             angle += sz_angle;
         }
 
@@ -84,7 +84,7 @@ namespace g80 {
             Point target;
             target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
             target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
-            // quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 50 + rnd() % 206, 0, 0, 255), 10 + rnd() % 100);
+            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 50 + rnd() % 206, 0, 0, 255), 10 + rnd() % 100);
         }
         return true;
     }

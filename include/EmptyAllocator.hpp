@@ -22,32 +22,22 @@
 
 namespace g80 {
     template<typename T>
-    class EmptyAllocator : public std::allocator<T> {
-    public:
+    struct EmptyAllocator {
+        typedef T value_type;
+        EmptyAllocator() = default;
+
         auto allocate(size_t n) -> T * {
-            auto p = new T[n];
-            return p; 
+            n *= sizeof(T);
+            T *p = static_cast<T *>(::operator new(n));
+            return p;
         }
 
         auto deallocate(T *p, size_t n) -> void {
-            delete []p;
+            delete p;
+            p = nullptr;
         }
+
     };
-
-    // template<typename T>
-    // struct NoAlloc {
-    //     NoAlloc() = default;
-
-    //     auto allocate(size_t n) -> T *{
-    //         n *= sizeof(T);
-    //         T *p = static_cast<T *>(new(n)); 
-    //     }
-
-    //     auto deallocate(T *p, size_t n) {
-    //         delete (p);
-    //     }
-
-    // };
 }
 
 #endif 
