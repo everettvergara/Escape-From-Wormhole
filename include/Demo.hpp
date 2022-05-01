@@ -72,7 +72,6 @@ namespace g80 {
                 color = SDL_MapRGBA(surface_->format, 129, 161, 193, 255);
             else 
                 color = SDL_MapRGBA(surface_->format, 94, 129, 172, 255);
-            
             return color;
         }
     };
@@ -81,7 +80,6 @@ namespace g80 {
         if (!Video::create_window(video_config)) return false;
         return true;
     }
-
 
     auto Demo::preprocess_states() -> bool {
         
@@ -111,9 +109,6 @@ namespace g80 {
     auto Demo::update_states() -> bool {
         SDL_LockSurface(surface_);
         
-
-
-
         // Erase all
         for (auto &qbp : quad_bezier_points_)
             set_pixel_strict_bounds(qbp.get_tail_point(), 0);
