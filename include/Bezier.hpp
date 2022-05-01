@@ -11,10 +11,14 @@ namespace g80 {
 
         auto operator+=(const Point &rhs) -> Point & {x += rhs.x; y += rhs.y; return *this;}
         auto operator-=(const Point &rhs) -> Point & {x -= rhs.x; y -= rhs.y; return *this;}
+        auto operator*=(const float rhs) -> Point & {x *= rhs; y *= rhs; return *this;}
+        auto operator/=(const float rhs) -> Point & {x /= rhs; y /= rhs; return *this;}
     };
 
     inline auto operator+(Point lhs, const Point &rhs) -> Point {lhs += rhs; return lhs;}
     inline auto operator-(Point lhs, const Point &rhs) -> Point {lhs -= rhs; return lhs;}
+    inline auto operator*(Point lhs, const Point &rhs) -> Point {lhs *= rhs; return lhs;}
+    inline auto operator/(Point lhs, const Point &rhs) -> Point {lhs /= rhs; return lhs;}
     inline auto operator==(const Point &lhs, const Point &rhs) -> bool {return lhs.x == rhs.x && lhs.y == rhs.y;}
     inline auto operator!=(const Point &lhs, const Point &rhs) -> bool {return lhs.x != rhs.x || lhs.y != rhs.y;}
     using Color = Uint32;
@@ -22,26 +26,23 @@ namespace g80 {
     class QuadBezier {
     public:
         QuadBezier(const Point &p1, const Point &p2, const Point &p3, const Dim smax) : 
-        p1_(p1), p2_(p2), p3_(p3), smax_(smax), d1_(p2_ - p1_), d2_(p3_ - p2_) {}
+        p1_(p1), p2_(p2), p3_(p3), d1_(p2_ - p1_), d2(p3_ - p2_), size_per_step_(1.0f / (smax - 1)) {}
 
         auto next() -> Point & {
-            Point c1, c2;
-            c1.x = p1_.x + d1_.x * s_ / smax_;
-            c1.y = p1_.y + d1_.y * s_ / smax_;
-            c2.x = p2_.x + d2_.x * s_ / smax_;
-            c2.y = p2_.y + d2_.y * s_ / smax_;
-            
-            Point dc = c2 - c1;
-            bz_.x = c1.x + dc.x * s_ / smax_;
-            bz_.y = c1.x + dc.y * s_ / smax_;
-            ++s_;
+            Point d1 = d1_ * s_;
+            Point d2 = d2_ * s_;
+            Point c1 = p1_ + d1;
+            Point c2 = p2_ + d2;
+            Point dc = (c2 - c1) * s_;
+            Point bz = c1 + dc;
+            s_ += s_per_step_;
             return bz_;
         }
 
     private:
-        Point p1_, p2_, p3_;
-        Dim s_{0}, smax_;
-        Point d1_, d2_, bz_;
+        Point p1_, p2_, p3_, d1_, d2_;
+        float s_{0};
+        float s_{0.0f}, size_per_step_;
         
     };
 }
