@@ -33,7 +33,7 @@ namespace g80 {
     class Demo : public Video {
 
     public: 
-        Demo (Dim N, float SZ_WORMHOLE = 750.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE) { }
+        Demo (Dim N, float SZ_WORMHOLE = 1000.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE) { }
         ~Demo() {}
         auto create_window(const VideoConfig &video_config) -> bool;
         auto preprocess_states() -> bool;
@@ -48,17 +48,33 @@ namespace g80 {
         
         QuadBeizerPoints quad_bezier_points_;
 
-        // inline auto rnd() -> Sint32 {
-        //     static std::time_t now = time(&now);
-        //     static Sint32 seed = now;
-        //     static Sint32 a = 1103515245;
-        //     static Sint32 c = 12345;
-        //     static Sint32 m = 2147483647;
-        //     static Sint32 rand = seed;
-        //     rand = (rand * a + c) % m;
-        //     return rand;
-        // }
+        inline auto rnd() -> UDim {
+            static std::time_t now = time(&now);
+            static UDim seed = now;
+            static UDim a = 1103515245;
+            static UDim c = 12345;
+            static UDim m = 2147483647;
+            static UDim rand = seed;
+            return rand = (rand * a + c) % m;
+        }
 
+        auto get_wormhole_speed(Dim min, Dim max) -> Dim {
+            return min + rnd() % (max - min);
+        }
+
+        auto get_wormhole_color(Dim speed) -> RGBAColor {
+            RGBAColor color;
+            if (speed >= 0 && speed < 75)
+                color = SDL_MapRGBA(surface_->format, 180, 142, 173, 255);
+            else if (speed >= 75 && speed < 100)
+                color = SDL_MapRGBA(surface_->format, 136, 192, 208, 255);
+            else if (speed >= 100 && speed < 150)
+                color = SDL_MapRGBA(surface_->format, 129, 161, 193, 255);
+            else 
+                color = SDL_MapRGBA(surface_->format, 94, 129, 172, 255);
+            
+            return color;
+        }
     };
 
     auto Demo::create_window(const VideoConfig &video_config) -> bool {
@@ -85,18 +101,8 @@ namespace g80 {
             Point target;
             target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
             target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
-            Dim speed = 20 + rand() % 180;
-            RGBAColor color;
-            if (speed >= 0 && speed < 75) {
-                color = SDL_MapRGBA(surface_->format, 180, 142, 173, 255);
-            } else if (speed >= 51 && speed < 100) {
-                color = SDL_MapRGBA(surface_->format, 136, 192, 208, 255);
-            } else if (speed >= 100 && speed < 150) {
-                color = SDL_MapRGBA(surface_->format, 129, 161, 193, 255);
-            } else {
-                color = SDL_MapRGBA(surface_->format, 94, 129, 172, 255);
-            }
-
+            Dim speed = get_wormhole_speed(20, 200);
+            RGBAColor color = get_wormhole_color(speed);
             quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, color, speed);
         }
         return true;
@@ -105,32 +111,27 @@ namespace g80 {
     auto Demo::update_states() -> bool {
         SDL_LockSurface(surface_);
         
+
+
+
         // Erase all
         for (auto &qbp : quad_bezier_points_)
-            set_pixel(qbp.get_tail_point(), 0);
+            set_pixel_strict_bounds(qbp.get_tail_point(), 0);
     
             
         // Update and Plot
         for (auto &qbp : quad_bezier_points_) {
             if (!qbp.is_valid_current_point()) {
+
+                // Erase remaining tail
                 while (qbp.is_valid_tail_point())
-                    set_pixel(qbp.get_tail_point(), 0);
+                    set_pixel_strict_bounds(qbp.get_tail_point(), 0);
 
-                Dim speed = 20 + rand() % 180;
-                RGBAColor color;
-                if (speed >= 0 && speed < 75) {
-                    color = SDL_MapRGBA(surface_->format, 180, 142, 173, 255);
-                } else if (speed >= 51 && speed < 100) {
-                    color = SDL_MapRGBA(surface_->format, 136, 192, 208, 255);
-                } else if (speed >= 100 && speed < 150) {
-                    color = SDL_MapRGBA(surface_->format, 129, 161, 193, 255);
-                } else {
-                    color = SDL_MapRGBA(surface_->format, 94, 129, 172, 255);
-                }
-
+                Dim speed = get_wormhole_speed(20, 200);
+                RGBAColor color = get_wormhole_color(speed);
                 qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), color, speed);
             }
-            set_pixel(qbp.next(), qbp.get_color(surface_->format));
+            set_pixel_strict_bounds(qbp.next(), qbp.get_color(surface_->format));
         }
 
         SDL_UnlockSurface(surface_);

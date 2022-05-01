@@ -79,6 +79,12 @@ namespace g80 {
                 *pixel_buffer = color;
         }
 
+        inline auto set_pixel_strict_bounds(const Point &p, RGBAColor color) -> void {
+            PixelBuffer pixel_buffer = get_pixel_buffer(p);
+            if (p.x >= 0 && p.y >= 0 && p.x < surface_->w && p.y < surface_->h)
+                *pixel_buffer = color;
+        }
+
         // User Def Functions
         virtual auto preprocess_states() -> bool;
         virtual auto update_states() -> bool;
