@@ -73,7 +73,7 @@ namespace g80 {
             return static_cast<PixelBuffer>(surface_->pixels) + surface_->w * p.y + p.x;
         }
 
-        inline auto set_pixel(const Point &p, Color color) -> void {
+        inline auto set_pixel(const Point &p, RGBAColor color) -> void {
             PixelBuffer pixel_buffer = get_pixel_buffer(p);
             if (pixel_buffer >= static_cast<PixelBuffer>(surface_->pixels) && pixel_buffer < pixel_end_)
                 *pixel_buffer = color;

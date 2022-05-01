@@ -7,12 +7,12 @@ namespace g80 {
 
     class Gfx {
     public:
-        static auto pset(SDL_Surface *surface, const Point &p, Color c) -> void {
+        static auto pset(SDL_Surface *surface, const Point &p, RGBAColor c) -> void {
             Uint32 *cp = static_cast<Uint32 *>(surface->pixels) + p.y * surface->w + p.x;
             *cp = c;            
         }
 
-        static auto line(SDL_Surface *surface, const Point &p1, const Point &p2, Color c) -> void {
+        static auto line(SDL_Surface *surface, const Point &p1, const Point &p2, RGBAColor c) -> void {
             Sint32 dx = p2.x - p1.x;
             Sint32 dy = p2.y - p1.y;
             Sint32 sdx = dx < 0 ? -1 : 1;

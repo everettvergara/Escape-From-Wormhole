@@ -7,16 +7,20 @@ namespace g80 {
     class QuadBezierAnim {
     public:
         QuadBezierAnim() {};
-        QuadBezierAnim(const Point &p1, const Point &p2, const Point &p3, const Color color, const Dim smax) : 
+        QuadBezierAnim(const Point &p1, const Point &p2, const Point &p3, const RGBAColor color, const Dim smax) : 
         p1_(p1), p2_(p2), p3_(p3), 
-        d1_(p2_ - p1_), d2_(p3_ - p2_), bz_(p1_),
+        d1_(p2_ - p1_), d2_(p3_ - p2_), bz_(p1_), t_{p1_},
         size_per_step_(1.0f / (smax - 1)),
-        color_(color) {}
+        st_{0.0f * size_per_step_},
+        color_(color) {
 
-        auto reset(const Point &p1, const Point &p2, const Point &p3, const Color color, const Dim smax) {
+        }
+
+        auto reset(const Point &p1, const Point &p2, const Point &p3, const RGBAColor color, const Dim smax) {
             p1_ = {p1}, p2_ = {p2}, p3_ = {p3},
-            d1_ = {p2_ - p1_}, d2_ = {p3_ - p2_}, bz_ = {p1_},
+            d1_ = {p2_ - p1_}, d2_ = {p3_ - p2_}, bz_ = {p1_}, t_ = {p1_},
             size_per_step_ = {1.0f / (smax - 1)},
+            st_ = {0.0f * size_per_step_},            
             color_ = {color}, s_ = {0.0f};
         }
 
@@ -39,8 +43,22 @@ namespace g80 {
             return bz_;
         }
 
-        auto get_color() -> Color & {
-            return color_;
+        auto get_tail_point() -> Point & {
+            Point d1 = d1_ * st_;
+            Point d2 = d2_ * st_;
+            Point c1 = p1_ + d1;
+            Point c2 = p2_ + d2;
+            Point dc = (c2 - c1) * st_;
+            t_ = c1 + dc;
+            if (s_ >= size_per_step_ * 10.0f) st_ += size_per_step_;
+            return t_;
+        }
+
+        auto get_color(const SDL_PixelFormat *format) -> RGBAColor {            
+            Color r_, g_, b_, a_;
+            SDL_GetRGBA(color_, format, &r_, &g_, &b_, &a_);
+            RGBAColor color = SDL_MapRGBA(format, r_ * s_, g_ * s_, b_ * s_, 255);
+            return color;
         }
 
         auto get_p1() -> Point & {
@@ -54,9 +72,9 @@ namespace g80 {
         }
 
     private:
-        Point p1_, p2_, p3_, d1_, d2_, bz_;
-        float s_{0.0f}, size_per_step_;
-        Color color_;
+        Point p1_, p2_, p3_, d1_, d2_, bz_, t_;
+        float s_{0.0f}, size_per_step_, st_;
+        RGBAColor color_;
     };
 }
 #endif 

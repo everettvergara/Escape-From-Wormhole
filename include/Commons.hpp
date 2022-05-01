@@ -24,7 +24,8 @@ namespace g80 {
     inline auto operator==(const Point &lhs, const Point &rhs) -> bool {return lhs.x == rhs.x && lhs.y == rhs.y;}
     inline auto operator!=(const Point &lhs, const Point &rhs) -> bool {return lhs.x != rhs.x || lhs.y != rhs.y;}
     
-    using Color = Uint32;
+    using RGBAColor = Uint32;
+    using Color = Uint8;
 
 }
 

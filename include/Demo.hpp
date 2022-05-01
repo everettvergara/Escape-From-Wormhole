@@ -33,7 +33,7 @@ namespace g80 {
     class Demo : public Video {
 
     public: 
-        Demo (Dim N, float SZ_WORMHOLE = 350.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE) { }
+        Demo (Dim N, float SZ_WORMHOLE = 750.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE) { }
         ~Demo() {}
         auto create_window(const VideoConfig &video_config) -> bool;
         auto preprocess_states() -> bool;
@@ -84,7 +84,7 @@ namespace g80 {
             Point target;
             target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
             target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
-            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 10 + rand() % 100);
+            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 100 + rand() % 100);
         }
         return true;
     }
@@ -94,15 +94,15 @@ namespace g80 {
         
         // Erase all
         for (auto &qbp : quad_bezier_points_)
-            set_pixel(qbp.get_current_point(), 0);
+            set_pixel(qbp.get_tail_point(), 0);
     
             
         // Update and Plot
         for (auto &qbp : quad_bezier_points_) {
             if (!qbp.is_valid())
-                qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), qbp.get_color(), 10 + rand() % 100);
+                qbp.reset(mouse_pointer, center_screen, qbp.get_p3(), SDL_MapRGBA(surface_->format, 255, 255, 255, 255), 100 + rand() % 100);
             
-            set_pixel(qbp.next(), qbp.get_color());
+            set_pixel(qbp.next(), qbp.get_color(surface_->format));
         }
 
         SDL_UnlockSurface(surface_);
