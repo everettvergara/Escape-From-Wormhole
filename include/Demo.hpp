@@ -20,27 +20,34 @@
 #ifndef _DEMO_HPP_
 #define _DEMO_HPP_
 
+#include <vector>
 #include "Video.h"
 #include "Gfx.hpp"
 #include "Bezier.hpp"
+#include "EmptyAllocator.hpp"
 
 namespace g80 {
 
+    using QuadBeizerPoints = std::vector<QuadBezierAnim, EmptyAllocator<QuadBezierAnim>>;
+    using Floats = std::vector<float, EmptyAllocator<float>>; 
     class Demo : public Video {
 
     public: 
-        // Demo () {
-
-        // }   
-        ~Demo() {
-        }
+        Demo (Dim N, float SZ_WORMHOLE = 350.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE) { }
+        ~Demo() {}
         auto create_window(const VideoConfig &video_config) -> bool;
         auto preprocess_states() -> bool;
         auto update_states() -> bool;
         auto capture_events() -> bool;
 
     private:
-        Sint32 mouse_x, mouse_y;
+        Dim N_;
+        float SZ_WORMHOLE_;
+        Point mouse_pointer, center_screen;
+        Floats sinf_, cosf_;
+        
+        QuadBeizerPoints quad_bezier_points_;
+
         inline auto rnd() -> Sint32 {
             static std::time_t now = time(&now);
             static Sint32 seed = now;
@@ -60,27 +67,32 @@ namespace g80 {
 
 
     auto Demo::preprocess_states() -> bool {
+        
+        float angle = 0.0f;
+        float sz_angle = M_PI * 2 / N_;
+        sinf_.reserve(N_);
+        cosf_.reserve(N_);        
+        for (Dim i = 0; i < N_; ++i) {
+            sinf_.emplace_back(SDL_sinf(angle));
+            cosf_.emplace_back(SDL_sinf(angle));
+            angle += sz_angle;
+        }
 
+        quad_bezier_points_.reserve(N_);
+        center_screen = {surface_->w / 2, surface_->h / 2};
+        for (Dim i = 0; i < N_; ++i) {
+            Point target;
+            target.x = center_screen.x + SZ_WORMHOLE_ * cosf_[i];
+            target.y = center_screen.y + SZ_WORMHOLE_ * sinf_[i];
+            quad_bezier_points_.emplace_back(mouse_pointer, center_screen, target, SDL_MapRGBA(surface_->format, 50 + rnd() % 206, 0, 0, 255), 10 + rnd() % 100);
+        }
         return true;
     }
 
     auto Demo::update_states() -> bool {
         SDL_LockSurface(surface_);
-        SDL_FillRect(surface_, NULL, 0);
-        Sint32 cx = surface_->w / 2;
-        Sint32 cy = surface_->h / 2;
-        Point p1{mouse_x, mouse_y};
-        Point p2{cx + static_cast<Sint32>(SDL_cosf(90 * M_PI / 180) * 0), cy + static_cast<Sint32>(SDL_sinf(90 * M_PI / 180) * 0)};
-        Point p3{cx + static_cast<Sint32>(SDL_cosf(90 * M_PI / 180) * 350), cy + static_cast<Sint32>(SDL_sinf(90 * M_PI / 180) * 350)};
-    
-
-        QuadBezierAnim quad_bezier_anim{p1, p2, p3, 20};
-
-        for (int i = 0; i <= 20; ++i) {
-            Point p = quad_bezier_anim.next();
-            Gfx::pset(surface_, p, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
-        }
-
+        
+        
         SDL_UnlockSurface(surface_);
         return true;
     }
@@ -97,8 +109,7 @@ namespace g80 {
             }
 
             else if (e.type == SDL_MOUSEMOTION) {
-                mouse_x = e.motion.x;
-                mouse_y = e.motion.y;                
+                mouse_pointer = {e.motion.x, e.motion.y};  
             }
         }
         return true;
