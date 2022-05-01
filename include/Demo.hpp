@@ -66,7 +66,7 @@ namespace g80 {
 
     auto Demo::update_states() -> bool {
         SDL_LockSurface(surface_);
-        
+        SDL_FillRect(surface_, NULL, 0);
         Sint32 cx = surface_->w / 2;
         Sint32 cy = surface_->h / 2;
         Point p1{mouse_x, mouse_y};
