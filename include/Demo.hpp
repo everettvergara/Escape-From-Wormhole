@@ -132,6 +132,7 @@ namespace g80 {
     
             
         // Update and Plot
+        update_wormhole_angle(10);
         for (auto &qbp : quad_bezier_points_) {
             if (!qbp.is_valid_current_point()) {
 
@@ -165,7 +166,7 @@ namespace g80 {
             }
 
             else if (e.type == SDL_MOUSEMOTION) {
-                update_wormhole_angle((e.motion.xrel * e.motion.yrel));
+                // update_wormhole_angle((e.motion.xrel * e.motion.yrel));
             }
         }
         return true;
