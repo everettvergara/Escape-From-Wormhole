@@ -2,17 +2,21 @@
 
 #include "VideoConfig.h"
 #include "Demo.hpp"
+#include "SinCos.hpp"
 
 using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;
 
 auto main(int argc, const char *argv[]) -> int {
-    VideoConfig video_config = set_default_video_config();
-    Demo demo(30000, 800.0f);
-    demo.create_window(video_config);
-    demo.preprocess_states();
-    demo.run();
+    TrigCache<double> cos(360);
+
+
+    // VideoConfig video_config = set_default_video_config();
+    // Demo demo(30000, 800.0f);
+    // demo.create_window(video_config);
+    // demo.preprocess_states();
+    // demo.run();
 }
 
 auto set_default_video_config() -> VideoConfig {
