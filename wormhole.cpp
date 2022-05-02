@@ -9,7 +9,6 @@ using namespace g80;
 auto set_default_video_config() -> VideoConfig;
 
 auto main(int argc, const char *argv[]) -> int {
-    TrigCache<double> cos(360);
 
 
     // VideoConfig video_config = set_default_video_config();
