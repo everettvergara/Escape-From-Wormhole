@@ -10,6 +10,10 @@ auto set_default_video_config() -> VideoConfig;
 
 auto main(int argc, const char *argv[]) -> int {
 
+    TrigCache<double> sinef(360);
+    // SinCache sined(SinCache(360));
+
+
 
     // VideoConfig video_config = set_default_video_config();
     // Demo demo(30000, 800.0f);
