@@ -1,5 +1,5 @@
-#ifndef _SINCOS_HPP_
-#define _SINCOS_HPP_
+#ifndef _TRIGCACHE_HPP_
+#define _TRIGCACHE_HPP_
 
 #include "Commons.hpp"
 #include <vector>

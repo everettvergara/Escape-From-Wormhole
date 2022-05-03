@@ -2,29 +2,12 @@
 
 #include "VideoConfig.h"
 #include "Demo.hpp"
-#include "SinCos.hpp"
+#include "TrigCache.hpp"
 
 using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;
-
-struct A {
-public:
-    A(char ch) : ch(ch) { std::cout << ch << " Constructor\n"; }
-    ~A() { char *p = &ch; std::cout << (void*) p << " Destructorx\n"; }
-    char ch;
-};
-
 auto main(int argc, const char *argv[]) -> int {
-
-    std::vector<A> a;
-    std::vector<A> b;
-    
-    a.reserve(10);
-    a.emplace_back('a');
-    b = a;
-
-    std::cout << "before exit\n";;
 
     //SinCacheF sinef(SinCacheF (360));
     //TrigCache<float> sinef(std::move(TrigCache<float>(360)));
