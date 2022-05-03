@@ -16,23 +16,13 @@ namespace g80 {
     class TrigCache {
     static_assert(
         std::is_same<float, T>::value || 
-        std::is_same<double, T>::value, 
+        std::is_same<double, T>::value ||
+        std::is_same<long double, T>::value, 
         "Trig Cache must have a floating-point type");
 
     public:
         TrigCache(Dim N) {
             angle_values_.reserve(N);
-            std::cout << "Normal Constructor\n";
-        }
-
-        TrigCache(const TrigCache &rhs) {
-            std::cout << "Copy Constructor\n";
-        }
-
-        TrigCache(TrigCache &&rhs) {
-            angle_values_.clear();
-
-            std::cout << "Move Constructor\n";
         }
 
         auto operator[](int i) -> T & {
@@ -47,8 +37,8 @@ namespace g80 {
     public:
         SinCacheF(Dim N) : TrigCache(N) {
             float a = 0.0f;
-            float ainc = 2.0f * M_PI / N_;
-            for (int i = 0; i < N_; ++i, a += ainc)
+            float ainc = 2.0f * M_PI / N;
+            for (int i = 0; i < N; ++i, a += ainc)
                 angle_values_[i] = SDL_sinf(a);
         }
     };
@@ -57,8 +47,8 @@ namespace g80 {
     public:
         SinCache(Dim N) : TrigCache(N) {
             double a = 0.0f;
-            double ainc = 2.0f * M_PI / N_;
-            for (int i = 0; i < N_; ++i, a += ainc)
+            double ainc = 2.0f * M_PI / N;
+            for (int i = 0; i < N; ++i, a += ainc)
                 angle_values_[i] = SDL_sin(a);
         }
     };
@@ -67,8 +57,8 @@ namespace g80 {
     public:
         CosCacheF(Dim N) : TrigCache(N) {
             float a = 0.0f;
-            float ainc = 2.0f * M_PI / N_;
-            for (int i = 0; i < N_; ++i, a += ainc)
+            float ainc = 2.0f * M_PI / N;
+            for (int i = 0; i < N; ++i, a += ainc)
                 angle_values_[i] = SDL_cosf(a);
         }
     };
@@ -77,8 +67,8 @@ namespace g80 {
     public:
         CosCache(Dim N) : TrigCache(N) {
             double a = 0.0f;
-            double ainc = 2.0f * M_PI / N_;
-            for (int i = 0; i < N_; ++i, a += ainc)
+            double ainc = 2.0f * M_PI / N;
+            for (int i = 0; i < N; ++i, a += ainc)
                 angle_values_[i] = SDL_cos(a);
         }
     };
