@@ -35,7 +35,7 @@ namespace g80 {
     class Demo : public Video {
 
     public: 
-        Demo (Dim N, float SZ_WORMHOLE = 1000.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE), propulsion_grid_(50, 50) { }
+        Demo (Dim N, float SZ_WORMHOLE = 1000.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE), propulsion_grid_(50, 50), propulsion_(100) { }
         ~Demo() {}
         auto create_window(const VideoConfig &video_config) -> bool;
         auto preprocess_states() -> bool;
@@ -58,6 +58,7 @@ namespace g80 {
 
         QuadBeizerPoints quad_bezier_points_;
         PropulsionGrid propulsion_grid_;
+        Propulsion propulsion_;
         
 
         inline auto rnd() -> UDim {
@@ -165,7 +166,9 @@ namespace g80 {
         float width_size = 1.0f * surface_->w / propulsion_grid_.get_width();
         float height_size = 1.0f * surface_->h / propulsion_grid_.get_height();
         Uint32 grid_color = SDL_MapRGBA(surface_->format, 40, 40, 40, 255);
-        Uint32 vector_color = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
+        Uint32 vector_color = SDL_MapRGBA(surface_->format, 0, 0, 255, 255);
+        Uint32 propulsion_color = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
+        
 
         for (float y = 0; y <= surface_->h; y += height_size)
             Gfx::line(surface_, {0, static_cast<Dim>(y)}, {surface_->w - 1, static_cast<Dim>(y)}, grid_color);
@@ -190,7 +193,7 @@ namespace g80 {
                     // if (cp >= min_point && cp < max_point) *cp = c;
                     if (p1.x >= 0 && p1.x < propulsion_grid_.get_width() && 
                         p1.y >= 0 && p1.y < propulsion_grid_.get_height()) {
-                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 30.0f);
+                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 100.0f);
                     }
                     if (t >= adx) {
                         p1.y += sdy;
@@ -202,7 +205,7 @@ namespace g80 {
                 for (Sint32 i = 0, t = adx; i <= ady; ++i, t += adx) {
                     if (p1.x >= 0 && p1.x < propulsion_grid_.get_width() && 
                         p1.y >= 0 && p1.y < propulsion_grid_.get_height()) {
-                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 30.0f);
+                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 100.0f);
                     }
                     if (t >= ady) {
                         p1.x += sdx;
@@ -211,22 +214,25 @@ namespace g80 {
                     p1.y += sdy;
                 }
             }
-        /*
-        for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
-            for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
-                Point center {
-                    static_cast<Dim>(x * width_size + width_size / 2), 
-                    static_cast<Dim>(y * height_size + height_size / 2)};
+        
+        // for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
+        //     for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
+        //         // Point center {
+        //         //     static_cast<Dim>(x * width_size + width_size / 2), 
+        //         //     static_cast<Dim>(y * height_size + height_size / 2)};
 
-                Dim ix = propulsion_grid_.ix(x, y);
-                Point dest {
-                    static_cast<Dim>(center.x + propulsion_grid_.get_vector_x(ix)),
-                    static_cast<Dim>(center.y + propulsion_grid_.get_vector_y(ix))};
-                Gfx::line(surface_, center, dest, vector_color);
-                propulsion_grid_.reduce_magnitude(ix, 0.9925f);
-            }
-        }
-        */
+        //         // Dim ix = propulsion_grid_.ix(x, y);
+        //         // Point dest {
+        //         //     static_cast<Dim>(center.x + propulsion_grid_.get_vector_x(ix)),
+        //         //     static_cast<Dim>(center.y + propulsion_grid_.get_vector_y(ix))};
+        //         // Gfx::line(surface_, center, dest, vector_color);
+        //         // propulsion_grid_.reduce_magnitude(ix, 0.9925f);
+        //     }
+        // }
+        
+
+
+
         // Draw Target
         Gfx::circle(surface_, center_screen_, 300, SDL_MapRGBA(surface_->format, 100, 100, 100, 255));
 
@@ -235,7 +241,45 @@ namespace g80 {
         player_.x += cos_craft_[air_craft_angle_] * 300;
         player_.y += sin_craft_[air_craft_angle_] * 300;
         Gfx::circle(surface_, player_, 20, vector_color);
-        SDL_Log("%d, %0.4f, %0.4f",air_craft_angle_,  cos_craft_[air_craft_angle_], sin_craft_[air_craft_angle_]);
+
+
+        // Create new Propulsion
+        for (Dim i = propulsion_.get_free_() ; i < propulsion_.get_size_() - 1 ; ++i) {
+            
+            Dim angle = air_craft_angle_ - 15 + rnd() % 30;
+            Dim radius = 20 + rnd() % 20;
+            Point start_burst;
+            start_burst.x = player_.x + radius * cos_craft_[angle] ;
+            start_burst.y = player_.y + radius * sin_craft_[angle] ;
+            // Dim propulsion_x = 1.0f * start_burst.x / width_size;
+            // Dim propulsion_y = 1.0f * start_burst.y / height_size;
+            Dim ix = propulsion_grid_.ix(start_burst.x, start_burst.y);
+            angle = propulsion_grid_.get_angle(ix);
+            float magnitude = propulsion_grid_.get_magnitude(ix);
+
+            Point end_burst = start_burst;
+            end_burst.x += magnitude * cos_craft_[angle] ;
+            end_burst.y += magnitude * sin_craft_[angle] ;
+            propulsion_.add_burst(start_burst, end_burst);
+
+        }
+
+        // Erase Propulsion
+        for (Dim i = 0; i < propulsion_.get_free_(); ++i) {
+            const LinePoint &lp = propulsion_[i];
+            Gfx::pset(surface_, lp.p1, 0);
+        }
+
+        propulsion_.next();
+        
+        // Draw Propulsion
+        for (Dim i = 0; i < propulsion_.get_free_(); ++i) {
+            const LinePoint &lp = propulsion_[i];
+            Gfx::pset(surface_, lp.p1, propulsion_color);
+        }
+
+
+        // SDL_Log("%d, %0.4f, %0.4f",air_craft_angle_,  cos_craft_[air_craft_angle_], sin_craft_[air_craft_angle_]);
         // Gfx::line(surface_, center_screen_, wormhole_origin_, SDL_MapRGBA(surface_->format, 100, 100, 100, 255));
 
         SDL_UnlockSurface(surface_);

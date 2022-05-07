@@ -26,7 +26,6 @@ namespace g80 {
 
             i = 0;
             if (adx >= ady) {    
-        
                 t = ady;
             } else {
                 t = adx;
@@ -41,6 +40,7 @@ namespace g80 {
                     t -= adx;
                 }
                 p1.x +=sdx;
+                t += ady;
             } else {
                 if (i > ady) return false;
                 if (t >= ady) {
@@ -48,7 +48,7 @@ namespace g80 {
                     t -= ady;
                 }
                 p1.y += sdy;
-                
+                t += adx;
             }
             ++i;
             return true;
@@ -68,9 +68,9 @@ namespace g80 {
 
         auto next() -> void {
             for (Dim i = 0; i < free_; ++i) {
-                if (!burst_list_[i].next()) {
-                    std::swap(burst_list_[i], burst_list_[free_]);
-                }
+                // if (!burst_list_[i].next()) {
+                //     std::swap(burst_list_[i], burst_list_[free_]);
+                // }
             }
         }
 
@@ -80,6 +80,10 @@ namespace g80 {
 
         auto get_size_() const -> Dim {
             return burst_list_.size();
+        }
+
+        inline auto operator[](Dim ix) -> LinePoint & {
+            return burst_list_[ix];
         }
 
     private:
