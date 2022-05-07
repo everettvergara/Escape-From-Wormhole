@@ -50,6 +50,10 @@ namespace g80 {
         float wormhole_radius_from_center{750.0f};
         Dim wormhole_angle_{0};
         Point center_screen_;
+        SinCacheF sin_craft_{360};
+        CosCacheF cos_craft_{360};
+        Dim air_craft_angle_{180};
+        Point player_;
 
         QuadBeizerPoints quad_bezier_points_;
         PropulsionGrid propulsion_grid_;
@@ -123,6 +127,11 @@ namespace g80 {
             RGBAColor color = get_wormhole_color(speed);
             quad_bezier_points_.emplace_back(surface_->format, wormhole_origin_, center_screen_, target, color, speed);
         }
+
+        player_ = center_screen_;
+        player_.x += cos_craft_[air_craft_angle_] * 300;
+        player_.y += sin_craft_[air_craft_angle_] * 300;
+
         return true;
     }
 
@@ -130,9 +139,9 @@ namespace g80 {
         SDL_LockSurface(surface_);
         
         // Erase all
-        // for (auto &qbp : quad_bezier_points_)
-        //     set_pixel_strict_bounds(qbp.get_tail_point(), 0);
-        SDL_FillRect(surface_, NULL, 0);
+        for (auto &qbp : quad_bezier_points_)
+            set_pixel_strict_bounds(qbp.get_tail_point(), 0);
+        // SDL_FillRect(surface_, NULL, 0);
             
         // Update and Plot
         update_wormhole_angle(10);
@@ -218,7 +227,15 @@ namespace g80 {
         }
         */
         // Draw Target
-        // Gfx::line(surface_, center_screen_, wormhole_origin_, SDL_MapRGBA(surface_->format, 255, 0, 255, 255));
+        Gfx::circle(surface_, center_screen_, 300, SDL_MapRGBA(surface_->format, 100, 100, 100, 255));
+
+        Gfx::circle(surface_, player_, 20, 0);
+        player_ = center_screen_;
+        player_.x += cos_craft_[air_craft_angle_] * 300;
+        player_.y += sin_craft_[air_craft_angle_] * 300;
+        Gfx::circle(surface_, player_, 20, vector_color);
+
+        // Gfx::line(surface_, center_screen_, wormhole_origin_, SDL_MapRGBA(surface_->format, 100, 100, 100, 255));
 
         SDL_UnlockSurface(surface_);
         return true;
@@ -236,6 +253,18 @@ namespace g80 {
             }
 
             else if (e.type == SDL_MOUSEMOTION) {
+                e.motion.xrel /= 2;
+                if (e.motion.xrel < 0) { 
+                    Dim xrel = e.motion.xrel < -90 ? 90 : -e.motion.xrel;
+                    air_craft_angle_ += xrel;
+                    if (air_craft_angle_ >= 360) air_craft_angle_ -= 360;
+                } else if (e.motion.xrel > 0) {
+                    Dim xrel = e.motion.xrel > 90 ? 90 : e.motion.xrel;
+                    air_craft_angle_ -= xrel;
+                    if (air_craft_angle_ < 0) air_craft_angle_ = 360 - air_craft_angle_;
+                }
+                
+
                 // update_wormhole_angle((e.motion.xrel * e.motion.yrel));
             }
         }
