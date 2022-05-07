@@ -13,13 +13,11 @@ auto main(int argc, const char *argv[]) -> int {
     //TrigCache<float> sinef(std::move(TrigCache<float>(360)));
     // SinCache sined(SinCache(360));
 
-
-
-    // VideoConfig video_config = set_default_video_config();
-    // Demo demo(30000, 800.0f);
-    // demo.create_window(video_config);
-    // demo.preprocess_states();
-    // demo.run();
+    VideoConfig video_config = set_default_video_config();
+    Demo demo(30000, 800.0f);
+    demo.create_window(video_config);
+    demo.preprocess_states();
+    demo.run();
 }
 
 auto set_default_video_config() -> VideoConfig {
