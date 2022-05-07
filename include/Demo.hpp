@@ -164,11 +164,44 @@ namespace g80 {
             Gfx::line(surface_, {static_cast<Dim>(x), 0}, {static_cast<Dim>(x), surface_->h - 1}, grid_color);
 
         
-        for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
-            for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
+        // 
+        // Draw a line from p1 to p2
+        Point p1{propulsion_grid_.get_width()/2, propulsion_grid_.get_height()/2};
+        Point p2{static_cast<Dim>(wormhole_origin_.x / width_size), static_cast<Dim>(wormhole_origin_.y / height_size)};
+        Sint32 dx = p2.x - p1.x;
+        Sint32 dy = p2.y - p1.y;
+        Sint32 sdx = dx < 0 ? -1 : 1;
+        Sint32 sdy = dy < 0 ? -1 : 1;
+        Sint32 adx = dx < 0 ? dx * -1 : dx;
+        Sint32 ady = dy < 0 ? dy * -1 : dy;
+        
+        if (adx >= ady) {    
+                for (Sint32 i = 0, t = ady; i <= adx; ++i, t += ady) {
+                    // if (cp >= min_point && cp < max_point) *cp = c;
+                    if (p1.x >= 0 && p1.x < propulsion_grid_.get_width() && 
+                        p1.y >= 0 && p1.y < propulsion_grid_.get_height()) {
+                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 30.0f);
+                    }
+                    if (t >= adx) {
+                        p1.y += sdy;
+                        t -= adx;
+                    }
+                    p1.x +=sdx;
+                }
+            } else {
+                for (Sint32 i = 0, t = adx; i <= ady; ++i, t += adx) {
+                    if (p1.x >= 0 && p1.x < propulsion_grid_.get_width() && 
+                        p1.y >= 0 && p1.y < propulsion_grid_.get_height()) {
+                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 30.0f);
+                    }
+                    if (t >= ady) {
+                        p1.x += sdx;
+                        t -= ady;
+                    }
+                    p1.y += sdy;
+                }
             }
-        }
-
+        /*
         for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
             for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
                 Point center {
@@ -183,9 +216,9 @@ namespace g80 {
                 propulsion_grid_.reduce_magnitude(ix, 0.9925f);
             }
         }
-        
+        */
         // Draw Target
-        Gfx::line(surface_, center_screen_, wormhole_origin_, SDL_MapRGBA(surface_->format, 255, 0, 255, 255));
+        // Gfx::line(surface_, center_screen_, wormhole_origin_, SDL_MapRGBA(surface_->format, 255, 0, 255, 255));
 
         SDL_UnlockSurface(surface_);
         return true;
