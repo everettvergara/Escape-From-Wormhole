@@ -29,6 +29,10 @@ namespace g80 {
             return angle_values_[i];
         } 
 
+        auto operator[](int i) const -> const T & {
+            return angle_values_[i];
+        } 
+
     protected:
         AngleValues<T> angle_values_;
     };

@@ -25,6 +25,7 @@
 #include "Video.h"
 #include "Gfx.hpp"
 #include "QuadBezierAnim.hpp"
+#include "PropulsionGrid.hpp"
 
 namespace g80 {
 
@@ -33,7 +34,7 @@ namespace g80 {
     class Demo : public Video {
 
     public: 
-        Demo (Dim N, float SZ_WORMHOLE = 1000.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE) { }
+        Demo (Dim N, float SZ_WORMHOLE = 1000.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE), propulsion_grid_(50, 50) { }
         ~Demo() {}
         auto create_window(const VideoConfig &video_config) -> bool;
         auto preprocess_states() -> bool;
@@ -51,6 +52,8 @@ namespace g80 {
         Point center_screen_;
 
         QuadBeizerPoints quad_bezier_points_;
+        PropulsionGrid propulsion_grid_;
+        
 
         inline auto rnd() -> UDim {
             static std::time_t now = time(&now);
@@ -127,9 +130,9 @@ namespace g80 {
         SDL_LockSurface(surface_);
         
         // Erase all
-        for (auto &qbp : quad_bezier_points_)
-            set_pixel_strict_bounds(qbp.get_tail_point(), 0);
-    
+        // for (auto &qbp : quad_bezier_points_)
+        //     set_pixel_strict_bounds(qbp.get_tail_point(), 0);
+        SDL_FillRect(surface_, NULL, 0);
             
         // Update and Plot
         update_wormhole_angle(10);
@@ -147,8 +150,36 @@ namespace g80 {
             set_pixel_strict_bounds(qbp.next(), qbp.get_color(surface_->format));
         }
 
+        // Draw Propulsion Grid
+        
+        float width_size = 1.0f * surface_->w / propulsion_grid_.get_width();
+        float height_size = 1.0f * surface_->h / propulsion_grid_.get_height();
+        Uint32 grid_color = SDL_MapRGBA(surface_->format, 40, 40, 40, 255);
+        Uint32 vector_color = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
+
+        for (int y = 0; y <= surface_->h; y += height_size)
+            Gfx::line(surface_, {0, y}, {surface_->w - 1, y}, grid_color);
+
+        for (int x = 0; x <= surface_->w; x += width_size)
+            Gfx::line(surface_, {x, 0}, {x, surface_->h - 1}, grid_color);
+
+        for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
+            for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
+                Point center {
+                    static_cast<Dim>(x * width_size + width_size / 2), 
+                    static_cast<Dim>(y * height_size + height_size / 2)};
+
+                Dim ix = propulsion_grid_.ix(x, y);
+                Point dest {
+                    static_cast<Dim>(center.x + propulsion_grid_.get_vector_x(ix)),
+                    static_cast<Dim>(center.y + propulsion_grid_.get_vector_y(ix))};
+                Gfx::line(surface_, center, dest, vector_color);
+                // propulsion_grid_.reduce_magnitude(ix, 0.1f);
+            }
+        }
+        
         // Draw Target
-        Gfx::circle(surface_, center_screen_, 300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        //Gfx::circle(surface_, center_screen_, 300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
 
         SDL_UnlockSurface(surface_);
         return true;
