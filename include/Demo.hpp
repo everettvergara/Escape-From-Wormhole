@@ -35,7 +35,7 @@ namespace g80 {
     class Demo : public Video {
 
     public: 
-        Demo (Dim N, float SZ_WORMHOLE = 1000.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE), propulsion_grid_(50, 50), propulsion_(100) { }
+        Demo (Dim N, float SZ_WORMHOLE = 1000.0f) : N_(N), SZ_WORMHOLE_(SZ_WORMHOLE), propulsion_grid_(50, 50), propulsion_(500) { }
         ~Demo() {}
         auto create_window(const VideoConfig &video_config) -> bool;
         auto preprocess_states() -> bool;
@@ -193,7 +193,7 @@ namespace g80 {
                     // if (cp >= min_point && cp < max_point) *cp = c;
                     if (p1.x >= 0 && p1.x < propulsion_grid_.get_width() && 
                         p1.y >= 0 && p1.y < propulsion_grid_.get_height()) {
-                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 100.0f);
+                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 50.0f);
                     }
                     if (t >= adx) {
                         p1.y += sdy;
@@ -205,7 +205,7 @@ namespace g80 {
                 for (Sint32 i = 0, t = adx; i <= ady; ++i, t += adx) {
                     if (p1.x >= 0 && p1.x < propulsion_grid_.get_width() && 
                         p1.y >= 0 && p1.y < propulsion_grid_.get_height()) {
-                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 100.0f);
+                            propulsion_grid_.set_magnitude(propulsion_grid_.ix(p1.x, p1.y), 50.0f);
                     }
                     if (t >= ady) {
                         p1.x += sdx;
@@ -249,14 +249,14 @@ namespace g80 {
             Dim angle = air_craft_angle_ - 15 + rnd() % 30;
             Dim radius = 20 + rnd() % 20;
             Point start_burst;
-            start_burst.x = player_.x + radius * cos_craft_[angle] ;
-            start_burst.y = player_.y + radius * sin_craft_[angle] ;
-            // Dim propulsion_x = 1.0f * start_burst.x / width_size;
-            // Dim propulsion_y = 1.0f * start_burst.y / height_size;
-            Dim ix = propulsion_grid_.ix(start_burst.x, start_burst.y);
+            start_burst.x = player_.x + radius * cos_craft_[angle];
+            start_burst.y = player_.y + radius * sin_craft_[angle];
+
+            Dim ix = propulsion_grid_.ix(start_burst.x / width_size, start_burst.y / height_size);
             angle = propulsion_grid_.get_angle(ix);
             float magnitude = propulsion_grid_.get_magnitude(ix);
 
+            // SDL_Log("%d, %.2f\n", angle, magnitude);
             Point end_burst = start_burst;
             end_burst.x += magnitude * cos_craft_[angle] ;
             end_burst.y += magnitude * sin_craft_[angle] ;

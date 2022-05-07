@@ -67,10 +67,10 @@ namespace g80 {
         }
 
         auto next() -> void {
-            for (Dim i = 0; i < free_; ++i) {
-                // if (!burst_list_[i].next()) {
-                //     std::swap(burst_list_[i], burst_list_[free_]);
-                // }
+            for (Dim i = 0; i < free_ - 1; ++i) {
+                if (!burst_list_[i].next()) {
+                    std::swap(burst_list_[i], burst_list_[free_--]);
+                }
             }
         }
 
@@ -87,7 +87,7 @@ namespace g80 {
         }
 
     private:
-        Dim free_{0};
+        volatile Dim free_{0};
         std::vector<LinePoint, EmptyAllocator<LinePoint>> burst_list_;
 
     };
