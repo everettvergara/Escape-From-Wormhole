@@ -26,6 +26,7 @@
 #include "Gfx.hpp"
 #include "QuadBezierAnim.hpp"
 #include "PropulsionGrid.hpp"
+#include "Propulsion.hpp"
 
 namespace g80 {
 
