@@ -54,14 +54,14 @@ namespace g80 {
         // Graphics
         inline auto is_pixel_within_bounds(const PixelPoint &p) const -> bool;
         auto pset(const PixelPoint &p, RGBAColor c) -> void;
-        auto line(const PixelPoint &p1, const PixelPoint &p2, RGBAColor c) -> void;
+        auto line(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void;
        
     protected:
         bool is_init_;
         bool is_running_ {false};
         SDL_Window *window_ {nullptr};
         SDL_Surface *surface_ {nullptr};
-        Uint32 *pixel_end_;
+        Uint32 *pixel_start_, *pixel_end_;
         Uint16 MSPF_;        
     };
 
@@ -99,7 +99,7 @@ namespace g80 {
     }
 
     auto Video::get_pixel_buffer(const PixelPoint &p) const -> Uint32 * {
-        return static_cast<Uint32 *>(surface_->pixels) + surface_->w * p.y + p.x;
+        return pixel_start_ + surface_->w * p.y + p.x;
     }
 
     auto Video::create_window(const VideoConfig &video_config) -> bool {
@@ -112,6 +112,7 @@ namespace g80 {
         if ((surface_ = SDL_GetWindowSurface(window_)) == NULL) return false;
 
         MSPF_ = 1000 / video_config.FPS;
+        pixel_start_ = static_cast<Uint32 *>(surface_->pixels);
         pixel_end_ = static_cast<Uint32 *>(surface_->pixels) + surface_->w * surface_->h;
         
         return true;
@@ -174,21 +175,25 @@ namespace g80 {
         *get_pixel_buffer(p) = c;
     }
 
-    auto Video::line(const PixelPoint &p1, const PixelPoint &p2, RGBAColor c) -> void {
+    auto Video::line(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void {
         PixelPoint d = p2 - p1;
         PixelPoint ad = d.abs();
         Sint32 sdx = d.x < 0 ? -1 : 1;
         Sint32 sdy = d.y < 0 ? -surface_->w : surface_->w;
-        Uint32 * pixel_buffer = static_cast<Uint32 *>(surface_->pixels) + p1.y * surface_->w + p1.x;
-        auto draw_line = [&](Sint32 abs_a, Sint32 abs_b, Sint32 sig_xy) -> void {
-            for (Sint32 i = 0, t = abs_a; i <= abs_b; ++i, t += abs_a) {
-                *pixel_buffer = c;
-                if (t >= abs_b) {pixel_buffer += sdy; t -= abs_b;}
-                pixel_buffer += sig_xy;
+
+        Uint32 *pixel_buffer = static_cast<Uint32 *>(surface_->pixels) + p1.y * surface_->w + p1.x;
+        auto draw_line = [&](Sint32 abs_g, Sint32 abs_l, Sint32 sig_g, Sint32 sig_l) -> void {
+            for (Sint32 i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
+                if (pixel_buffer >= pixel_start_ && pixel_buffer < pixel_end_) *pixel_buffer = c;
+                if (t >= abs_g) {
+                    pixel_buffer += sig_l;
+                    t -= abs_g;
+                }
+                pixel_buffer += sig_g;
             }
         };
-        if (ad.x >= ad.y) draw_line(ad.y, ad.x, sdx);
-        else draw_line(ad.x, ad.y, sdy);
+        if (ad.x >= ad.y) draw_line(ad.x, ad.y, sdx, sdy);
+        else draw_line(ad.y, ad.x, sdy, sdx);
     }
 
 }
