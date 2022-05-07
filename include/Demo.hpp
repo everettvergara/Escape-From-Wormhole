@@ -163,6 +163,12 @@ namespace g80 {
         for (float x = 0; x <= surface_->w; x += width_size)
             Gfx::line(surface_, {static_cast<Dim>(x), 0}, {static_cast<Dim>(x), surface_->h - 1}, grid_color);
 
+        
+        for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
+            for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
+            }
+        }
+
         for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
             for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
                 Point center {
@@ -179,7 +185,7 @@ namespace g80 {
         }
         
         // Draw Target
-        //Gfx::circle(surface_, center_screen_, 300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        Gfx::line(surface_, center_screen_, wormhole_origin_, SDL_MapRGBA(surface_->format, 255, 0, 255, 255));
 
         SDL_UnlockSurface(surface_);
         return true;
