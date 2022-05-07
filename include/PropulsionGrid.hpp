@@ -17,7 +17,7 @@ namespace g80 {
             width_(width), 
             height_(height),
             size_(width_ * height_),
-            magnitudes_(size_, 5.0f),
+            magnitudes_(size_, 20.0f),
             min_magnitude_(5.0f) {
             
             angles_.reserve(size_);

@@ -157,11 +157,11 @@ namespace g80 {
         Uint32 grid_color = SDL_MapRGBA(surface_->format, 40, 40, 40, 255);
         Uint32 vector_color = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
 
-        for (int y = 0; y <= surface_->h; y += height_size)
-            Gfx::line(surface_, {0, y}, {surface_->w - 1, y}, grid_color);
+        for (float y = 0; y <= surface_->h; y += height_size)
+            Gfx::line(surface_, {0, static_cast<Dim>(y)}, {surface_->w - 1, static_cast<Dim>(y)}, grid_color);
 
-        for (int x = 0; x <= surface_->w; x += width_size)
-            Gfx::line(surface_, {x, 0}, {x, surface_->h - 1}, grid_color);
+        for (float x = 0; x <= surface_->w; x += width_size)
+            Gfx::line(surface_, {static_cast<Dim>(x), 0}, {static_cast<Dim>(x), surface_->h - 1}, grid_color);
 
         for (int y = 0; y <= propulsion_grid_.get_height(); ++y) {
             for (int x = 0; x < propulsion_grid_.get_width(); ++x) {
@@ -174,7 +174,7 @@ namespace g80 {
                     static_cast<Dim>(center.x + propulsion_grid_.get_vector_x(ix)),
                     static_cast<Dim>(center.y + propulsion_grid_.get_vector_y(ix))};
                 Gfx::line(surface_, center, dest, vector_color);
-                // propulsion_grid_.reduce_magnitude(ix, 0.1f);
+                propulsion_grid_.reduce_magnitude(ix, 0.9925f);
             }
         }
         
