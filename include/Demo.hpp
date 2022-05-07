@@ -234,7 +234,7 @@ namespace g80 {
         player_.x += cos_craft_[air_craft_angle_] * 300;
         player_.y += sin_craft_[air_craft_angle_] * 300;
         Gfx::circle(surface_, player_, 20, vector_color);
-
+        SDL_Log("%d, %0.4f, %0.4f",air_craft_angle_,  cos_craft_[air_craft_angle_], sin_craft_[air_craft_angle_]);
         // Gfx::line(surface_, center_screen_, wormhole_origin_, SDL_MapRGBA(surface_->format, 100, 100, 100, 255));
 
         SDL_UnlockSurface(surface_);
@@ -261,7 +261,7 @@ namespace g80 {
                 } else if (e.motion.xrel > 0) {
                     Dim xrel = e.motion.xrel > 90 ? 90 : e.motion.xrel;
                     air_craft_angle_ -= xrel;
-                    if (air_craft_angle_ < 0) air_craft_angle_ = 360 - air_craft_angle_;
+                    if (air_craft_angle_ < 0) air_craft_angle_ = air_craft_angle_ + 360;
                 }
                 
 
