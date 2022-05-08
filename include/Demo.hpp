@@ -33,7 +33,7 @@ namespace g80 {
     }
 
     auto Demo::update_states() -> bool {
-        line({0,0}, {surface_->w - 1, surface_->h - 1}, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        line({200, -100}, {1280, 350}, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
         return true;
     }
 }

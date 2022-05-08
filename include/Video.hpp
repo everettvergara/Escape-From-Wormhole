@@ -223,17 +223,22 @@ namespace g80 {
 
         */ 
 
-       
+
         if (p1.y < 0 && w != 0) {
             // Check for x = 0, intercept
             float m = 1.0f * h / w;
-            float b = 1.0f * h - m * w;
+            float b = 1.0f * p1.y - m * p1.x;
+
+            // y = mx + b
             Sint32 x = -b / m;
 
             // x is not within the bounds
             if (x < 0 || x >= surface_->w) return;
             p1.x = x;
             p1.y = 0;
+
+            // SDL_Log("%d %d %0.2f %0.4f h:%d w:%d\n", p1.x, p1.y, m, b, h, w);
+            // return;
         }
         
         PixelPoint d = p2 - p1;
