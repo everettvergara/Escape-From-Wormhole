@@ -54,7 +54,9 @@ namespace g80 {
         // Graphics
         inline auto is_pixel_within_bounds(const PixelPoint &p) const -> bool;
         auto pset(const PixelPoint &p, RGBAColor c) -> void;
+        auto pset_lite(const PixelPoint &p, RGBAColor c) -> void;
         auto line(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void;
+        auto line_lite(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void;
        
     protected:
         bool is_init_;
@@ -175,7 +177,65 @@ namespace g80 {
         *get_pixel_buffer(p) = c;
     }
 
+    auto Video::pset_lite(const PixelPoint &p, RGBAColor c) -> void {
+        *get_pixel_buffer(p) = c;
+    }
+
     auto Video::line(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void {
+        
+        // Out of bounds recomputation
+        Sint32 h = p2.y - p1.y;
+        Sint32 w = p2.x - p1.x;
+
+        /*
+            if p1.y < 0 && p1.x >= 0
+            if (p2.y < 0) then no line
+
+            if (p2.y >= 0)
+            p1.
+            |\
+            | \
+            |  \
+            ----x  0
+            |    \
+            |     \ p2
+
+            p2.x > p1.x, p2.y > p1.y
+            p2.x < p1.x, p2.y > p1.y
+            p2.x = p1.x, p2.y > p1.y
+            
+            --
+            w = p2.x - p1.x
+            h = p2.y - p1.y
+            
+            solve for m:
+            y = mx + b
+            m = 1.0f * h / w;
+
+            solve for b:
+            mw + b = h
+            b = 1.0f * h - mw;
+
+            what is x if y = 0;
+            mw = h - b
+            w = -b / m
+
+
+        */ 
+
+       
+        if (p1.y < 0 && w != 0) {
+            // Check for x = 0, intercept
+            float m = 1.0f * h / w;
+            float b = 1.0f * h - m * w;
+            Sint32 x = -b / m;
+
+            // x is not within the bounds
+            if (x < 0 || x >= surface_->w) return;
+            p1.x = x;
+            p1.y = 0;
+        }
+        
         PixelPoint d = p2 - p1;
         PixelPoint ad = d.abs();
         Sint32 sdx = d.x < 0 ? -1 : 1;
@@ -184,7 +244,28 @@ namespace g80 {
         Uint32 *pixel_buffer = static_cast<Uint32 *>(surface_->pixels) + p1.y * surface_->w + p1.x;
         auto draw_line = [&](Sint32 abs_g, Sint32 abs_l, Sint32 sig_g, Sint32 sig_l) -> void {
             for (Sint32 i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
-                if (pixel_buffer >= pixel_start_ && pixel_buffer < pixel_end_) *pixel_buffer = c;
+                *pixel_buffer = c;
+                if (t >= abs_g) {
+                    pixel_buffer += sig_l;
+                    t -= abs_g;
+                }
+                pixel_buffer += sig_g;
+            }
+        };
+        if (ad.x >= ad.y) draw_line(ad.x, ad.y, sdx, sdy);
+        else draw_line(ad.y, ad.x, sdy, sdx);
+    }
+
+    auto Video::line_lite(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void {
+        PixelPoint d = p2 - p1;
+        PixelPoint ad = d.abs();
+        Sint32 sdx = d.x < 0 ? -1 : 1;
+        Sint32 sdy = d.y < 0 ? -surface_->w : surface_->w;
+
+        Uint32 *pixel_buffer = static_cast<Uint32 *>(surface_->pixels) + p1.y * surface_->w + p1.x;
+        auto draw_line = [&](Sint32 abs_g, Sint32 abs_l, Sint32 sig_g, Sint32 sig_l) -> void {
+            for (Sint32 i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
+                *pixel_buffer = c;
                 if (t >= abs_g) {
                     pixel_buffer += sig_l;
                     t -= abs_g;
