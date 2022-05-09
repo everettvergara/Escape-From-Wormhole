@@ -53,6 +53,7 @@ namespace g80 {
         // }
         
         line({-1000, surface_->h / 2}, {+3000, surface_->h / 2}, pal, 0, 39);
+        line({3000, surface_->h / 3}, {-1000, surface_->h / 3}, pal, 0, 39);
         //line({-1000, surface_->h / 2}, {+1000, surface_->h / 2}, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
 
         return true;
