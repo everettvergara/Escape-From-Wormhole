@@ -53,11 +53,11 @@ namespace g80 {
         virtual auto update_window_surface() -> bool;
 
         // Graphics
-        inline auto is_pixel_within_bounds(const Point<Sint32> &p) const -> bool;
+        inline auto is_point_within_bounds(const Point<Sint32> &p) const -> bool;
         auto pset(const Point<Sint32> &p, RGBAColor c) -> void;
         inline auto pset_lite(const Point<Sint32> &p, RGBAColor c) -> void;
         auto line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void;
-        auto line(Point<Sint32> p1, Point<Sint32> p2, Palette palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void;    
+        auto line(Point<Sint32> p1, Point<Sint32> p2, const Palette &palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void;   
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
@@ -172,13 +172,13 @@ namespace g80 {
         return SDL_UpdateWindowSurface(window_) == 0;
     }
 
-    auto Video::is_pixel_within_bounds(const Point<Sint32> &p) const -> bool {
+    auto Video::is_point_within_bounds(const Point<Sint32> &p) const -> bool {
         if (p.x < 0 || p.y < 0 || p.x >= surface_->w || p.y >= surface_->h) return false;
         return true;
     }
 
     auto Video::pset(const Point<Sint32> &p, RGBAColor c) -> void {
-        if (!is_pixel_within_bounds(p)) return;
+        if (!is_point_within_bounds(p)) return;
         pset_lite(p, c);
     }
 
@@ -219,10 +219,6 @@ namespace g80 {
             return p;
         };
 
-        auto is_point_within_bbox = [&](Point<Sint32> p) -> bool {
-            return p.x >= 0 && p.x <= surface_->w - 1 && p.y >=0 && p.y <= surface_->h - 1;
-        };
-
         auto get_new_point_from_intercept = [&](const Point<Sint32> &p) -> Point<Sint32> {
             Point<Sint32> top_p = get_point_on_x_intercept(p, 0);
             Point<Sint32> bottom_p = get_point_on_x_intercept(p, surface_->h - 1);
@@ -231,24 +227,24 @@ namespace g80 {
             Uint8 bbox = bbox_plane(p);
 
             if (bbox == 0) {
-                if (is_point_within_bbox(top_p)) return top_p;
-                else if (is_point_within_bbox(left_p)) return left_p;
+                if (is_point_within_bounds(top_p)) return top_p;
+                else if (is_point_within_bounds(left_p)) return left_p;
             } else if (bbox == 2) {
-                if (is_point_within_bbox(top_p)) return top_p;
-                else if (is_point_within_bbox(right_p)) return right_p;                
+                if (is_point_within_bounds(top_p)) return top_p;
+                else if (is_point_within_bounds(right_p)) return right_p;                
             } else if (bbox == 6) {
-                if (is_point_within_bbox(bottom_p)) return bottom_p;
-                else if (is_point_within_bbox(left_p)) return left_p;                
+                if (is_point_within_bounds(bottom_p)) return bottom_p;
+                else if (is_point_within_bounds(left_p)) return left_p;                
             } else if (bbox == 8) {
-                if (is_point_within_bbox(bottom_p)) return bottom_p;
-                else if (is_point_within_bbox(right_p)) return right_p;   
-            } else if (bbox == 1 && is_point_within_bbox(top_p)) {
+                if (is_point_within_bounds(bottom_p)) return bottom_p;
+                else if (is_point_within_bounds(right_p)) return right_p;   
+            } else if (bbox == 1 && is_point_within_bounds(top_p)) {
                 return top_p;
-            } else if (bbox == 3 && is_point_within_bbox(left_p)) {
+            } else if (bbox == 3 && is_point_within_bounds(left_p)) {
                 return left_p;
-            } else if (bbox == 7 && is_point_within_bbox(bottom_p)) {
+            } else if (bbox == 7 && is_point_within_bounds(bottom_p)) {
                 return bottom_p;
-            } else if (is_point_within_bbox(right_p)) {
+            } else if (is_point_within_bounds(right_p)) {
                 return right_p;
             } 
             return p;
@@ -265,16 +261,35 @@ namespace g80 {
 
     auto Video::line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void {
         line_recalc_points(p1, p2);
-        if (!is_pixel_within_bounds(p1) || is_pixel_within_bounds(p2)) return;
+        if (!is_point_within_bounds(p1) || is_point_within_bounds(p2)) return;
 
         line_lite(p1, p2, c);
     }
 
     auto Video::line(Point<Sint32> p1, Point<Sint32> p2, const Palette &palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void {
+        Point<Sint32> op1 = p1;
+        Point<Sint32> op2 = p2;
         line_recalc_points(p1, p2);
-        if (!is_pixel_within_bounds(p1) || is_pixel_within_bounds(p2)) return;
+        if (!is_point_within_bounds(p1) || is_point_within_bounds(p2)) return;
         
-        // recalc palette_ix_from, to
+        if (op1 != p1) {
+            Point ad = (p1 - op1).abs();
+            Point ad_op = (p2 - p1).abs();
+            float skipped;
+            if (ad.x >= ad.y) skipped = 1.0f * ad.x / (ad_op.x == 0 ? 1 : ad_op.x);
+            else skipped = 1.0f * ad.y / (ad_op.y == 0 ? 1 : ad_op.y);
+            pal_ix_from = pal_ix_from * 1.0f + skipped * (pal_ix_to - pal_ix_from);
+        }
+
+        if (op2 != p2) {
+            Point ad = (p2 - op2).abs();
+            Point ad_op = (p2 - p1).abs();
+            float skipped;
+            if (ad.x >= ad.y) skipped = 1.0f * ad.x / (ad_op.x == 0 ? 1 : ad_op.x);
+            else skipped = 1.0f * ad.y / (ad_op.y == 0 ? 1 : ad_op.y);
+            pal_ix_to = pal_ix_from * (1.0f - skipped * (pal_ix_to - pal_ix_from));
+        }
+
         line_lite(p1, p2, palette, pal_ix_from, pal_ix_to);
     }
 
