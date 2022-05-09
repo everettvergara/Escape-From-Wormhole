@@ -23,6 +23,7 @@
 #include "SDL.h"
 #include "Commons.hpp"
 #include "VideoConfig.h"
+#include "Palette.hpp"
 
 namespace g80 {
 

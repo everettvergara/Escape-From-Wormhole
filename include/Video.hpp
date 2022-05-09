@@ -24,6 +24,7 @@
 #include "VideoConfig.hpp"
 #include "Point.hpp"
 #include "Color.hpp"
+#include "Palette.hpp"
 
 namespace g80 {
 
@@ -57,6 +58,7 @@ namespace g80 {
         inline auto pset_lite(const Point<Sint32> &p, RGBAColor c) -> void;
         auto line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
+        auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
     protected:
         bool is_init_;
@@ -286,5 +288,35 @@ namespace g80 {
         else draw_line(ad.y, ad.x, sdy, sdx);
     }
 
+//        auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
+
+    auto Video::line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+        Point<Sint32> d = p2 - p1;
+        Point<Sint32> ad = d.abs();
+        Sint32 sdx = d.x < 0 ? -1 : 1;
+        Sint32 sdy = d.y < 0 ? -surface_->w : surface_->w;
+        
+        float ix = pal_ix_from;
+        
+        Uint32 *pixel_buffer = static_cast<Uint32 *>(surface_->pixels) + p1.y * surface_->w + p1.x;
+        auto draw_line = [&](Sint32 abs_g, Sint32 abs_l, Sint32 sig_g, Sint32 sig_l, float ix_inc) -> void {
+            for (Sint32 i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
+                *pixel_buffer = palette[static_cast<Uint32>(ix)];
+                if (t >= abs_g) {
+                    pixel_buffer += sig_l;
+                    t -= abs_g;
+                }
+                pixel_buffer += sig_g;
+                ix += ix_inc;
+            }
+        };
+        if (ad.x >= ad.y) {
+            float ix_inc = 1.0f * (pal_ix_to - pal_ix_from) / (ad.x == 0 ? 1 : ad.x);
+            draw_line(ad.x, ad.y, sdx, sdy, ix_inc);
+        } else {
+            float ix_inc = 1.0f * (pal_ix_to - pal_ix_from) / (ad.y == 0 ? 1 : ad.y);
+            draw_line(ad.y, ad.x, sdy, sdx, ix_inc);
+        }
+    }
 }
 #endif 
