@@ -20,6 +20,8 @@
 #ifndef _VIDEO_HPP_
 #define _VIDEO_HPP_
 
+#include <cassert>
+#include <type_traits>
 #include <SDL.h>
 #include "VideoConfig.hpp"
 #include "Point.hpp"
@@ -28,10 +30,23 @@
 
 namespace g80 {
 
-    // Video Class
+    template<typename T>
+    inline auto lerp(T a, T b, T t) -> T {
+        static_assert(
+            std::is_same<T, float>::value || 
+            std::is_same<T, double>::value || 
+            std::is_same<T, long double>::value,
+            "Must be of floating-point type");
+        return a + t * (b - a);
+    }
+
     class Video {
     public:
         Video();
+        Video(const Video &) = delete;
+        Video(Video &&) = delete;
+        auto operator=(const Video &) -> Video & = delete;
+        auto operator=(Video &&) -> Video & = delete;
         virtual ~Video();
 
         // Getters
@@ -52,7 +67,7 @@ namespace g80 {
         virtual auto update_states() -> bool;
         virtual auto update_window_surface() -> bool;
 
-        // Graphics
+        // Drawing functions
         inline auto is_point_within_bounds(const Point<Sint32> &p) const -> bool;
         auto pset(const Point<Sint32> &p, RGBAColor c) -> void;
         inline auto pset_lite(const Point<Sint32> &p, RGBAColor c) -> void;
@@ -67,7 +82,7 @@ namespace g80 {
         SDL_Window *window_ {nullptr};
         SDL_Surface *surface_ {nullptr};
         Uint32 *pixel_start_, *pixel_end_;
-        Uint16 MSPF_;        
+        Uint16 MSPF_;
 
         auto line_recalc_points(Point<Sint32> &p1, Point<Sint32> &p2) -> void;
     };
@@ -261,15 +276,11 @@ namespace g80 {
 
     auto Video::line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void {
         line_recalc_points(p1, p2);
-        // SDL_Log("%d, %d to %d %d", p1.x, p1.y, p2.x, p2.y);
-        // exit(0);        
         if (!is_point_within_bounds(p1) || !is_point_within_bounds(p2)) return;
-
         line_lite(p1, p2, c);
     }
 
     auto Video::line(Point<Sint32> p1, Point<Sint32> p2, const Palette &palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void {
-
         line_recalc_points(p1, p2);
         if (!is_point_within_bounds(p1) || !is_point_within_bounds(p2)) return;
 
@@ -277,29 +288,16 @@ namespace g80 {
         Point<Sint32> op2 = p2;
         Uint32 opal_ix_from = pal_ix_from;
 
-        if (op1 != p1) {
+        auto lerp_pal = [&](const Point<Sint32> &p, Uint32 &pal) {
             Point ad_op = (op1 - op2).abs();
-            Point ad1 = (op1 - p1).abs();
-
-            if (ad_op.x >= ad_op.y && ad_op.x > 0) 
-                pal_ix_from += (1.0f * ad1.x / ad_op.x) * (pal_ix_to - pal_ix_from);
-            else if (ad_op.y > 0)
-                pal_ix_from += (1.0f * ad1.y / ad_op.y) * (pal_ix_to - pal_ix_from);
-        }
-
-        if (op2 != p2) {
-            Point ad_op = (op1 - op2).abs();
-            Point ad2 = (op1 - p2).abs();
-
-            if (ad_op.x >= ad_op.y && ad_op.x > 0) 
-                pal_ix_to = opal_ix_from + (1.0f * ad2.x / ad_op.x) * (pal_ix_to - pal_ix_from);
-            else if (ad_op.y > 0)
-                pal_ix_to = opal_ix_from + (1.0f * ad2.y / ad_op.y) * (pal_ix_to - pal_ix_from);
-
-            SDL_Log("%d - %d: %d %d", ad2.x, ad_op.x, pal_ix_from, pal_ix_to);
-        }
-
-        // BUG:
+            Point ad = (op1 - p).abs();
+            if (ad_op.x >= ad_op.y && ad_op.x > 0) pal = opal_ix_from + (1.0f * ad.x / ad_op.x) * (pal_ix_to - pal_ix_from);
+            else if (ad_op.y > 0) pal = opal_ix_from + (1.0f * ad.y / ad_op.y) * (pal_ix_to - pal_ix_from);
+            else pal = opal_ix_from;
+        };
+        
+        if (op1 != p1) lerp_pal(p1, pal_ix_from);
+        if (op2 != p2) lerp_pal(p2, pal_ix_to);
         line_lite(p1, p2, palette, pal_ix_from, pal_ix_to);
     }
 
