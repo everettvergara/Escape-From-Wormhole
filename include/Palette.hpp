@@ -16,9 +16,9 @@ namespace g80 {
             return colors_[i];
         };
         
-        auto set_gradients(SDL_PixelFormat *format, Uint32 n, std::initializer_list<std::tuple<Uint32, RGBAColor>> rgba_colors) -> void {
+        auto add_gradients(SDL_PixelFormat *format, Uint32 n, std::initializer_list<std::tuple<Uint32, RGBAColor>> rgba_colors) -> void {
             if (colors_.size() > 0) return;
-            
+
             colors_.reserve(n);
 
             Color r1, g1, b1, a1;
@@ -37,7 +37,6 @@ namespace g80 {
                 float inc = 1.0f / (i_to - i_from);
                 float perc = 0.0f;
                 for (Uint32 i = i_from; i != i_to; ++i) {
-                    // SDL_Log("%d. - %d,%d,%d", i, r1 + (r2 - r1) * perc, g1, b1);
                     colors_.emplace_back(SDL_MapRGBA(
                         format, 
                         r1 + (r2 - r1) * perc,

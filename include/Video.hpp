@@ -261,7 +261,9 @@ namespace g80 {
 
     auto Video::line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void {
         line_recalc_points(p1, p2);
-        if (!is_point_within_bounds(p1) || is_point_within_bounds(p2)) return;
+        // SDL_Log("%d, %d to %d %d", p1.x, p1.y, p2.x, p2.y);
+        // exit(0);        
+        if (!is_point_within_bounds(p1) || !is_point_within_bounds(p2)) return;
 
         line_lite(p1, p2, c);
     }
@@ -270,15 +272,16 @@ namespace g80 {
         Point<Sint32> op1 = p1;
         Point<Sint32> op2 = p2;
         line_recalc_points(p1, p2);
-        if (!is_point_within_bounds(p1) || is_point_within_bounds(p2)) return;
-        
+        if (!is_point_within_bounds(p1) || !is_point_within_bounds(p2)) return;
+
         if (op1 != p1) {
             Point ad = (p1 - op1).abs();
             Point ad_op = (p2 - p1).abs();
             float skipped;
             if (ad.x >= ad.y) skipped = 1.0f * ad.x / (ad_op.x == 0 ? 1 : ad_op.x);
             else skipped = 1.0f * ad.y / (ad_op.y == 0 ? 1 : ad_op.y);
-            pal_ix_from = pal_ix_from * 1.0f + skipped * (pal_ix_to - pal_ix_from);
+
+            pal_ix_from = pal_ix_from + skipped * (pal_ix_to - pal_ix_from);
         }
 
         if (op2 != p2) {
@@ -287,9 +290,11 @@ namespace g80 {
             float skipped;
             if (ad.x >= ad.y) skipped = 1.0f * ad.x / (ad_op.x == 0 ? 1 : ad_op.x);
             else skipped = 1.0f * ad.y / (ad_op.y == 0 ? 1 : ad_op.y);
-            pal_ix_to = pal_ix_from * (1.0f - skipped * (pal_ix_to - pal_ix_from));
+            pal_ix_to = pal_ix_to - skipped * (pal_ix_to - pal_ix_from);
         }
 
+        // BUG:
+        SDL_Log("%d %d", pal_ix_from, pal_ix_to);
         line_lite(p1, p2, palette, pal_ix_from, pal_ix_to);
     }
 
