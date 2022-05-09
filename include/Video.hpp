@@ -55,7 +55,7 @@ namespace g80 {
         inline auto is_pixel_within_bounds(const PixelPoint &p) const -> bool;
         auto pset(const PixelPoint &p, RGBAColor c) -> void;
         auto pset_lite(const PixelPoint &p, RGBAColor c) -> void;
-        auto line(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void;
+        auto line(PixelPoint p1, PixelPoint p2, RGBAColor c) -> void;
         auto line_lite(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void;
        
     protected:
@@ -181,11 +181,9 @@ namespace g80 {
         *get_pixel_buffer(p) = c;
     }
 
-    auto Video::line(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void {
+    auto Video::line(PixelPoint p1, PixelPoint p2, RGBAColor c) -> void {
         
         // Out of bounds recomputation
-        Sint32 h = p2.y - p1.y;
-        Sint32 w = p2.x - p1.x;
 
         /*
             if p1.y < 0 && p1.x >= 0
@@ -220,8 +218,32 @@ namespace g80 {
             mw = h - b
             w = -b / m
 
+            1   |   \  2    |     3
+                |    \      |
+        --------+-----------+-----------
+                |           |
+            4   |      5    |  6
+        --------+-----------+-----------
+                |           |
+            7   |     8     |  9
+
+
+            if both p1, p2 >= 
+
+            possibility of crossing 5
+            1,5     1,6     1,8        1,9
+            2,4     2,7,    2,5        2,8      2,6,    2,9
+            3,4     3,7     3,5        3,8
+
+            if p1 is beyong box recompute p1
+            if p2 is beyong box then recompute p2
 
         */ 
+
+       auto is_beyond_box = [&]
+
+        Sint32 h = p2.y - p1.y;
+        Sint32 w = p2.x - p1.x;
 
 
         if (p1.y < 0 && w != 0) {
@@ -233,9 +255,15 @@ namespace g80 {
             if (x < 0 || x >= surface_->w) return; // check for y intercept
             p1.x = x;
             p1.y = 0;
+
         } else if (p1.y < 0 && w == 0) {
             if (p1.x < 0 || p1.x >= surface_->w) return; 
             p1.y = 0;
+        } else if (p1.y >= surface_->h && w != 0) {
+            float m = 1.0f * h / w;
+            float b = 1.0f * p1.y - m * p1.x;
+            Sint32 x = p1.y - b / m;
+
         }
         
         PixelPoint d = p2 - p1;
