@@ -20,10 +20,17 @@
 #ifndef _VIDEO_HPP_
 #define _VIDEO_HPP_
 
+#include <initializer_list>
 #include <SDL.h>
 #include "VideoConfig.hpp"
 #include "PixelPoint.hpp"
 #include "Color.hpp"
+
+template<typename T>
+auto in(const T &to_check, const std::initializer_list<T> &list) -> bool {
+    for (auto &l : list) if (to_check == l) return true;
+    return false;
+}
 
 namespace g80 {
 
@@ -40,7 +47,7 @@ namespace g80 {
         inline auto get_surface() const -> SDL_Surface *;
         inline auto get_video_width() const -> Sint32;
         inline auto get_video_height() const -> Sint32;
-        inline auto get_pixel_buffer(const PixelPoint &p) const -> Uint32 *;
+        inline auto get_pixel_buffer(const PixelPoint<Sint32> &p) const -> Uint32 *;
 
         // User Def Functions
         virtual auto create_window(const VideoConfig &video_config) -> bool;
@@ -52,11 +59,11 @@ namespace g80 {
         virtual auto update_window_surface() -> bool;
 
         // Graphics
-        inline auto is_pixel_within_bounds(const PixelPoint &p) const -> bool;
-        auto pset(const PixelPoint &p, RGBAColor c) -> void;
-        auto pset_lite(const PixelPoint &p, RGBAColor c) -> void;
-        auto line(PixelPoint p1, PixelPoint p2, RGBAColor c) -> void;
-        auto line_lite(PixelPoint p1, const PixelPoint &p2, RGBAColor c) -> void;
+        inline auto is_pixel_within_bounds(const PixelPoint<Sint32> &p) const -> bool;
+        auto pset(const PixelPoint<Sint32> &p, RGBAColor c) -> void;
+        auto pset_lite(const PixelPoint<Sint32> &p, RGBAColor c) -> void;
+        auto line(PixelPoint<Sint32> p1, PixelPoint<Sint32> p2, RGBAColor c) -> void;
+        auto line_lite(PixelPoint<Sint32> p1, const PixelPoint<Sint32> &p2, RGBAColor c) -> void;
        
     protected:
         bool is_init_;
@@ -100,7 +107,7 @@ namespace g80 {
         return surface_->h;
     }
 
-    auto Video::get_pixel_buffer(const PixelPoint &p) const -> Uint32 * {
+    auto Video::get_pixel_buffer(const PixelPoint<Sint32> &p) const -> Uint32 * {
         return pixel_start_ + surface_->w * p.y + p.x;
     }
 
@@ -167,21 +174,21 @@ namespace g80 {
         return SDL_UpdateWindowSurface(window_) == 0;
     }
 
-    auto Video::is_pixel_within_bounds(const PixelPoint &p) const -> bool {
+    auto Video::is_pixel_within_bounds(const PixelPoint<Sint32> &p) const -> bool {
         if (p.x < 0 || p.y < 0 || p.x >= surface_->w || p.y >= surface_->h) return false;
         return true;
     }
 
-    auto Video::pset(const PixelPoint &p, RGBAColor c) -> void {
+    auto Video::pset(const PixelPoint<Sint32> &p, RGBAColor c) -> void {
         if (!is_pixel_within_bounds(p)) return;
         *get_pixel_buffer(p) = c;
     }
 
-    auto Video::pset_lite(const PixelPoint &p, RGBAColor c) -> void {
+    auto Video::pset_lite(const PixelPoint<Sint32> &p, RGBAColor c) -> void {
         *get_pixel_buffer(p) = c;
     }
 
-    auto Video::line(PixelPoint p1, PixelPoint p2, RGBAColor c) -> void {
+    auto Video::line(PixelPoint<Sint32> p1, PixelPoint<Sint32> p2, RGBAColor c) -> void {
         
         // Out of bounds recomputation
 
@@ -218,14 +225,14 @@ namespace g80 {
             mw = h - b
             w = -b / m
 
-            1   |   \  2    |     3
+            0   |   \  1    |     2
                 |    \      |
         --------+-----------+-----------
                 |           |
-            4   |      5    |  6
+            3   |      4    |  5
         --------+-----------+-----------
                 |           |
-            7   |     8     |  9
+            6   |     7     |  8
 
 
             if both p1, p2 >= 
@@ -240,31 +247,62 @@ namespace g80 {
 
         */ 
 
-       auto is_beyond_box = [&]
+        auto bbox_plane = [&](const PixelPoint<Sint32> &pixel_point) -> PixelPoint<Sint8> {
+            if (pixel_point.x < 0 && pixel_point.y < 0) return {-1, -1};
+            else if (pixel_point.x < 0 && pixel_point.y >= 0 && pixel_point.y < surface_->h) return {-1, 0};
+            else if (pixel_point.x < 0 && pixel_point.y >= surface_->h) return {-1, 1};
+            else if (pixel_point.x >=0 && pixel_point.x < surface_->w && pixel_point.y < 0) return {0, -1};
+            else if (pixel_point.x >=0 && pixel_point.x < surface_->w && pixel_point.y >= 0 && pixel_point.y < surface_->h) return {0, 0};
+            else if (pixel_point.x >=0 && pixel_point.x < surface_->w && pixel_point.y >= surface_->h) return {0, 1};
+            else if (pixel_point.x >= surface_->w && pixel_point.y < 0) return {1, -1};
+            else if (pixel_point.x >= surface_->w &&pixel_point.y >= 0 && pixel_point.y < surface_->h) return {1, 0};
+            else return {1, 1};
+        };
 
-        Sint32 h = p2.y - p1.y;
-        Sint32 w = p2.x - p1.x;
+        Sint32 bbox_plane_p1 = bbox_plane(p1);
+        Sint32 bbox_plane_p2 = bbox_plane(p2);
 
+        if (bbox_plane_p1 != 4) {
+            Sint32 y_on_x_intercept = in(bbox_plane_p1, {0, 1, 2}) ? 0 : surface_->h - 1;
+            Sint32 x_on_y_intercept = in(bbox_plane_p1, {0, 1, 2}) ? 0 : surface_->w - 1;
 
-        if (p1.y < 0 && w != 0) {
-            float m = 1.0f * h / w;
-            float b = 1.0f * p1.y - m * p1.x;
-            Sint32 x = -b / m;
+            Sint32 h = p2.y - p1.y;
+            Sint32 w = p2.x - p1.x;
 
-            // x is not within the bounds
-            if (x < 0 || x >= surface_->w) return; // check for y intercept
-            p1.x = x;
-            p1.y = 0;
+            if (w != 0) {
+                float m = 1.0f * h / w;
+                float b = 1.0f * p1.y - m * p1.x;
+                // y = mx + b;
+                // mx + b = y
+                // x = (y - b) / m
+                Sint32 x = (y_on_x_intercept - b) / m;
+                p1.y  = y_on_x_intercept;
+            }
 
-        } else if (p1.y < 0 && w == 0) {
-            if (p1.x < 0 || p1.x >= surface_->w) return; 
-            p1.y = 0;
-        } else if (p1.y >= surface_->h && w != 0) {
-            float m = 1.0f * h / w;
-            float b = 1.0f * p1.y - m * p1.x;
-            Sint32 x = p1.y - b / m;
+            // if (p1.y < 0 && w != 0) {
+            //     float m = 1.0f * h / w;
+            //     float b = 1.0f * p1.y - m * p1.x;
+            //     Sint32 x = -b / m;
 
+            //     // x is not within the bounds
+            //     if (x < 0 || x >= surface_->w) return; // check for y intercept
+            //     p1.x = x;
+            //     p1.y = 0;
+
+            // } else if (p1.y < 0 && w == 0) {
+            //     if (p1.x < 0 || p1.x >= surface_->w) return; 
+            //     p1.y = 0;
+            // } else if (p1.y >= surface_->h && w != 0) {
+            //     float m = 1.0f * h / w;
+            //     float b = 1.0f * p1.y - m * p1.x;
+            //     Sint32 x = p1.y - b / m;
+
+            // }
         }
+
+
+
+
         
         PixelPoint d = p2 - p1;
         PixelPoint ad = d.abs();
