@@ -184,13 +184,6 @@ namespace g80 {
     }
 
     auto Video::line_recalc_points(Point<Sint32> &p1, Point<Sint32> &p2) -> void {
-        
-        /*
-            012
-            345
-            678
-        */
-
         auto bbox_plane = [&](const Point<Sint32> &pixel_point) -> Sint8 {
             if (pixel_point.x < 0 && pixel_point.y < 0) return 0;
             else if (pixel_point.x < 0 && pixel_point.y >= 0 && pixel_point.y < surface_->h) return 3;
