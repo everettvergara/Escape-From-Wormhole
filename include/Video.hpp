@@ -31,13 +31,23 @@
 namespace g80 {
 
     template<typename T>
-    inline auto lerp(T a, T b, T t) -> T {
+    inline auto lerp(const T a, const T b, const T t) -> T {
         static_assert(
             std::is_same<T, float>::value || 
             std::is_same<T, double>::value || 
             std::is_same<T, long double>::value,
             "Must be of floating-point type");
         return a + t * (b - a);
+    }
+
+    template<typename T>
+    inline auto lerp_point(const Point<T> &a, const Point<T> &b, T t, T tmax) -> Point<T> {
+        return a + (b - a) * t / tmax;
+    }
+
+    template<typename T>
+    inline auto lerp_point_b_less_a(const Point<T> &a, const Point<T> &b_less_a, T t, T tmax) -> Point<T> {
+        return a + b_less_a * t / tmax;
     }
 
     class Video {
@@ -76,6 +86,20 @@ namespace g80 {
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
+        auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) {
+            auto d1 = p2 - p1;
+            auto d2 = p3 - p2;
+            
+            Point<Sint32> pv = p1;
+            for (auto s = 0; s <= max_steps; ++s) {
+                auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+                auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+                auto bz = lerp_point(cp1, cp2, s, max_steps);
+                line_lite(pv, bz, c);
+                pv = bz;
+            }
+        }
+
     protected:
         bool is_init_;
         bool is_running_ {false};
