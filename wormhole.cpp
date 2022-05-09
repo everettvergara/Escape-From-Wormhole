@@ -1,6 +1,5 @@
 
 #include "Demo.hpp"
-
 using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;

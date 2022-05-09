@@ -295,11 +295,10 @@ namespace g80 {
         Point<Sint32> ad = d.abs();
         Sint32 sdx = d.x < 0 ? -1 : 1;
         Sint32 sdy = d.y < 0 ? -surface_->w : surface_->w;
-        
-        float ix = pal_ix_from;
-        
+
         Uint32 *pixel_buffer = static_cast<Uint32 *>(surface_->pixels) + p1.y * surface_->w + p1.x;
         auto draw_line = [&](Sint32 abs_g, Sint32 abs_l, Sint32 sig_g, Sint32 sig_l, float ix_inc) -> void {
+            float ix = pal_ix_from;
             for (Sint32 i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
                 *pixel_buffer = palette[static_cast<Uint32>(ix)];
                 if (t >= abs_g) {
