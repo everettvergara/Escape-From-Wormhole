@@ -57,6 +57,7 @@ namespace g80 {
         auto pset(const Point<Sint32> &p, RGBAColor c) -> void;
         inline auto pset_lite(const Point<Sint32> &p, RGBAColor c) -> void;
         auto line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void;
+        auto line(Point<Sint32> p1, Point<Sint32> p2, Palette palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void;    
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
@@ -264,7 +265,17 @@ namespace g80 {
 
     auto Video::line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void {
         line_recalc_points(p1, p2);
+        if (!is_pixel_within_bounds(p1) || is_pixel_within_bounds(p2)) return;
+
         line_lite(p1, p2, c);
+    }
+
+    auto Video::line(Point<Sint32> p1, Point<Sint32> p2, const Palette &palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void {
+        line_recalc_points(p1, p2);
+        if (!is_pixel_within_bounds(p1) || is_pixel_within_bounds(p2)) return;
+        
+        // recalc palette_ix_from, to
+        line_lite(p1, p2, palette, pal_ix_from, pal_ix_to);
     }
 
     auto Video::line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void {
@@ -287,8 +298,6 @@ namespace g80 {
         if (ad.x >= ad.y) draw_line(ad.x, ad.y, sdx, sdy);
         else draw_line(ad.y, ad.x, sdy, sdx);
     }
-
-//        auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
 
     auto Video::line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
         Point<Sint32> d = p2 - p1;
