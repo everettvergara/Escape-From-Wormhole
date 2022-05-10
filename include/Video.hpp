@@ -91,10 +91,28 @@ namespace g80 {
             auto d2 = p3 - p2;
             
             Point<Sint32> pv = p1;
-            for (auto s = 0; s <= max_steps; ++s) {
+            for (auto s = 1; s <= max_steps; ++s) {
                 auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
                 auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
                 auto bz = lerp_point(cp1, cp2, s, max_steps);
+                line_lite(pv, bz, c);
+                pv = bz;
+            }
+        }
+        auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) {
+            auto d1 = p2 - p1;
+            auto d2 = p3 - p2;
+            auto d3 = p4 - p3;
+            
+            Point<Sint32> pv = p1;
+            for (auto s = 1; s <= max_steps; ++s) {
+                auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+                auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+                auto cp3 = lerp_point_b_less_a(p3, d3, s, max_steps);
+                auto bz1 = lerp_point(cp1, cp2, s, max_steps);
+                auto bz2 = lerp_point(cp2, cp3, s, max_steps);
+                auto bz = lerp_point(bz1, bz2, s, max_steps);
+
                 line_lite(pv, bz, c);
                 pv = bz;
             }
