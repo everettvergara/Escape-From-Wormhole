@@ -91,7 +91,7 @@ namespace g80 {
         auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
         auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
         auto bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
-
+        auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
 
     protected:
         bool is_init_;
@@ -435,12 +435,31 @@ namespace g80 {
 
         auto Video::bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
             if (points.size() < 3) return;
+            Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
+            Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
+
             auto p = points.begin();
             auto p1 = *p;
             do {
                 auto p2 = *(p + 1);
                 auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
-                quad_bezier_lite(p1, p2, p3, max_steps, c);
+                quad_bezier_lite(p1, p2, p3, steps_per_segment, c);
+                p1 = p3;
+                ++p;
+            } while ((p + 2) != points.end());
+        }
+
+        auto Video::bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
+            if (points.size() < 3) return;
+            Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
+            Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
+
+            auto p = points.begin();
+            auto p1 = *p;
+            do {
+                auto p2 = *(p + 1);
+                auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
+                quad_bezier(p1, p2, p3, steps_per_segment, c);
                 p1 = p3;
                 ++p;
             } while ((p + 2) != points.end());
