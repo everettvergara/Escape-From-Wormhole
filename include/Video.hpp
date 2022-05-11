@@ -80,8 +80,10 @@ namespace g80 {
 
         // Drawing functions
         inline auto is_point_within_bounds(const Point<Sint32> &p) const -> bool;
+        
         auto pset(const Point<Sint32> &p, RGBAColor c) -> void;
         inline auto pset_lite(const Point<Sint32> &p, RGBAColor c) -> void;
+        
         auto line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void;
         auto line(Point<Sint32> p1, Point<Sint32> p2, const Palette &palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void;   
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
@@ -94,6 +96,9 @@ namespace g80 {
         
         auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
         auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
+        auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
+        auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
+
         auto bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
         auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
 
@@ -452,6 +457,28 @@ namespace g80 {
         }
     }
 
+    auto Video::cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+        auto d1 = p2 - p1;
+        auto d2 = p3 - p2;
+        auto d3 = p4 - p3;
+        
+        Point<Sint32> pv = p1;
+        float step_size = 1.0f * (pal_ix_to - pal_ix_from) / max_steps;
+        
+        for (auto s = 1; s <= max_steps; ++s) {
+            Uint32 from = pal_ix_from +  (s - 1) * step_size, to = from + step_size;
+            auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+            auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+            auto cp3 = lerp_point_b_less_a(p3, d3, s, max_steps);
+            auto bz1 = lerp_point(cp1, cp2, s, max_steps);
+            auto bz2 = lerp_point(cp2, cp3, s, max_steps);
+            auto bz = lerp_point(bz1, bz2, s, max_steps);
+
+            line_lite(pv, bz, palette, from, to);
+            pv = bz;
+        }
+    }
+
     auto Video::cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void {
         auto d1 = p2 - p1;
         auto d2 = p3 - p2;
@@ -467,6 +494,28 @@ namespace g80 {
             auto bz = lerp_point(bz1, bz2, s, max_steps);
 
             line(pv, bz, c);
+            pv = bz;
+        }
+    }
+
+    auto Video::cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+        auto d1 = p2 - p1;
+        auto d2 = p3 - p2;
+        auto d3 = p4 - p3;
+        
+        Point<Sint32> pv = p1;
+        float step_size = 1.0f * (pal_ix_to - pal_ix_from) / max_steps;
+        
+        for (auto s = 1; s <= max_steps; ++s) {
+            Uint32 from = pal_ix_from +  (s - 1) * step_size, to = from + step_size;
+            auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+            auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+            auto cp3 = lerp_point_b_less_a(p3, d3, s, max_steps);
+            auto bz1 = lerp_point(cp1, cp2, s, max_steps);
+            auto bz2 = lerp_point(cp2, cp3, s, max_steps);
+            auto bz = lerp_point(bz1, bz2, s, max_steps);
+
+            line(pv, bz, palette, from, to);
             pv = bz;
         }
     }
