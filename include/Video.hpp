@@ -435,13 +435,13 @@ namespace g80 {
 
         auto Video::bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
             if (points.size() < 3) return;
-            
             auto p = points.begin();
+            auto p1 = *p;
             do {
-                auto p1 = *p;
                 auto p2 = *(p + 1);
                 auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
                 quad_bezier_lite(p1, p2, p3, max_steps, c);
+                p1 = p3;
                 ++p;
             } while ((p + 2) != points.end());
         }
