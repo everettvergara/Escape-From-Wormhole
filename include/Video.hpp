@@ -20,10 +20,11 @@
 #ifndef _VIDEO_HPP_
 #define _VIDEO_HPP_
 
-#include <iostream>
 #include <cassert>
 #include <type_traits>
+
 #include <SDL.h>
+
 #include "VideoConfig.hpp"
 #include "Point.hpp"
 #include "Color.hpp"
@@ -79,11 +80,13 @@ namespace g80 {
         virtual auto update_window_surface() -> bool;
 
         // Drawing functions
+
         inline auto is_point_within_bounds(const Point<Sint32> &p) const -> bool;
         
         auto pset(const Point<Sint32> &p, RGBAColor c) -> void;
         inline auto pset_lite(const Point<Sint32> &p, RGBAColor c) -> void;
         
+        // TODO: Non-lite should use lites
         auto line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void;
         auto line(Point<Sint32> p1, Point<Sint32> p2, const Palette &palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void;   
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
