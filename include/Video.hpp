@@ -20,6 +20,7 @@
 #ifndef _VIDEO_HPP_
 #define _VIDEO_HPP_
 
+#include <iostream>
 #include <cassert>
 #include <type_traits>
 #include <SDL.h>
@@ -86,8 +87,11 @@ namespace g80 {
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
-        auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void;
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void;        
+        auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void;
+        auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
+        
+        
         auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
         auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
         auto bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
@@ -368,102 +372,119 @@ namespace g80 {
     }
 
     auto Video::quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void {
-            auto d1 = p2 - p1;
-            auto d2 = p3 - p2;
-            
-            Point<Sint32> pv = p1;
-            for (auto s = 1; s <= max_steps; ++s) {
-                auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
-                auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
-                auto bz = lerp_point(cp1, cp2, s, max_steps);
-                line_lite(pv, bz, c);
-                pv = bz;
-            }
-        }
-
-        auto Video::quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void {
-            auto d1 = p2 - p1;
-            auto d2 = p3 - p2;
-            
-            Point<Sint32> pv = p1;
-            for (auto s = 1; s <= max_steps; ++s) {
-                auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
-                auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
-                auto bz = lerp_point(cp1, cp2, s, max_steps);
-                line(pv, bz, c);
-                pv = bz;
-            }
-        }
+        auto d1 = p2 - p1;
+        auto d2 = p3 - p2;
         
-        auto Video::cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void {
-            auto d1 = p2 - p1;
-            auto d2 = p3 - p2;
-            auto d3 = p4 - p3;
-            
-            Point<Sint32> pv = p1;
-            for (auto s = 1; s <= max_steps; ++s) {
-                auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
-                auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
-                auto cp3 = lerp_point_b_less_a(p3, d3, s, max_steps);
-                auto bz1 = lerp_point(cp1, cp2, s, max_steps);
-                auto bz2 = lerp_point(cp2, cp3, s, max_steps);
-                auto bz = lerp_point(bz1, bz2, s, max_steps);
-
-                line_lite(pv, bz, c);
-                pv = bz;
-            }
+        Point<Sint32> pv = p1;
+        for (auto s = 1; s <= max_steps; ++s) {
+            auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+            auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+            auto bz = lerp_point(cp1, cp2, s, max_steps);
+            line_lite(pv, bz, c);
+            pv = bz;
         }
+    }
 
-        auto Video::cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void {
-            auto d1 = p2 - p1;
-            auto d2 = p3 - p2;
-            auto d3 = p4 - p3;
-            
-            Point<Sint32> pv = p1;
-            for (auto s = 1; s <= max_steps; ++s) {
-                auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
-                auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
-                auto cp3 = lerp_point_b_less_a(p3, d3, s, max_steps);
-                auto bz1 = lerp_point(cp1, cp2, s, max_steps);
-                auto bz2 = lerp_point(cp2, cp3, s, max_steps);
-                auto bz = lerp_point(bz1, bz2, s, max_steps);
+    auto Video::quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+        auto d1 = p2 - p1;
+        auto d2 = p3 - p2;
+        
+        Point<Sint32> pv = p1;
+        float step_size = 1.0f * (pal_ix_to - pal_ix_from) / max_steps;
+        for (auto s = 1; s <= max_steps; ++s) {
+            Uint32 from = pal_ix_from +  (s - 1) * step_size, to = from + step_size;
+            auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+            auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+            auto bz = lerp_point(cp1, cp2, s, max_steps);
+            line_lite(pv, bz, palette, from, to);
+            pv = bz;
+        }        
+    }
+        
 
-                line(pv, bz, c);
-                pv = bz;
-            }
+    auto Video::quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void {
+        auto d1 = p2 - p1;
+        auto d2 = p3 - p2;
+        
+        Point<Sint32> pv = p1;
+        for (auto s = 1; s <= max_steps; ++s) {
+            auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+            auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+            auto bz = lerp_point(cp1, cp2, s, max_steps);
+            line(pv, bz, c);
+            pv = bz;
         }
+    }
+    
+    auto Video::cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void {
+        auto d1 = p2 - p1;
+        auto d2 = p3 - p2;
+        auto d3 = p4 - p3;
+        
+        Point<Sint32> pv = p1;
+        for (auto s = 1; s <= max_steps; ++s) {
+            auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+            auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+            auto cp3 = lerp_point_b_less_a(p3, d3, s, max_steps);
+            auto bz1 = lerp_point(cp1, cp2, s, max_steps);
+            auto bz2 = lerp_point(cp2, cp3, s, max_steps);
+            auto bz = lerp_point(bz1, bz2, s, max_steps);
 
-        auto Video::bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
-            if (points.size() < 3) return;
-            Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
-            Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
-
-            auto p = points.begin();
-            auto p1 = *p;
-            do {
-                auto p2 = *(p + 1);
-                auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
-                quad_bezier_lite(p1, p2, p3, steps_per_segment, c);
-                p1 = p3;
-                ++p;
-            } while ((p + 2) != points.end());
+            line_lite(pv, bz, c);
+            pv = bz;
         }
+    }
 
-        auto Video::bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
-            if (points.size() < 3) return;
-            Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
-            Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
+    auto Video::cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void {
+        auto d1 = p2 - p1;
+        auto d2 = p3 - p2;
+        auto d3 = p4 - p3;
+        
+        Point<Sint32> pv = p1;
+        for (auto s = 1; s <= max_steps; ++s) {
+            auto cp1 = lerp_point_b_less_a(p1, d1, s, max_steps);
+            auto cp2 = lerp_point_b_less_a(p2, d2, s, max_steps);
+            auto cp3 = lerp_point_b_less_a(p3, d3, s, max_steps);
+            auto bz1 = lerp_point(cp1, cp2, s, max_steps);
+            auto bz2 = lerp_point(cp2, cp3, s, max_steps);
+            auto bz = lerp_point(bz1, bz2, s, max_steps);
 
-            auto p = points.begin();
-            auto p1 = *p;
-            do {
-                auto p2 = *(p + 1);
-                auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
-                quad_bezier(p1, p2, p3, steps_per_segment, c);
-                p1 = p3;
-                ++p;
-            } while ((p + 2) != points.end());
+            line(pv, bz, c);
+            pv = bz;
         }
+    }
+
+    auto Video::bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
+        if (points.size() < 3) return;
+        Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
+        Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
+
+        auto p = points.begin();
+        auto p1 = *p;
+        do {
+            auto p2 = *(p + 1);
+            auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
+            quad_bezier_lite(p1, p2, p3, steps_per_segment, c);
+            p1 = p3;
+            ++p;
+        } while ((p + 2) != points.end());
+    }
+
+    auto Video::bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
+        if (points.size() < 3) return;
+        Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
+        Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
+
+        auto p = points.begin();
+        auto p1 = *p;
+        do {
+            auto p2 = *(p + 1);
+            auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
+            quad_bezier(p1, p2, p3, steps_per_segment, c);
+            p1 = p3;
+            ++p;
+        } while ((p + 2) != points.end());
+    }
 
 }
 #endif 
