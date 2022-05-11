@@ -90,6 +90,8 @@ namespace g80 {
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void;        
         auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
         auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
+        auto bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
+
 
     protected:
         bool is_init_;
@@ -430,5 +432,19 @@ namespace g80 {
                 pv = bz;
             }
         }
+
+        auto Video::bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
+            if (points.size() < 3) return;
+            
+            auto p = points.begin();
+            do {
+                auto p1 = *p;
+                auto p2 = *(p + 1);
+                auto p3 = (p + 3) == points.end() ? *(p + 2) : (p2 + (*(p + 2) - p2) / 2);
+                quad_bezier_lite(p1, p2, p3, max_steps, c);
+                ++p;
+            } while ((p + 2) != points.end());
+        }
+
 }
 #endif 
