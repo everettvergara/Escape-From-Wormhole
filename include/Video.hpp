@@ -606,7 +606,7 @@ namespace g80 {
             auto p2 = *(p + 1);
             auto p3 = *(p + 2);
             auto p4 = *(p + 3);
-            Point<Sint32> prev = p1;
+            Point<Sint32> prev = p2;
             for (float u = 0, uinc = 1.0f / segments; u <= 1.0f; u += uinc) {
                 float uu = u * u;
                 float uuu = uu * u;
@@ -621,7 +621,7 @@ namespace g80 {
                 prev = b;
             }
             ++p;
-        } while ((p + 4) != points.end());
+        } while (p + 3 != points.end());
     }
 
 }
