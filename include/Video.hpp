@@ -83,30 +83,32 @@ namespace g80 {
 
         inline auto is_point_within_bounds(const Point<Sint32> &p) const -> bool;
         
-        auto pset(const Point<Sint32> &p, RGBAColor c) -> void;
-        inline auto pset_lite(const Point<Sint32> &p, RGBAColor c) -> void;
+        auto pset(const Point<Sint32> &p, const RGBAColor c) -> void;
+        inline auto pset_lite(const Point<Sint32> &p, const RGBAColor c) -> void;
         
         // TODO: Non-lite should use lites
-        auto line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void;
+        auto line(Point<Sint32> p1, Point<Sint32> p2, const RGBAColor c) -> void;
         auto line(Point<Sint32> p1, Point<Sint32> p2, const Palette &palette, Uint32 pal_ix_from, Uint32 pal_ix_to) -> void;   
-        auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void;
+        auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
-        auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void;        
+        auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;        
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
-        auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void;
+        auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;
         auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         
-        auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
-        auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void;
+        auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const RGBAColor c) -> void;
+        auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const RGBAColor c) -> void;
         auto cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         auto cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
 
-        auto bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
+        auto bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
         auto bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
-        auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void;
+        auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
         auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         
+        auto catmullrom_spline_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32, const RGBAColor c) -> void;
+
     protected:
         bool is_init_;
         bool is_running_ {false};
@@ -223,12 +225,12 @@ namespace g80 {
         return true;
     }
 
-    auto Video::pset(const Point<Sint32> &p, RGBAColor c) -> void {
+    auto Video::pset(const Point<Sint32> &p, const RGBAColor c) -> void {
         if (!is_point_within_bounds(p)) return;
         pset_lite(p, c);
     }
 
-    auto Video::pset_lite(const Point<Sint32> &p, RGBAColor c) -> void {
+    auto Video::pset_lite(const Point<Sint32> &p, const RGBAColor c) -> void {
         *get_pixel_buffer(p) = c;
     }
 
@@ -305,7 +307,7 @@ namespace g80 {
             p2 = get_new_point_from_intercept(p2);
     }
 
-    auto Video::line(Point<Sint32> p1, Point<Sint32> p2, RGBAColor c) -> void {
+    auto Video::line(Point<Sint32> p1, Point<Sint32> p2, const RGBAColor c) -> void {
         line_recalc_points(p1, p2);
         if (!is_point_within_bounds(p1) || !is_point_within_bounds(p2)) return;
         line_lite(p1, p2, c);
@@ -332,7 +334,7 @@ namespace g80 {
         line_lite(p1, p2, palette, pal_ix_from, pal_ix_to);
     }
 
-    auto Video::line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, RGBAColor c) -> void {
+    auto Video::line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const RGBAColor c) -> void {
         Point<Sint32> d = p2 - p1;
         Point<Sint32> ad = d.abs();
         Sint32 sdx = d.x < 0 ? -1 : 1;
@@ -381,7 +383,7 @@ namespace g80 {
         }
     }
 
-    auto Video::quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void {
+    auto Video::quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void {
         auto d1 = p2 - p1;
         auto d2 = p3 - p2;
         
@@ -412,7 +414,7 @@ namespace g80 {
     }
         
 
-    auto Video::quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, RGBAColor c) -> void {
+    auto Video::quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void {
         auto d1 = p2 - p1;
         auto d2 = p3 - p2;
         
@@ -443,7 +445,7 @@ namespace g80 {
     }
             
     
-    auto Video::cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void {
+    auto Video::cubic_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const RGBAColor c) -> void {
         auto d1 = p2 - p1;
         auto d2 = p3 - p2;
         auto d3 = p4 - p3;
@@ -484,7 +486,7 @@ namespace g80 {
         }
     }
 
-    auto Video::cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, RGBAColor c) -> void {
+    auto Video::cubic_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Point<Sint32> &p4, const Sint32 max_steps, const RGBAColor c) -> void {
         auto d1 = p2 - p1;
         auto d2 = p3 - p2;
         auto d3 = p4 - p3;
@@ -525,7 +527,7 @@ namespace g80 {
         }
     }
 
-    auto Video::bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
+    auto Video::bezier_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void {
         if (points.size() < 3) return;
         Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
         Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
@@ -560,7 +562,7 @@ namespace g80 {
         } while ((p + 2) != points.end());
     }
 
-    auto Video::bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, RGBAColor c) -> void {
+    auto Video::bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void {
         if (points.size() < 3) return;
         Sint32 steps_per_segment_t = static_cast<Sint32>(1.0f * max_steps / (points.size() - 1));
         Sint32 steps_per_segment = steps_per_segment_t == 0 ? 1 : steps_per_segment_t; 
