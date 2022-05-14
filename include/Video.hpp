@@ -606,21 +606,16 @@ namespace g80 {
             auto p2 = *(p + 1);
             auto p3 = *(p + 2);
             auto p4 = *(p + 3);
-            Point<float> prev = p2;
+            Point<Sint32> prev = p2;
             for (float u = 0, uinc = 1.0f / segments; u <= 1.0f; u += uinc) {
                 float uu = u * u;
                 float uuu = uu * u;
-
                 float nc1 = -uuu + 2.0f * uu - u;
                 float nc2 = 3.0f * uuu - 5.0f * uu + 2.0f;
                 float nc3 = -3.0f * uuu + 4.0f * uu + u;
                 float nc4 = uuu - uu;
-
-                Point<float> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
-                Point<Sint32> bs1 = prev;
-                Point<Sint32> bs2 = b;
-                pset_lite(bs2, c);
-                line_lite(bs1, bs2, c);
+                Point<Sint32> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
+                line_lite(prev, b, c);
                 prev = b;
             }
             ++p;

@@ -56,7 +56,7 @@ namespace g80 {
         line({300, 50}, {900, 300}, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
         line({900, 300}, {700, 50}, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
 
-        bspline_lite({{50, 700}, {300, 50}, {900, 300}, {700, 50}}, SDL_MapRGBA(surface_->format, 255, 255, 255, 255));
+        bspline_lite({{50, 700}, {300, 50}, {900, 300}, {700, 50}, {1000, 700}}, SDL_MapRGBA(surface_->format, 255, 255, 255, 255));
 
         // quad_bezier_lite({50, 50}, {150,600}, {900,300}, 20, SDL_MapRGBA(surface_->format, 255, 255, 255, 255));
         // quad_bezier_lite({900, 300}, {1280, 700}, {50, 50}, 20, SDL_MapRGBA(surface_->format, 255, 255, 255, 255));
