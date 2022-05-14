@@ -599,7 +599,7 @@ namespace g80 {
 
     auto Video::bspline_lite(const std::initializer_list<Point<Sint32>> &points, const RGBAColor c) -> void {
         if (points.size() < 4) return;
-        const float segments = 10.0f;
+        const float segments = 100.0f;
         auto p = points.begin();
         do {
             auto p1 = *p;
@@ -611,12 +611,12 @@ namespace g80 {
                 float uu = u * u;
                 float uuu = uu * u;
 
-                float nc1 = -(uuu / 6.0f) + uu/2.0f - u/2.0f + 1.0f / 6.0f;
-                float nc2 = uuu / 2.0f - uu + 2.0f / 3.0f;
-                float nc3 = (-uuu + uu + u) / 2.0f + 1.0 / 6.0f;
-                float nc4 = uuu / 6.0f;
+                float nc1 = -uuu + 2.0f * uu - u;
+                float nc2 = 3.0f * uuu - 5.0f * uu + 2.0f;
+                float nc3 = -3.0f * uuu + 4.0f * uu + u;
+                float nc4 = uuu - uu;
 
-                Point<float> b = p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4;
+                Point<float> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
                 Point<Sint32> bs1 = prev;
                 Point<Sint32> bs2 = b;
                 pset_lite(bs2, c);
