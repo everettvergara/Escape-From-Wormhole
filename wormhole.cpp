@@ -16,7 +16,7 @@ auto main(int argc, const char *argv[]) -> int {
     demo.run();
 }
 
-auto set_default_video_config() -> VideoConfig {
+auto set_default_video_config() -> VideoConfig { 
     VideoConfig video_config {
         "Escape from The Wormhole",
         {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720},

@@ -110,6 +110,7 @@ namespace g80 {
         auto catmullrom_spline_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
         auto catmullrom_spline_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         auto catmullrom_spline(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
+        auto catmullrom_spline(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
 
     protected:
         bool is_init_;
@@ -643,7 +644,7 @@ namespace g80 {
                 float nc3 = -3.0f * uuu + 4.0f * uu + u;
                 float nc4 = uuu - uu;
                 Point<float> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
-                line_lite(prev, b, c);
+                line(prev, b, c);
                 prev = b;
             }
             line(prev, p3, c);
@@ -676,10 +677,39 @@ namespace g80 {
                 prev = b;
                 from = to;
             }
-            line(prev, p3, palette, from, to);
+            line_lite(prev, p3, palette, from, to);
             ++p;
         } while (p + 3 != points.end());        
     }
+
+    auto Video::catmullrom_spline(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+        if (points.size() < 4) return;
+        const float segments = 1.0f * max_steps / (points.size() - 3);
+        float step_size = 1.0f * (pal_ix_to - pal_ix_from) / (points.size() - 3);
         
+        auto p = points.begin();
+        float from = pal_ix_from, to = from;
+        do {
+            auto p1 = *p;
+            auto p2 = *(p + 1);
+            auto p3 = *(p + 2);
+            auto p4 = *(p + 3);
+            Point<float> prev = p2;
+            for (float u = 0, uinc = 1.0f / segments, pal_inc = step_size / segments; u <= 1.0f; u += uinc, to += pal_inc) {
+                float uu = u * u;
+                float uuu = uu * u;
+                float nc1 = -uuu + 2.0f * uu - u;
+                float nc2 = 3.0f * uuu - 5.0f * uu + 2.0f;
+                float nc3 = -3.0f * uuu + 4.0f * uu + u;
+                float nc4 = uuu - uu;
+                Point<float> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
+                line(prev, b, palette, from, to);
+                prev = b;
+                from = to;
+            }
+            line(prev, p3, palette, from, to);
+            ++p;
+        } while (p + 3 != points.end());        
+    }        
 }
 #endif 
