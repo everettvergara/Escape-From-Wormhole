@@ -677,6 +677,7 @@ namespace g80 {
                 prev = b;
                 from = to;
             }
+            // bug: FROM - TO not properly distributed
             line_lite(prev, p3, palette, from, to);
             ++p;
         } while (p + 3 != points.end());        
@@ -707,6 +708,7 @@ namespace g80 {
                 prev = b;
                 from = to;
             }
+            // bug: FROM - TO not properly distributed
             line(prev, p3, palette, from, to);
             ++p;
         } while (p + 3 != points.end());        
