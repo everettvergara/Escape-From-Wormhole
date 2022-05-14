@@ -108,6 +108,7 @@ namespace g80 {
         auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         
         auto catmullrom_spline_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
+        auto catmullrom_spline(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
 
     protected:
         bool is_init_;
@@ -622,5 +623,29 @@ namespace g80 {
         } while (p + 3 != points.end());
     }
 
+    auto Video::catmullrom_spline(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void {
+        if (points.size() < 4) return;
+        const float segments = 1.0f * max_steps / (points.size() - 2);
+        auto p = points.begin();
+        do {
+            auto p1 = *p;
+            auto p2 = *(p + 1);
+            auto p3 = *(p + 2);
+            auto p4 = *(p + 3);
+            Point<Sint32> prev = p2;
+            for (float u = 0, uinc = 1.0f / segments; u <= 1.0f; u += uinc) {
+                float uu = u * u;
+                float uuu = uu * u;
+                float nc1 = -uuu + 2.0f * uu - u;
+                float nc2 = 3.0f * uuu - 5.0f * uu + 2.0f;
+                float nc3 = -3.0f * uuu + 4.0f * uu + u;
+                float nc4 = uuu - uu;
+                Point<Sint32> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
+                line(prev, b, c);
+                prev = b;
+            }
+            ++p;
+        } while (p + 3 != points.end());
+    }
 }
 #endif 
