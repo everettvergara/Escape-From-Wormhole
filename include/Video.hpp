@@ -657,8 +657,7 @@ namespace g80 {
         float step_size = 1.0f * (pal_ix_to - pal_ix_from) / (points.size() - 3);
         
         auto p = points.begin();
-        Sint32 s = 0;
-        float from = pal_ix_from + s * step_size, to = from;
+        float from = pal_ix_from, to = from;
         do {
             auto p1 = *p;
             auto p2 = *(p + 1);
@@ -677,7 +676,8 @@ namespace g80 {
                 prev = b;
                 from = to;
             }
-            ++p; ++s;
+            line(prev, p3, palette, from, to);
+            ++p;
         } while (p + 3 != points.end());        
     }
         
