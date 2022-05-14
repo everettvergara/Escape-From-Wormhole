@@ -609,7 +609,7 @@ namespace g80 {
             auto p3 = *(p + 2);
             auto p4 = *(p + 3);
             Point<Sint32> prev = p2;
-            for (float u = 0, uinc = 1.0f / (segments - 1); u <= 1.0f; u += uinc) {
+            for (float u = 0, uinc = 1.0f / segments; u <= 1.0f; u += uinc) {
                 float uu = u * u;
                 float uuu = uu * u;
                 float nc1 = -uuu + 2.0f * uu - u;
@@ -620,6 +620,7 @@ namespace g80 {
                 line_lite(prev, b, c);
                 prev = b;
             }
+            line_lite(prev, p3, c);
             ++p;
         } while (p + 3 != points.end());
     }
@@ -634,7 +635,7 @@ namespace g80 {
             auto p3 = *(p + 2);
             auto p4 = *(p + 3);
             Point<Sint32> prev = p2;
-            for (float u = 0, uinc = 1.0f / (segments - 1); u <= 1.0f; u += uinc) {
+            for (float u = 0, uinc = 1.0f / segments; u <= 1.0f; u += uinc) {
                 float uu = u * u;
                 float uuu = uu * u;
                 float nc1 = -uuu + 2.0f * uu - u;
@@ -642,9 +643,10 @@ namespace g80 {
                 float nc3 = -3.0f * uuu + 4.0f * uu + u;
                 float nc4 = uuu - uu;
                 Point<float> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
-                line(prev, b, c);
+                line_lite(prev, b, c);
                 prev = b;
             }
+            line(prev, p3, c);
             ++p;
         } while (p + 3 != points.end());
     }
@@ -656,14 +658,14 @@ namespace g80 {
         
         auto p = points.begin();
         Sint32 s = 0;
+        float from = pal_ix_from + s * step_size, to = from;
         do {
             auto p1 = *p;
             auto p2 = *(p + 1);
             auto p3 = *(p + 2);
             auto p4 = *(p + 3);
-            Point<Sint32> prev = p2;
-            float from = pal_ix_from + s * step_size, to = from;
-            for (float u = 0, uinc = 1.0f / (segments - 1), pal_inc = step_size / segments; u <= 1.0f; u += uinc, to += pal_inc) {
+            Point<float> prev = p2;
+            for (float u = 0, uinc = 1.0f / segments, pal_inc = step_size / segments; u <= 1.0f; u += uinc, to += pal_inc) {
                 float uu = u * u;
                 float uuu = uu * u;
                 float nc1 = -uuu + 2.0f * uu - u;
