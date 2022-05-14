@@ -107,7 +107,7 @@ namespace g80 {
         auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
         auto bezier(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         
-        auto catmull_spline_lite(const std::initializer_list<Point<Sint32>> &points, const RGBAColor c) -> void;
+        auto catmullrom_spline_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void;
 
     protected:
         bool is_init_;
@@ -597,9 +597,9 @@ namespace g80 {
         } while ((p + 2) != points.end());
     }
 
-    auto Video::catmull_spline_lite(const std::initializer_list<Point<Sint32>> &points, const RGBAColor c) -> void {
+    auto Video::catmullrom_spline_lite(const std::initializer_list<Point<Sint32>> &points, const Sint32 max_steps, const RGBAColor c) -> void {
         if (points.size() < 4) return;
-        const float segments = 100.0f;
+        const float segments = 1.0f * max_steps / (points.size() - 2);
         auto p = points.begin();
         do {
             auto p1 = *p;
