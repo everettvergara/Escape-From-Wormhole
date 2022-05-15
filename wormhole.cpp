@@ -20,7 +20,6 @@ auto main(int argc, const char *argv[]) -> int {
 
     // Point p1{1678, 167}, p2{1704, 170};
     // demo.line_recalc_points(p1, p2);
-
     // SDL_Log("p1: %d, %d to p2: %d, %d", p1.x, p1.y, p2.x, p2.y);
 
 

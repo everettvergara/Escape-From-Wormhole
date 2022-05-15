@@ -5,6 +5,7 @@
 
 namespace g80 {
 
+    // TODO: CHECK IF steps will be removed and be replaced by accel
     template<typename T>
     class LineMotion : public PointMotion<T> {
     public:
@@ -26,6 +27,8 @@ namespace g80 {
             tail_inc_ = head_inc_;
             
             accel_ = accel;
+            current_step_inc_ = accel;
+            tail_step_inc_ = accel;
         }
 
         auto next() -> bool {
@@ -36,22 +39,26 @@ namespace g80 {
                 this->head_ += head_inc_;
                 head_inc_ *= accel_;
                 
-                ++this->current_step_;
+                
+                this->current_step_ = this->current_step_ + this->current_step_inc_;
+                current_step_inc_ *= accel_;
             }
         
-            if (this->tail_step_++ >= 0) {
+            this->tail_step_  = this->tail_step_ + tail_step_inc_;
+            if (this->tail_step_ >= 0) {
                 this->tail_ += tail_inc_;
                 tail_inc_ *= accel_;                
             }
+            tail_step_inc_ *= accel_;
 
-            SDL_Log("%.2f, %.2f to %.2f, %.2f", this->tail_.x, this->tail_.y, this->head_.x, this->head_.y);
+            // SDL_Log("%.2f, %.2f to %.2f, %.2f", this->tail_.x, this->tail_.y, this->head_.x, this->head_.y);
             return true;
         }
 
     private:
         T x_inc_, y_inc_;
         Point<T> head_inc_, tail_inc_;
-        T accel_;
+        T accel_, current_step_inc_, tail_step_inc_;
     };
 }
 
