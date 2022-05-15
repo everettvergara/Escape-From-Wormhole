@@ -658,14 +658,14 @@ namespace g80 {
         float step_size = 1.0f * (pal_ix_to - pal_ix_from) / (points.size() - 3);
         
         auto p = points.begin();
-        float from = pal_ix_from, to = from;
+        float pal_from = pal_ix_from, pal_to = pal_from;
         do {
             auto p1 = *p;
             auto p2 = *(p + 1);
             auto p3 = *(p + 2);
             auto p4 = *(p + 3);
             Point<Sint32> prev = p2;
-            for (float u = 0, uinc = 1.0f / segments, pal_inc = step_size / segments; u <= 1.0f; u += uinc, to += pal_inc) {
+            for (float u = 0, uinc = 1.0f / segments, pal_inc = step_size / segments; u <= 1.0f; u += uinc, pal_to += pal_inc) {
                 float uu = u * u;
                 float uuu = uu * u;
                 float nc1 = -uuu + 2.0f * uu - u;
@@ -673,12 +673,11 @@ namespace g80 {
                 float nc3 = -3.0f * uuu + 4.0f * uu + u;
                 float nc4 = uuu - uu;
                 Point<Sint32> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
-                line_lite(prev, b, palette, from, to);
+                line_lite(prev, b, palette, pal_from, pal_to);
                 prev = b;
-                from = to;
+                pal_from = pal_to;
             }
-            // bug: FROM - TO not properly distributed
-            line_lite(prev, p3, palette, from, to);
+            line_lite(prev, p3, palette, pal_from, pal_to);
             ++p;
         } while (p + 3 != points.end());        
     }
@@ -689,14 +688,14 @@ namespace g80 {
         float step_size = 1.0f * (pal_ix_to - pal_ix_from) / (points.size() - 3);
         
         auto p = points.begin();
-        float from = pal_ix_from, to = from;
+        float pal_from = pal_ix_from, pal_to = pal_from;
         do {
             auto p1 = *p;
             auto p2 = *(p + 1);
             auto p3 = *(p + 2);
             auto p4 = *(p + 3);
             Point<Sint32> prev = p2;
-            for (float u = 0, uinc = 1.0f / segments, pal_inc = step_size / segments; u <= 1.0f; u += uinc, to += pal_inc) {
+            for (float u = 0, uinc = 1.0f / segments, pal_inc = step_size / segments; u <= 1.0f; u += uinc, pal_to += pal_inc) {
                 float uu = u * u;
                 float uuu = uu * u;
                 float nc1 = -uuu + 2.0f * uu - u;
@@ -704,12 +703,11 @@ namespace g80 {
                 float nc3 = -3.0f * uuu + 4.0f * uu + u;
                 float nc4 = uuu - uu;
                 Point<Sint32> b = (p1 * nc1 + p2 * nc2 + p3 * nc3 + p4 * nc4) * 0.5f;
-                line(prev, b, palette, from, to);
+                line(prev, b, palette, pal_from, pal_to);
                 prev = b;
-                from = to;
+                pal_from = pal_to;
             }
-            // bug: FROM - TO not properly distributed
-            line(prev, p3, palette, from, to);
+            line(prev, p3, palette, pal_from, pal_to);
             ++p;
         } while (p + 3 != points.end());        
     }        
