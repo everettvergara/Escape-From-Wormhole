@@ -8,14 +8,12 @@ auto set_default_video_config() -> VideoConfig;
 
 auto main(int argc, const char *argv[]) -> int {
 
-    Point<Sint32> p = {10, 10};
-    p = 10 * p;
-    // VideoConfig video_config = set_default_video_config();
-    // Demo demo;
+    VideoConfig video_config = set_default_video_config();
+    Demo demo;
 
-    // demo.create_window(video_config);
-    // demo.preprocess_states();
-    // demo.run();
+    demo.create_window(video_config);
+    demo.preprocess_states();
+    demo.run();
 }
 
 auto set_default_video_config() -> VideoConfig { 
