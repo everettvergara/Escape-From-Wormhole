@@ -40,7 +40,7 @@ namespace g80 {
 
         auto line_motion_set(const Point<T> &start_point, const Point<T> &end_point, Sint32 step_size, Sint32 trail_size) {
             
-            set(start_point, step_size, trail_size);
+            this->set(start_point, step_size, trail_size);
             
             Point<T> delta {end_point - start_point};
             x_inc_ = delta.x / this->step_size_;
