@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 #include "Video.hpp"
-#include "PointMotion.hpp"
+#include "LineMotion.hpp"
 
 namespace g80 {
     class Demo : public Video {
