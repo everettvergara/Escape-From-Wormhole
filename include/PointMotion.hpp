@@ -22,7 +22,7 @@ namespace g80 {
     protected:
         Point<T> head_;
         Point<T> tail_;
-        Sint32 step_size_;
+        Sint32 step_size_, step_{0};
         Sint32 trail_size_;
         Sint32 current_step_{0}, tail_step_;
     };
@@ -32,23 +32,20 @@ namespace g80 {
     public:
         LineMotion(const Point<T> &start_point, const Point<T> &end_point, Sint32 step_size, Sint32 trail_size) : 
             PointMotion<T>(start_point, step_size, trail_size),
-            start_point_(start_point), point_diff_(end_point - start_point_) {
-                
-            float slope = d.x != 0 ? d.y / d.x : 0;
-            x_inc = point_diff_.x / step_size_;
-            y_inc = point_diff_.y / step_size_;
+            delta_(end_point - start_point) {
+            x_inc_ = delta_.x / this->step_size_;
+            y_inc_ = delta_.y / this->step_size_;
         }
 
         auto next() -> bool {
-            if (++s_ == this->step_size_) return false;
-            start_point.x += x_inc;
-            start_point.y += y_inc;
+            // if (step_ == this->step_size_) return false;
+            this->head_.x += x_inc_;
+            this->head_.y += y_inc_;
             return true;
         }
 
     private:
-        Point<float> start_point_, point_diff_;
-        Sint32 s_{0};
+        Point<float> delta_;
         float x_inc_, y_inc_;
     };
 }
