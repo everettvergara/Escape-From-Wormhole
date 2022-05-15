@@ -50,15 +50,16 @@ namespace g80 {
         auto next() -> bool {
             if (this->tail_step_ == this->step_size_) return false;
             
-            this->head_.x += x_inc_;
-            this->head_.y += y_inc_;
+            if (this->current_step_ < this->step_size_) {
+                this->head_.x += x_inc_;
+                this->head_.y += y_inc_;
+                ++this->current_step_;
+            }
         
             if (this->tail_step_++ >= 0) {
                 this->tail_.x += x_inc_;
                 this->tail_.y += y_inc_;                
             }
-
-            ++this->current_step_;
 
             return true;
         }
