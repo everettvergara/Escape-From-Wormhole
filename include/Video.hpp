@@ -120,6 +120,7 @@ namespace g80 {
         Uint32 *pixel_start_, *pixel_end_;
         Uint16 MSPF_;
 
+    public:
         auto line_recalc_points(Point<Sint32> &p1, Point<Sint32> &p2) -> void;
     };
 
@@ -302,12 +303,13 @@ namespace g80 {
         };
 
         if (bbox_plane(p1) != 4) {
-            p1 = get_new_point_from_intercept(p1);
+            if (bbox_plane(p2) == 4) p1 = get_new_point_from_intercept(p1);
             if (bbox_plane(p1) != 4) return;
         }
         
-        if (bbox_plane(p2) != 4) 
-            p2 = get_new_point_from_intercept(p2);
+        if (bbox_plane(p2) != 4) {
+            if (bbox_plane(p1) == 4) p2 = get_new_point_from_intercept(p2);
+        }
     }
 
     auto Video::line(Point<Sint32> p1, Point<Sint32> p2, const RGBAColor c) -> void {
