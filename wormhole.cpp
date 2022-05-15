@@ -9,7 +9,7 @@ auto set_default_video_config() -> VideoConfig;
 
 auto main(int argc, const char *argv[]) -> int {
 
-    LineMotion<Sint32> line_motion({10, 10}, {1000, 500}, 10, 1);
+    LineMotion<float> line_motion({10.0f, 10.0f}, {1000.0f, 500.0f}, 10, 1);
  
     // VideoConfig video_config = set_default_video_config();
     // Demo demo;
