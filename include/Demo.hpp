@@ -33,7 +33,7 @@ namespace g80 {
     }
 
     auto Demo::preprocess_states() -> bool {
-        line_motion_.line_motion_set({0.0f, 0.0f}, {1000.0f, 100.0f}, 500, 100);
+        line_motion_.line_motion_set({0.0f, 0.0f}, {1000.0f, 100.0f}, 500, 100, 1.1f);
         return true;
     }
 

@@ -10,13 +10,22 @@ namespace g80 {
     public:
         LineMotion() : PointMotion<T>() {};
 
-        auto line_motion_set(const Point<T> &start_point, const Point<T> &end_point, Sint32 step_size, Sint32 trail_size) {
+        auto line_motion_set(
+            const Point<T> &start_point, 
+            const Point<T> &end_point, 
+            const Sint32 step_size, 
+            const Sint32 trail_size,
+            const T accel = 1) {
             
             this->set(start_point, step_size, trail_size);
             
             Point<T> delta {end_point - start_point};
-            x_inc_ = delta.x / this->step_size_;
-            y_inc_ = delta.y / this->step_size_;
+
+            head_inc_.x = delta.x / this->step_size_;
+            head_inc_.y = delta.y / this->step_size_;
+            tail_inc_ = head_inc_;
+            
+            accel_ = accel;
         }
 
         auto next() -> bool {
@@ -24,21 +33,25 @@ namespace g80 {
             if (this->tail_step_ == this->step_size_) return false;
             
             if (this->current_step_ < this->step_size_) {
-                this->head_.x += x_inc_;
-                this->head_.y += y_inc_;
+                this->head_ += head_inc_;
+                head_inc_ *= accel_;
                 ++this->current_step_;
             }
         
             if (this->tail_step_++ >= 0) {
-                this->tail_.x += x_inc_;
-                this->tail_.y += y_inc_;                
+                this->tail_ += tail_inc_;
+                tail_inc_ *= accel_;                
             }
+
+            // SDL_log("h:%.2f, %.2f t:%.2f, %.2f", this->head_.x, this->head_.y, this->tail_.x, this->tail_.y);
 
             return true;
         }
 
     private:
         T x_inc_, y_inc_;
+        Point<T> head_inc_, tail_inc_;
+        T accel_;
     };
 }
 
