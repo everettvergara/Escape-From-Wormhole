@@ -1,6 +1,7 @@
 
 #include "Demo.hpp"
 #include "Point.hpp"
+#include "PointMotion.hpp"
 
 using namespace g80;
 
@@ -8,12 +9,14 @@ auto set_default_video_config() -> VideoConfig;
 
 auto main(int argc, const char *argv[]) -> int {
 
-    VideoConfig video_config = set_default_video_config();
-    Demo demo;
+    LineMotion<Sint32> line_motion({10, 10}, {1000, 500}, 10, 1);
+ 
+    // VideoConfig video_config = set_default_video_config();
+    // Demo demo;
 
-    demo.create_window(video_config);
-    demo.preprocess_states();
-    demo.run();
+    // demo.create_window(video_config);
+    // demo.preprocess_states();
+    // demo.run();
 }
 
 auto set_default_video_config() -> VideoConfig { 
