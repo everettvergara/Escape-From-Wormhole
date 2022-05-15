@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include "Video.hpp"
+#include "PointMotion.hpp"
 
 namespace g80 {
     class Demo : public Video {
@@ -24,6 +25,7 @@ namespace g80 {
         */
 
     private:
+        LineMotion<float> line_motion_;
     };
 
     Demo::Demo() : Video() {
