@@ -32,7 +32,9 @@ namespace g80 {
     template<typename T> inline auto operator+(Point<T> lhs, const Point<T> &rhs) -> Point<T> {lhs += rhs; return lhs;}
     template<typename T> inline auto operator-(Point<T> lhs, const Point<T> &rhs) -> Point<T> {lhs -= rhs; return lhs;}
     template<typename T> inline auto operator*(Point<T> lhs, const float rhs) -> Point<T> {lhs *= rhs; return lhs;}
+    template<typename T> inline auto operator*(const float lhs, Point<T> rhs) -> Point<T> {rhs *= lhs; return rhs;}
     template<typename T> inline auto operator/(Point<T> lhs, const float rhs) -> Point<T> {lhs /= rhs; return lhs;}
+    template<typename T> inline auto operator/(const float rhs, Point<T> lhs) -> Point<T> {rhs /= lhs; return rhs;}
     template<typename T> inline auto operator==(const Point<T> &lhs, const Point<T> &rhs) -> bool {return lhs.x == rhs.x && lhs.y == rhs.y;}
     template<typename T> inline auto operator!=(const Point<T> &lhs, const Point<T> &rhs) -> bool {return lhs.x != rhs.x || lhs.y != rhs.y;}
 
