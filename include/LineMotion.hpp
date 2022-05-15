@@ -13,8 +13,8 @@ namespace g80 {
         auto line_motion_set(
             const Point<T> &start_point, 
             const Point<T> &end_point, 
-            const Sint32 step_size, 
-            const Sint32 trail_size,
+            const T step_size, 
+            const T trail_size,
             const T accel = 1) {
             
             this->set(start_point, step_size, trail_size);
@@ -35,6 +35,7 @@ namespace g80 {
             if (this->current_step_ < this->step_size_) {
                 this->head_ += head_inc_;
                 head_inc_ *= accel_;
+                
                 ++this->current_step_;
             }
         
@@ -43,8 +44,7 @@ namespace g80 {
                 tail_inc_ *= accel_;                
             }
 
-            // SDL_log("h:%.2f, %.2f t:%.2f, %.2f", this->head_.x, this->head_.y, this->tail_.x, this->tail_.y);
-
+            SDL_Log("%.2f, %.2f to %.2f, %.2f", this->tail_.x, this->tail_.y, this->head_.x, this->head_.y);
             return true;
         }
 

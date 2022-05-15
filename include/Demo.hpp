@@ -33,7 +33,8 @@ namespace g80 {
     }
 
     auto Demo::preprocess_states() -> bool {
-        line_motion_.line_motion_set({0.0f, 0.0f}, {1000.0f, 100.0f}, 500, 100, 1.1f);
+        // BUG: Boundary bug in line
+        line_motion_.line_motion_set({0.0f, 0.0f}, {1000.0f, 100.0f}, 100, 5, 1.01f);
         return true;
     }
 

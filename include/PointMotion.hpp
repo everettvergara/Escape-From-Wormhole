@@ -23,9 +23,9 @@ namespace g80 {
 
     protected:
         Point<T> head_, tail_;
-        Sint32 step_size_, current_step_{0}, tail_step_{0};
+        T step_size_, current_step_{0.0f}, tail_step_{0.0f};
 
-        auto set(const Point<T> &start_point, const Sint32 step_size, const Sint32 trail_size) -> void {
+        auto set(const Point<T> &start_point, const T step_size, const T trail_size) -> void {
             head_ = {start_point};
             tail_ = {start_point};
             step_size_ = {step_size};
