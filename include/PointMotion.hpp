@@ -1,12 +1,14 @@
 #ifndef _POINTMOTION_HPP_
 #define _POINTMOTION_HPP_
 
+
 #include "Point.hpp"
 
 namespace g80 {
 
     template<typename T>
     class PointMotion {
+
     public:
         PointMotion(const Point<T> &start_point, const Sint32 step_size, const Sint32 trail_size) : 
             head_(start_point),
@@ -22,9 +24,7 @@ namespace g80 {
     protected:
         Point<T> head_;
         Point<T> tail_;
-        Sint32 step_size_, step_{0};
-        Sint32 trail_size_;
-        Sint32 current_step_{0}, tail_step_;
+        Sint32 step_size_, trail_size_, current_step_{0}, tail_step_{0};
     };
 
     template<typename T>
@@ -38,15 +38,22 @@ namespace g80 {
         }
 
         auto next() -> bool {
-            // if (step_ == this->step_size_) return false;
+            if (tail_step_ == this->step_size_) return false;
+            
             this->head_.x += x_inc_;
             this->head_.y += y_inc_;
+
+            if (tail_step_++ >= 0) {
+                this->tail_.x += x_inc_;
+                this->tail_.y += y_inc_;                
+            }
+
             return true;
         }
 
     private:
-        Point<float> delta_;
-        float x_inc_, y_inc_;
+        Point<T> delta_;
+        T x_inc_, y_inc_;
     };
 }
 
