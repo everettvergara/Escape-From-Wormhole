@@ -27,11 +27,11 @@ namespace g80 {
         Point<T> head_, tail_;
         Sint32 sz_steps_, step_;
         
-        auto set(const Point<T> &start_point, const Sint32 sz_steps, const Sint32 sz_body) -> void {
+        auto set(const Point<T> &start_point, const Sint32 sz_steps, const Sint32 sz_trail) -> void {
             head_ = {start_point};
             tail_ = {start_point};
-            sz_steps_ = {sz_steps + sz_body};
-            step_ = {0};
+            sz_steps_ = {sz_steps + sz_trail};
+            step_ = {-sz_trail};
         }
     };
 }

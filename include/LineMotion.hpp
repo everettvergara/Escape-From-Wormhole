@@ -14,39 +14,31 @@ namespace g80 {
         auto line_motion_set(
             const Point<T> &start_point, 
             const Point<T> &end_point, 
-            const T trail_size,
-            const T accel = 0.0f) {
+            const Sint32 sz_steps,
+            const Sint32 sz_trail) {
             
-            this->set(start_point, trail_size);
-            
+            this->set(start_point, sz_steps, sz_trail);
             Point<T> delta {end_point - start_point};
-
-            head_inc_.x = start_point.x + delta.x / this->step_size_;
-            head_inc_.y = start_point.y + delta.y / this->step_size_;
+            head_inc_.x = delta.x / this->sz_steps_;
+            head_inc_.y = delta.y / this->sz_steps_;
             tail_inc_ = head_inc_;
-            
-            accel_ = delta * 0.0005f; // 0.0f; // 0.0005f;
         }
 
         auto next() -> bool {
-            if (this->tail_step_ > this->step_size_) return false;
+            if (this->step_ == this->sz_steps_) return false;
 
             this->head_ += head_inc_;
-            head_inc_ += accel_;
             
-            // tail_step_ += 
-            if (this->tail_step_++ >= 0) {
-                this->tail_ += tail_inc_;
-                tail_inc_ += accel_;                
+            if (this->step_++ >= 0) {
+                this->tail_ += tail_inc_; 
             }
-            
-            SDL_Log("%.2f %.2f, %.2f, %.2f", this->tail_step_, this->step_size_, this->head_.x, this->head_.y);
+
+            // SDL_Log("%.2f %.2f, %.2f, %.2f", this->tail_step_, this->step_size_, this->head_.x, this->head_.y);
             return true;
         }
 
     private:
-        T x_inc_, y_inc_;
-        Point<T> head_inc_, tail_inc_, accel_;
+        Point<T> head_inc_, tail_inc_;
     };
 }
 
