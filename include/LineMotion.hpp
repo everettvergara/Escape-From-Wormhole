@@ -9,7 +9,8 @@ namespace g80 {
     template<typename T>
     class LineMotion : public PointMotion<T> {
     public:
-        LineMotion() : PointMotion<T>() {};
+        LineMotion() : PointMotion<T>() {}
+        ~LineMotion() {}
 
         auto line_motion_set(
             const Point<T> &start_point, 

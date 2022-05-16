@@ -5,6 +5,7 @@
 
 #include "Video.hpp"
 #include "LineMotion.hpp"
+#include "TrigCache.hpp"
 
 namespace g80 {
     class Demo : public Video {
@@ -25,7 +26,8 @@ namespace g80 {
         */
 
     private:
-        LineMotion<float> line_motion_;
+        
+        std::vector<LineMotion<float>> explosions_;
     };
 
     Demo::Demo() : Video() {
@@ -33,22 +35,64 @@ namespace g80 {
     }
 
     auto Demo::preprocess_states() -> bool {
-        // BUG: Boundary bug in line
-        line_motion_.line_motion_set({0.0f, 100.0f}, {1000.0f, 500.0f}, 50, 5);
+        // line_motion_.line_motion_set({0.0f, 100.0f}, {1000.0f, 500.0f}, 50, 5);
+
+        const Sint32 N = 360 * 3;
+        SinCacheF sine(N);
+        CosCacheF cosine(N);
+
+        explosions_.reserve(N);
+        for (int i = 0; i < N; ++i) {
+            explosions_.emplace_back();
+            explosions_[i].line_motion_set(
+                {surface_->w / 2.0f, surface_->h / 2.0f},
+                {surface_->w / 2.0f + cosine[i] * 700,
+                surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 81, 1 + rand() % 5);
+        } 
+
         return true;
     }
 
     auto Demo::update_states() -> bool {
 
+        const Sint32 N = 360 * 3;
+        SinCacheF sine(N);
+        CosCacheF cosine(N);        
+        Palette pal;
+        pal.add_gradients(surface_->format, 40, 
+            {
+                {0, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
+                {20, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
+                {40, SDL_MapRGBA(surface_->format, 255, 100, 0, 255)},
+                {60, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
+                {100, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},});
+                
+
+        // Erase
         SDL_FillRect(surface_, NULL, 0);
+        
+        // Draw
+        // RGBAColor c = SDL_MapRGBA(surface_->format, 255, 255, 255, 255);
+        for (auto &l : explosions_) {
+            line(l.get_head(), l.get_tail(), pal[100.0f * l.get_tail_step() / l.get_size_of_step()]);
+        }
+
+        // Update
+        for (int i = 0; i < N; ++i) {
+            if (!explosions_[i].next()) 
+                explosions_[i].line_motion_set(
+                    {surface_->w / 2.0f, surface_->h / 2.0f},
+                    {surface_->w / 2.0f + cosine[i] * 700,
+                    surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 81, 1 + rand() % 5);
+        } 
 
         // pset(line_motion_.get_tail(), SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
         // pset(line_motion_.get_head(), SDL_MapRGBA(surface_->format, 255, 255, 255, 255));
 
-        line(line_motion_.get_head(), line_motion_.get_tail(), SDL_MapRGBA(surface_->format, 255, 255, 255, 255));
+        // line(line_motion_.get_head(), line_motion_.get_tail(), SDL_MapRGBA(surface_->format, 255, 255, 255, 255));
 
-        if (!line_motion_.next())
-            exit(0);
+        // if (!line_motion_.next())
+        //     exit(0);
 
 
         // Palette pal;

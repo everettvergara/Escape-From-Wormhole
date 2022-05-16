@@ -14,14 +14,17 @@ namespace g80 {
         std::is_same<T, long double>::value, "Type must be float, double or long double only.");
 
     public:
-        PointMotion() {};
-
+        PointMotion() {}
+        virtual ~PointMotion() = default;
         virtual auto next() -> bool {
             return true;
         };
 
         auto get_head() const -> const Point<T> & {return head_;}
         auto get_tail() const -> const Point<T> & {return tail_;}
+        auto get_head_step() const -> Sint32 {return head_step_;}
+        auto get_tail_step() const -> Sint32 {return tail_step_;}
+        auto get_size_of_step() const -> Sint32 {return sz_steps_;}
 
     protected:
         Point<T> head_, tail_;
