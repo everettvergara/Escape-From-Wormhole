@@ -34,8 +34,6 @@ namespace g80 {
             if (this->tail_step_++ >= 0)
                 this->tail_ += inc_;
 
-
-            // SDL_Log("%.2f %.2f", this->tail_.x, this->tail_.y);
             return true;
         }
 

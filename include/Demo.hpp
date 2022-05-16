@@ -59,7 +59,7 @@ namespace g80 {
             explosions_[i].line_motion_set(
                 {surface_->w / 2.0f, surface_->h / 2.0f},
                 {surface_->w / 2.0f + cosine[i] * 700,
-                surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 3);
+                surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1);
         
         } 
 
@@ -71,14 +71,19 @@ namespace g80 {
         const Sint32 N = 360 * 20;
         SinCacheF sine(N);
         CosCacheF cosine(N);        
-        Palette pal;
-        pal.add_gradients(surface_->format, 40, 
+        Palette pal, pal2;
+        pal.add_gradients(surface_->format, 300, 
             {
                 {0, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
                 {60, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
                 {120, SDL_MapRGBA(surface_->format, 255, 100, 0, 255)},
                 {180, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
                 {300, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},});
+                
+        pal2.add_gradients(surface_->format, 100, 
+            {
+                {0, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
+                {100, SDL_MapRGBA(surface_->format, 150, 0, 255, 255)},});
                 
 
         // Erase
@@ -87,7 +92,7 @@ namespace g80 {
         // Draw
         // RGBAColor c = SDL_MapRGBA(surface_->format, 255, 255, 255, 255);
         for (auto &l : explosions_) {
-            line(l.get_head(), l.get_tail(), pal[149.0f + 150.0f * l.get_tail_step() / l.get_size_of_step()]);            
+            line(l.get_head(), l.get_tail(), pal2[100.0f * l.get_tail_step() / l.get_size_of_step()]);            
         }
 
         for (auto &l : explosions_accel_) {
@@ -101,7 +106,7 @@ namespace g80 {
                 explosions_[i].line_motion_set(
                     {surface_->w / 2.0f, surface_->h / 2.0f},
                     {surface_->w / 2.0f + cosine[i] * 700,
-                    surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 3);                
+                    surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1);                
             }
 
             if (!explosions_accel_[i].next()) 
