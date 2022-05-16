@@ -1,17 +1,17 @@
-#ifndef _DEMO_HPP_
-#define _DEMO_HPP_
+#ifndef _LINEMOTIONDEMO_HPP_
+#define _LINEMOTIONDEMO_HPP_
 
 #include <cstdlib>
 
 #include "Video.hpp"
-#include "LineWithAccelMotion.hpp"
-#include "LineMotion.hpp"
+#include "Motion/LineWithAccelMotion.hpp"
+#include "Motion/LineMotion.hpp"
 #include "TrigCache.hpp"
 
 namespace g80 {
-    class Demo : public Video {
+    class LineMotionDemo : public Video {
     public:
-        Demo();
+        LineMotionDemo();
 
         auto preprocess_states() -> bool;
         auto update_states() -> bool;
@@ -33,11 +33,11 @@ namespace g80 {
 
     };
 
-    Demo::Demo() : Video() {
+    LineMotionDemo::LineMotionDemo() : Video() {
 
     }
 
-    auto Demo::preprocess_states() -> bool {
+    auto LineMotionDemo::preprocess_states() -> bool {
         // line_motion_.line_motion_set({0.0f, 100.0f}, {1000.0f, 500.0f}, 50, 5);
 
         const Sint32 N = 360 * 20;
@@ -66,7 +66,7 @@ namespace g80 {
         return true;
     }
 
-    auto Demo::update_states() -> bool {
+    auto LineMotionDemo::update_states() -> bool {
 
         const Sint32 N = 360 * 20;
         SinCacheF sine(N);

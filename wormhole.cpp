@@ -1,7 +1,6 @@
 
-#include "Demo.hpp"
-#include "Point.hpp"
-#include "PointMotion.hpp"
+#include "LineMotionDemo.hpp"
+
 
 using namespace g80;
 
@@ -12,18 +11,11 @@ auto main(int argc, const char *argv[]) -> int {
     // LineMotion<float> line_motion({10.0f, 10.0f}, {1000.0f, 500.0f}, 10, 1);
  
     VideoConfig video_config = set_default_video_config();
-    Demo demo;
+    LineMotionDemo demo;
 
     demo.create_window(video_config);
     demo.preprocess_states();
     demo.run();
-
-    // Point p1{1678, 167}, p2{1704, 170};
-    // demo.line_recalc_points(p1, p2);
-    
-    // SDL_Log("p1: %d, %d to p2: %d, %d", p1.x, p1.y, p2.x, p2.y);
-
-
 }
 
 auto set_default_video_config() -> VideoConfig { 
