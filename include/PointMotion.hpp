@@ -16,20 +16,22 @@ namespace g80 {
     public:
         PointMotion() {};
 
-        virtual auto next() -> bool {return true;};
+        virtual auto next() -> bool {
+            return step_++ < sz_steps_;
+        };
 
         auto get_head() const -> const Point<T> & {return head_;}
         auto get_tail() const -> const Point<T> & {return tail_;}
 
     protected:
         Point<T> head_, tail_;
-        T step_size_, current_step_{0.0f}, tail_step_{0.0f};
-
-        auto set(const Point<T> &start_point, const T step_size, const T trail_size) -> void {
+        Sint32 sz_steps_, step_;
+        
+        auto set(const Point<T> &start_point, const Sint32 sz_steps, const Sint32 sz_body) -> void {
             head_ = {start_point};
             tail_ = {start_point};
-            step_size_ = {step_size};
-            tail_step_ = {-trail_size};
+            sz_steps_ = {sz_steps + sz_body};
+            step_ = {0};
         }
     };
 }
