@@ -5,6 +5,7 @@
 
 #include "Video.hpp"
 #include "LineWithAccelMotion.hpp"
+#include "LineMotion.hpp"
 #include "TrigCache.hpp"
 
 namespace g80 {
@@ -27,7 +28,9 @@ namespace g80 {
 
     private:
         
-        std::vector<LineWithAccelMotion<float>> explosions_;
+        std::vector<LineWithAccelMotion<float>> explosions_accel_;
+        std::vector<LineMotion<float>> explosions_;
+
     };
 
     Demo::Demo() : Video() {
@@ -41,13 +44,23 @@ namespace g80 {
         SinCacheF sine(N);
         CosCacheF cosine(N);
 
+        explosions_accel_.reserve(N);
         explosions_.reserve(N);
+
         for (int i = 0; i < N; ++i) {
+            explosions_accel_.emplace_back();
             explosions_.emplace_back();
-            explosions_[i].line_with_accel_motion_set(
+
+            explosions_accel_[i].line_with_accel_motion_set(
                 {surface_->w / 2.0f, surface_->h / 2.0f},
                 {surface_->w / 2.0f + cosine[i] * 700,
                 surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 5);
+
+            explosions_[i].line_motion_set(
+                {surface_->w / 2.0f, surface_->h / 2.0f},
+                {surface_->w / 2.0f + cosine[i] * 700,
+                surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 3);
+        
         } 
 
         return true;
@@ -74,13 +87,25 @@ namespace g80 {
         // Draw
         // RGBAColor c = SDL_MapRGBA(surface_->format, 255, 255, 255, 255);
         for (auto &l : explosions_) {
-            line(l.get_head(), l.get_tail(), pal[150.0f * l.get_tail_step() / l.get_size_of_step()]);
+            line(l.get_head(), l.get_tail(), pal[149.0f + 150.0f * l.get_tail_step() / l.get_size_of_step()]);            
+        }
+
+        for (auto &l : explosions_accel_) {
+            line(l.get_head(), l.get_tail(), pal[150.0f * l.get_tail_step() / l.get_size_of_step()]);            
         }
 
         // Update
         for (int i = 0; i < N; ++i) {
-            if (!explosions_[i].next()) 
-                explosions_[i].line_with_accel_motion_set(
+
+            if (!explosions_[i].next()) {
+                explosions_[i].line_motion_set(
+                    {surface_->w / 2.0f, surface_->h / 2.0f},
+                    {surface_->w / 2.0f + cosine[i] * 700,
+                    surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 3);                
+            }
+
+            if (!explosions_accel_[i].next()) 
+                explosions_accel_[i].line_with_accel_motion_set(
                     {surface_->w / 2.0f, surface_->h / 2.0f},
                     {surface_->w / 2.0f + cosine[i] * 700,
                     surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 5);

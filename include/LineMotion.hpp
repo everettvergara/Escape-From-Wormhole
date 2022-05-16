@@ -11,7 +11,7 @@ namespace g80 {
         LineMotion() : PointMotion<T>() {}
         ~LineMotion() {}
 
-        auto line_with_accel_motion_set(
+        auto line_motion_set(
             const Point<T> &start_point, 
             const Point<T> &end_point, 
             const Sint32 sz_steps,
@@ -32,8 +32,10 @@ namespace g80 {
             }
 
             if (this->tail_step_++ >= 0)
-                this->tail_ = inc_;
+                this->tail_ += inc_;
 
+
+            // SDL_Log("%.2f %.2f", this->tail_.x, this->tail_.y);
             return true;
         }
 
