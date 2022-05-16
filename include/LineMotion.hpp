@@ -5,14 +5,13 @@
 
 namespace g80 {
 
-    // TODO: CHECK IF steps will be removed and be replaced by accel
     template<typename T>
     class LineMotion : public PointMotion<T> {
     public:
         LineMotion() : PointMotion<T>() {}
         ~LineMotion() {}
 
-        auto line_motion_set(
+        auto line_with_accel_motion_set(
             const Point<T> &start_point, 
             const Point<T> &end_point, 
             const Sint32 sz_steps,
@@ -20,32 +19,26 @@ namespace g80 {
             
             this->set(start_point, sz_steps, sz_trail);
 
-            start_point_ = start_point;
-
-            // Accel x,y = k * s^2
-            Point<T> delta {end_point - start_point};
-            k_ = delta / (this->sz_steps_ * this->sz_steps_);
+            Point<T> delta = end_point - start_point;
+            inc_ = delta / sz_steps;
         }
 
         auto next() -> bool {
             if (this->tail_step_ == this->sz_steps_) return false;
 
             if (this->head_step_ < this->sz_steps_) {
-                float step_sq = this->head_step_ * this->head_step_; 
-                this->head_ = start_point_ + k_ * step_sq;
+                this->head_ += inc_;
                 ++this->head_step_;
             }
 
-            if (this->tail_step_++ >= 0) {
-                float tail_step_sq = this->tail_step_ * this->tail_step_; 
-                this->tail_ = start_point_ + k_ * tail_step_sq;
-            }
+            if (this->tail_step_++ >= 0)
+                this->tail_ = inc_;
 
             return true;
         }
 
     private:
-        Point<T> start_point_, k_;
+        Point<T> inc_;
     };
 }
 

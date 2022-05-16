@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 #include "Video.hpp"
-#include "LineMotion.hpp"
+#include "LineWithAccelMotion.hpp"
 #include "TrigCache.hpp"
 
 namespace g80 {
@@ -27,7 +27,7 @@ namespace g80 {
 
     private:
         
-        std::vector<LineMotion<float>> explosions_;
+        std::vector<LineWithAccelMotion<float>> explosions_;
     };
 
     Demo::Demo() : Video() {
@@ -44,7 +44,7 @@ namespace g80 {
         explosions_.reserve(N);
         for (int i = 0; i < N; ++i) {
             explosions_.emplace_back();
-            explosions_[i].line_motion_set(
+            explosions_[i].line_with_accel_motion_set(
                 {surface_->w / 2.0f, surface_->h / 2.0f},
                 {surface_->w / 2.0f + cosine[i] * 700,
                 surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 5);
@@ -80,7 +80,7 @@ namespace g80 {
         // Update
         for (int i = 0; i < N; ++i) {
             if (!explosions_[i].next()) 
-                explosions_[i].line_motion_set(
+                explosions_[i].line_with_accel_motion_set(
                     {surface_->w / 2.0f, surface_->h / 2.0f},
                     {surface_->w / 2.0f + cosine[i] * 700,
                     surface_->h / 2.0f + sine[i] * 700}, 20 + rand() % 281, 1 + rand() % 5);

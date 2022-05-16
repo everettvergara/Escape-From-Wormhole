@@ -20,11 +20,11 @@ namespace g80 {
             return true;
         };
 
-        auto get_head() const -> const Point<T> & {return head_;}
-        auto get_tail() const -> const Point<T> & {return tail_;}
-        auto get_head_step() const -> Sint32 {return head_step_;}
-        auto get_tail_step() const -> Sint32 {return tail_step_;}
-        auto get_size_of_step() const -> Sint32 {return sz_steps_;}
+        inline auto get_head() const -> const Point<T> & {return head_;}
+        inline auto get_tail() const -> const Point<T> & {return tail_;}
+        inline auto get_head_step() const -> Sint32 {return head_step_;}
+        inline auto get_tail_step() const -> Sint32 {return tail_step_;}
+        inline auto get_size_of_step() const -> Sint32 {return sz_steps_;}
 
     protected:
         Point<T> head_, tail_;
