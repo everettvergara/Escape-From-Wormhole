@@ -72,7 +72,7 @@ namespace g80 {
         SinCacheF sine(N);
         CosCacheF cosine(N);        
         Palette pal, pal2;
-        pal.add_gradients(surface_->format, 300, 
+        pal.add_gradients(surface_->format, 
             {
                 {0, SDL_MapRGBA(surface_->format, 0, 255, 255, 255)},
                 {60, SDL_MapRGBA(surface_->format, 0, 100, 255, 255)},
@@ -80,7 +80,7 @@ namespace g80 {
                 {180, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},
                 {300, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},});
                 
-        pal2.add_gradients(surface_->format, 100, 
+        pal2.add_gradients(surface_->format,
             {
                 {0, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
                 {100, SDL_MapRGBA(surface_->format, 150, 0, 255, 255)},});

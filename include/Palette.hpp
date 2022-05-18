@@ -16,10 +16,13 @@ namespace g80 {
             return colors_[i];
         };
         
-        auto add_gradients(SDL_PixelFormat *format, Uint32 n, std::initializer_list<std::tuple<Uint32, RGBAColor>> rgba_colors) -> void {
+        auto add_gradients(SDL_PixelFormat *format, std::initializer_list<std::tuple<Uint32, RGBAColor>> rgba_colors) -> void {
             if (colors_.size() > 0) return;
+            if (rgba_colors.size() == 0) return;
 
-            colors_.reserve(n);
+            auto last = rgba_colors.end() - 1;
+            auto n = std::get<0>(*last);
+            colors_.reserve(n + 1);
 
             Color r1, g1, b1, a1;
             Color r2, g2, b2, a2;

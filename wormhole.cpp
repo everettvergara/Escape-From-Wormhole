@@ -1,7 +1,7 @@
 
 #include "CircleDemo.hpp"
 
-
+// TODO: Fix Palette Bug;
 using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;
