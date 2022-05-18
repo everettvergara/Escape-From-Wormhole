@@ -16,36 +16,39 @@ auto main(int argc, const char *argv[]) -> int {
     demo.create_window(video_config);
 
     Palette pal;
-    pal.add_gradients(
-        demo.get_surface()->format, 
-        {
-            {0, SDL_MapRGBA(demo.get_surface()->format, 0, 0, 0, 0)},
-            {3, SDL_MapRGBA(demo.get_surface()->format, 100, 100, 100, 100)},
-            {10, SDL_MapRGBA(demo.get_surface()->format, 200, 200, 200, 200)},
 
-        });    
-    
-    Uint8 r,g,b,a;
-    SDL_GetRGBA(pal[0], demo.get_surface()->format, &r, &g, &b, &a);
-    SDL_Log("0: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
-    
-    SDL_GetRGBA(pal[1], demo.get_surface()->format, &r, &g, &b, &a);
-    SDL_Log("1: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
-    
-    SDL_GetRGBA(pal[2], demo.get_surface()->format, &r, &g, &b, &a);
-    SDL_Log("2: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
-    
-    SDL_GetRGBA(pal[3], demo.get_surface()->format, &r, &g, &b, &a);
-    SDL_Log("3: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
-    
-    SDL_GetRGBA(pal[4], demo.get_surface()->format, &r, &g, &b, &a);
-    SDL_Log("4: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+    pal[0] = 255;
 
-    SDL_GetRGBA(pal[5], demo.get_surface()->format, &r, &g, &b, &a);
-    SDL_Log("5: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+    // pal.add_gradients(
+    //     demo.get_surface()->format, 
+    //     {
+    //         {0, SDL_MapRGBA(demo.get_surface()->format, 0, 0, 0, 0)},
+    //         {3, SDL_MapRGBA(demo.get_surface()->format, 100, 100, 100, 100)},
+    //         {10, SDL_MapRGBA(demo.get_surface()->format, 200, 200, 200, 200)},
 
-    SDL_GetRGBA(pal[10], demo.get_surface()->format, &r, &g, &b, &a);
-    SDL_Log("5: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+    //     });    
+    
+    // Uint8 r,g,b,a;
+    // SDL_GetRGBA(pal[0], demo.get_surface()->format, &r, &g, &b, &a);
+    // SDL_Log("0: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+    
+    // SDL_GetRGBA(pal[1], demo.get_surface()->format, &r, &g, &b, &a);
+    // SDL_Log("1: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+    
+    // SDL_GetRGBA(pal[2], demo.get_surface()->format, &r, &g, &b, &a);
+    // SDL_Log("2: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+    
+    // SDL_GetRGBA(pal[3], demo.get_surface()->format, &r, &g, &b, &a);
+    // SDL_Log("3: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+    
+    // SDL_GetRGBA(pal[4], demo.get_surface()->format, &r, &g, &b, &a);
+    // SDL_Log("4: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+
+    // SDL_GetRGBA(pal[5], demo.get_surface()->format, &r, &g, &b, &a);
+    // SDL_Log("5: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
+
+    // SDL_GetRGBA(pal[10], demo.get_surface()->format, &r, &g, &b, &a);
+    // SDL_Log("5: r:%d, g:%d, b:%d, a:%d", r, g, b, a);
 
     // demo.preprocess_states();
     // demo.run();

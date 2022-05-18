@@ -12,10 +12,15 @@ namespace g80 {
     using RGBAColors = std::vector<RGBAColor, EmptyAllocator<RGBAColor>>;
     class Palette {
     public:
-        auto operator[](int i) const -> const RGBAColor & {
+
+        Palette() {};
+        Palette(const Uint32 n) : colors_(n) {
+        }
+        
+        auto operator[](const int i) -> RGBAColor & {
             return colors_[i];
         };
-        
+
         auto add_gradients(SDL_PixelFormat *format, std::initializer_list<std::tuple<Uint32, RGBAColor>> rgba_colors) -> void {
             if (colors_.size() > 0) return;
             if (rgba_colors.size() < 2) return;
@@ -33,7 +38,7 @@ namespace g80 {
             SDL_GetRGBA(rgba_color_from, format, &r1, &g1, &b1, &a1);
 
             while(++t != rgba_colors.end()) {
-                auto i_to = std::get<0>(*t); // TODO: check if this is <= previous then error
+                auto i_to = std::get<0>(*t);
                 auto rgba_color_to = std::get<1>(*t);
                 SDL_GetRGBA(rgba_color_to, format, &r2, &g2, &b2, &a2);
 
