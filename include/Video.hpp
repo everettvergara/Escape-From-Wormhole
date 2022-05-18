@@ -93,7 +93,7 @@ namespace g80 {
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
         auto circle_lite(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void;
-
+        auto circle(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void;
 
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;        
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
@@ -756,6 +756,61 @@ namespace g80 {
             
             // Bottom Left: Bottom
             *(center - y + bx) = c;
+
+            ++y;
+            re += dy;
+            dy += 2;
+            if ((re << 1) + dx > 0)
+            {
+                --x;
+                bx -= surface_->w;
+                re += dx;
+                dx += 2;
+            }
+            by += surface_->w;
+        }
+    }
+
+    auto Video::circle(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void {
+        
+        Uint32 *center = get_pixel_buffer(p);
+
+        Sint32 x = r;
+        Sint32 y = 0;
+        Sint32 bx = x * surface_->w;
+        Sint32 by = y * surface_->w;
+
+        Sint32 dx = 1 - (r << 1);
+        Sint32 dy = 1;
+        Sint32 re = 0;
+
+        while (x >= y)
+        {
+            // Upper Right: Bottom, x--, y++
+            if (p.x + x >= 0 && p.x + x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
+                *(center + x - by) = c;
+
+            // Upper Right: Top
+            if (p.x + y >= 0 && p.x + y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
+            *(center + y - bx) = c;
+
+            // // Upper Left: Top
+            // *(center - y - bx) = c;
+
+            // // Upper Left: Bottom
+            // *(center - x - by) = c;
+
+            // // Bottom Right: Top
+            // *(center + x + by) = c;
+
+            // // Bottom Right: Bottom
+            // *(center + y + bx) = c;
+            
+            // // Bottom Left: Top
+            // *(center - x + by) = c;
+            
+            // // Bottom Left: Bottom
+            // *(center - y + bx) = c;
 
             ++y;
             re += dy;
