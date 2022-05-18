@@ -18,7 +18,7 @@ namespace g80 {
         
         auto add_gradients(SDL_PixelFormat *format, std::initializer_list<std::tuple<Uint32, RGBAColor>> rgba_colors) -> void {
             if (colors_.size() > 0) return;
-            if (rgba_colors.size() == 0) return;
+            if (rgba_colors.size() < 2) return;
 
             auto last = rgba_colors.end() - 1;
             auto n = std::get<0>(*last);
@@ -33,7 +33,7 @@ namespace g80 {
             SDL_GetRGBA(rgba_color_from, format, &r1, &g1, &b1, &a1);
 
             while(++t != rgba_colors.end()) {
-                auto i_to = std::get<0>(*t);
+                auto i_to = std::get<0>(*t); // TODO: check if this is <= previous then error
                 auto rgba_color_to = std::get<1>(*t);
                 SDL_GetRGBA(rgba_color_to, format, &r2, &g2, &b2, &a2);
 
@@ -48,10 +48,12 @@ namespace g80 {
                         a1 + (a2 - a1) * perc));
                     perc += inc;
                 }
+
                 i_from = i_to;
-                rgba_color_from = rgba_color_to;
-                r1 = r2; g1 = g2; b1 = b2;
+                r1 = r2; g1 = g2; b1 = b2; a1 = a2;
             }
+
+            colors_.emplace_back(SDL_MapRGBA(format, r1, g1, b1, a1));
         }
 
     private:
