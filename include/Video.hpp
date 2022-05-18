@@ -786,13 +786,13 @@ namespace g80 {
 
         while (x >= y)
         {
-            // Upper Right: Bottom, x--, y++
+            // Upper Right: Bottom, 
             if (p.x + x >= 0 && p.x + x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
-                *(center + x - by) = c;
+                *(center + x - by) = c; // bottom up
 
-            // Upper Right: Top
-            if (p.x + y >= 0 && p.x + y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
-            *(center + y - bx) = c;
+            // Upper Right: Top, ++y, --x 
+            if (p.x + y >= 0 && p.x + y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
+            *(center + y - bx) = c; // top down
 
             // // Upper Left: Top
             // *(center - y - bx) = c;
