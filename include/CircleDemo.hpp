@@ -1,5 +1,5 @@
-#ifndef _VIDEODEMO_HPP_
-#define _VIDEODEMO_HPP_
+#ifndef _CIRCLEDEMO_HPP_
+#define _CIRCLEDEMO_HPP_
 
 #include <cstdlib>
 
@@ -9,9 +9,9 @@
 #include "TrigCache.hpp"
 
 namespace g80 {
-    class VideoDemo : public Video {
+    class CircleDemo : public Video {
     public:
-        VideoDemo();
+        CircleDemo();
 
         auto preprocess_states() -> bool;
         auto update_states() -> bool;
@@ -31,17 +31,18 @@ namespace g80 {
     private:
 
         Point<Sint32> mouse_;
+        Sint32 r_ = 1, rn_ = 1;
     };
 
-    VideoDemo::VideoDemo() : Video() {
+    CircleDemo::CircleDemo() : Video() {
 
     }
 
-    auto VideoDemo::preprocess_states() -> bool {
+    auto CircleDemo::preprocess_states() -> bool {
         return true;
     }
 
-    auto VideoDemo::update_states() -> bool {
+    auto CircleDemo::update_states() -> bool {
         Palette pal;
         // TODO: Palette, size should be automatic based on gradients
         // todo: FIX BUG, size SHould be based on the last index + 1 
@@ -61,11 +62,11 @@ namespace g80 {
                 });
 
         // circle({1280/2, 720/2}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
-        circle(mouse_, 200, pal, 0, 299);
+        circle(mouse_, r_, pal, 0, 299);
         return true;
     }
 
-    auto VideoDemo::capture_events() -> bool {
+    auto CircleDemo::capture_events() -> bool {
         SDL_Event e;
         while(SDL_PollEvent(&e)) {
             if(e.type == SDL_QUIT)
@@ -79,6 +80,9 @@ namespace g80 {
             else if (e.type == SDL_MOUSEMOTION) {
                 mouse_.x = e.motion.x;
                 mouse_.y = e.motion.y;
+                if (r_ >100 || r_ <1) rn_ *= -1;
+                r_ += rn_;
+                
             }
         }
         return true;
