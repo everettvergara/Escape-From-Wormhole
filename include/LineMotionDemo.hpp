@@ -74,11 +74,11 @@ namespace g80 {
         Palette pal, pal2;
         pal.add_gradients(surface_->format, 300, 
             {
-                {0, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
-                {60, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
-                {120, SDL_MapRGBA(surface_->format, 255, 100, 0, 255)},
-                {180, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
-                {300, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},});
+                {0, SDL_MapRGBA(surface_->format, 0, 255, 255, 255)},
+                {60, SDL_MapRGBA(surface_->format, 0, 100, 255, 255)},
+                {120, SDL_MapRGBA(surface_->format, 100, 100, 255, 255)},
+                {180, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},
+                {300, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},});
                 
         pal2.add_gradients(surface_->format, 100, 
             {
