@@ -788,15 +788,15 @@ namespace g80 {
         {
             // Upper Right: Bottom, 
             if (p.x + x >= 0 && p.x + x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
-                *(center + x - by) = c; // bottom up
+                *(center + x - by) = c; // bottom -> top
 
             // Upper Right: Top, 
             if (p.x + y >= 0 && p.x + y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
-                *(center + y - bx) = c; // top bottom
+                *(center + y - bx) = c; // top -> bottom
 
             // Upper Left: Top
             if (p.x - y >= 0 && p.x - y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
-                *(center - y - bx) = c; // bottom top
+                *(center - y - bx) = c; // bottom top 
 
             // Upper Left: Bottom,
             if (p.x - x >= 0 && p.x - x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
@@ -810,7 +810,7 @@ namespace g80 {
             if (p.x - y >= 0 && p.x - y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
                 *(center - y + bx) = c; // bottom top
 
-            // Bottom Right: Bottom ++y, --x 
+            // Bottom Right: Bottom 
             if (p.x + y >= 0 && p.x + y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
                 *(center + y + bx) = c; // bottom top
 
