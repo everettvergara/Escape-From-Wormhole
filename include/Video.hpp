@@ -774,7 +774,7 @@ namespace g80 {
     }
 
     auto Video::circle(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
-
+        if (r == 0) {pset(p, palette[pal_ix_from]); return;}
         Uint32 *center = get_pixel_buffer(p);
         float size_per_octant = (pal_ix_to - pal_ix_from) / 8.0f;        
         float start_c[8], inc_c = size_per_octant / ((2.0f * M_PI * r) / 8.0f);
@@ -853,7 +853,7 @@ namespace g80 {
     }
 
     auto Video::circle_lite(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
-
+        if (r == 0) {pset_lite(p, palette[pal_ix_from]); return;}
         Uint32 *center = get_pixel_buffer(p);
         float size_per_octant = (pal_ix_to - pal_ix_from) / 8.0f;        
         float start_c[8], inc_c = size_per_octant / ((2.0f * M_PI * r) / 8.0f);
