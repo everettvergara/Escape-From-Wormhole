@@ -776,22 +776,28 @@ namespace g80 {
 
         float size_per_octant = (pal_ix_to - pal_ix_from) / 8.0f;        
         Uint32 *center = get_pixel_buffer(p);
-        float start_c[8], inc_c = size_per_octant / (r * 0.5);
+        // r: 200, size_peroctant = 37.375 circ/8 =  157.08, inc_c = 
+        float start_c[8], inc_c = size_per_octant / ((2.0f * M_PI * r) / 8.0f);
         for (Sint32 i = 0; i < 8; ++i) {
             start_c[i] = pal_ix_from + (i * size_per_octant);
-            SDL_Log("i: %d = %.2f\n", i, start_c[i]);
+            // SDL_Log("i: %d = %.2f\n", i, start_c[i]);
         }
-    
-        Sint32 x = r;
-        Sint32 y = 0;
-        Sint32 bx = x * surface_->w;
-        Sint32 by = y * surface_->w;
+
+
+        start_c[1] = start_c[2] - inc_c;
+        start_c[3] = start_c[4] - inc_c;
+
+        Sint32 x = r;   // decreasing
+        Sint32 y = 0;   // increasing
+        Sint32 bx = x * surface_->w; // decreases
+        Sint32 by = y * surface_->w; // increases
 
         Sint32 dx = 1 - (r << 1);
         Sint32 dy = 1;
         Sint32 re = 0;
 
         Uint32 c = SDL_MapRGBA(surface_->format, 255, 255, 255, 255);
+        //int i = 0;
         while (x >= y)
         {
             // Upper Right: Bottom, 
@@ -800,15 +806,15 @@ namespace g80 {
 
             // Upper Right: Top, y++, x--
             if (p.x + y >= 0 && p.x + y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
-                *(center + y - bx) = palette[start_c[1]]; // bottom  -> top
+                *(center + y - bx) = palette[start_c[1]]; // top  -> bottom
 
-            // Upper Left: Top
+            // Upper Left: Top 
             if (p.x - y >= 0 && p.x - y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
-                *(center - y - bx) = c; // bottom top 
+                *(center - y - bx) = palette[start_c[2]]; // top -> bottom 
 
             // Upper Left: Bottom,
             if (p.x - x >= 0 && p.x - x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
-                *(center - x - by) = c; // bottom top
+                *(center - x - by) = palette[start_c[3]]; // bottom top
 
             // Bottom Left: Top
             if (p.x - x >= 0 && p.x - x < surface_->w && p.y + y >= 0 && p.y + y < surface_->h)
@@ -826,9 +832,6 @@ namespace g80 {
             if (p.x + x >= 0 && p.x + x < surface_->w && p.y + y >= 0 && p.y + y < surface_->h)
                 *(center + x + by) = c; //top bottom
 
-            start_c[0] += inc_c;
-            start_c[1] += inc_c;
-
             ++y;
             re += dy;
             dy += 2;
@@ -840,7 +843,15 @@ namespace g80 {
                 dx += 2;
             }
             by += surface_->w;
+//            ++i;
+
+            start_c[0] += inc_c;
+            start_c[1] -= inc_c;
+            start_c[2] += inc_c;
+            start_c[3] -= inc_c;                  
         }
+
+        //SDL_Log("%d %.2f\n", i, start_c[0]);
     }
 
 
