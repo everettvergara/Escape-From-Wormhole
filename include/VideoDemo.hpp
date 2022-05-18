@@ -41,7 +41,7 @@ namespace g80 {
 
     auto VideoDemo::update_states() -> bool {
 
-        circle({1280/2, 900}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        circle({1280/2, 50}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
         return true;
     }
 }
