@@ -94,6 +94,7 @@ namespace g80 {
        
         auto circle_lite(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void;
 
+
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;        
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;
@@ -124,6 +125,7 @@ namespace g80 {
 
     public:
         auto line_recalc_points(Point<Sint32> &p1, Point<Sint32> &p2) -> void;
+
     };
 
 
@@ -719,7 +721,7 @@ namespace g80 {
     auto Video::circle_lite(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void {
         
         Uint32 *center = get_pixel_buffer(p);
-        
+
         Sint32 x = r;
         Sint32 y = 0;
         Sint32 bx = x * surface_->w;
@@ -731,14 +733,29 @@ namespace g80 {
 
         while (x >= y)
         {
+            // Upper Right: Bottom
             *(center + x - by) = c;
+
+            // Upper Right: Top
             *(center + y - bx) = c;
+
+            // Upper Left: Top
             *(center - y - bx) = c;
+
+            // Upper Left: Bottom
             *(center - x - by) = c;
+
+            // Bottom Right: Top
             *(center + x + by) = c;
+
+            // Bottom Right: Bottom
             *(center + y + bx) = c;
-            *(center - y + bx) = c;
+            
+            // Bottom Left: Top
             *(center - x + by) = c;
+            
+            // Bottom Left: Bottom
+            *(center - y + bx) = c;
 
             ++y;
             re += dy;
