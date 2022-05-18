@@ -94,6 +94,7 @@ namespace g80 {
        
         auto circle_lite(const Point<Sint32> &p, const Sint32 r, const RGBAColor c) -> void;
         auto circle(const Point<Sint32> &p, const Sint32 r, const RGBAColor c) -> void;
+        auto circle(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         auto circle_lite(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
 
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;        
@@ -734,29 +735,29 @@ namespace g80 {
 
         while (x >= y)
         {
-            // Upper Right: Bottom
+            // Upper Right: Bottom, 
             *(center + x - by) = c;
 
-            // Upper Right: Top
+            // Upper Right: Top, y++, x--
             *(center + y - bx) = c;
 
-            // Upper Left: Top
+            // Upper Left: Top 
             *(center - y - bx) = c;
 
-            // Upper Left: Bottom
+            // Upper Left: Bottom,
             *(center - x - by) = c;
 
-            // Bottom Right: Top
-            *(center + x + by) = c;
-
-            // Bottom Right: Bottom
-            *(center + y + bx) = c;
-            
             // Bottom Left: Top
             *(center - x + by) = c;
             
-            // Bottom Left: Bottom
+            // Bottom Left: Bottom 
             *(center - y + bx) = c;
+
+            // Bottom Right: Bottom 
+            *(center + y + bx) = c;
+
+            // Bottom Right: Top
+            *(center + x + by) = c;
 
             ++y;
             re += dy;
@@ -772,32 +773,28 @@ namespace g80 {
         }
     }
 
-    auto Video::circle_lite(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+    auto Video::circle(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
 
-        float size_per_octant = (pal_ix_to - pal_ix_from) / 8.0f;        
         Uint32 *center = get_pixel_buffer(p);
-        // r: 200, size_peroctant = 37.375 circ/8 =  157.08, inc_c = 
+        float size_per_octant = (pal_ix_to - pal_ix_from) / 8.0f;        
         float start_c[8], inc_c = size_per_octant / ((2.0f * M_PI * r) / 8.0f);
-        for (Sint32 i = 0; i < 8; ++i) {
+        for (Sint32 i = 0; i < 8; i += 2)
             start_c[i] = pal_ix_from + (i * size_per_octant);
-            // SDL_Log("i: %d = %.2f\n", i, start_c[i]);
-        }
-
 
         start_c[1] = start_c[2] - inc_c;
         start_c[3] = start_c[4] - inc_c;
+        start_c[5] = start_c[6] - inc_c;
+        start_c[7] = pal_ix_to;
 
-        Sint32 x = r;   // decreasing
-        Sint32 y = 0;   // increasing
-        Sint32 bx = x * surface_->w; // decreases
-        Sint32 by = y * surface_->w; // increases
+        Sint32 x = r;
+        Sint32 y = 0;
+        Sint32 bx = x * surface_->w;
+        Sint32 by = y * surface_->w;
 
         Sint32 dx = 1 - (r << 1);
         Sint32 dy = 1;
         Sint32 re = 0;
 
-        Uint32 c = SDL_MapRGBA(surface_->format, 255, 255, 255, 255);
-        //int i = 0;
         while (x >= y)
         {
             // Upper Right: Bottom, 
@@ -818,19 +815,19 @@ namespace g80 {
 
             // Bottom Left: Top
             if (p.x - x >= 0 && p.x - x < surface_->w && p.y + y >= 0 && p.y + y < surface_->h)
-                *(center - x + by) = c; // top bottom
+                *(center - x + by) = palette[start_c[4]]; // top bottom
             
             // Bottom Left: Bottom 
             if (p.x - y >= 0 && p.x - y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
-                *(center - y + bx) = c; // bottom top
+                *(center - y + bx) = palette[start_c[5]]; // bottom top
 
             // Bottom Right: Bottom 
             if (p.x + y >= 0 && p.x + y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
-                *(center + y + bx) = c; // bottom top
+                *(center + y + bx) = palette[start_c[6]]; // bottom top
 
             // Bottom Right: Top
             if (p.x + x >= 0 && p.x + x < surface_->w && p.y + y >= 0 && p.y + y < surface_->h)
-                *(center + x + by) = c; //top bottom
+                *(center + x + by) = palette[start_c[7]]; //top bottom
 
             ++y;
             re += dy;
@@ -843,17 +840,88 @@ namespace g80 {
                 dx += 2;
             }
             by += surface_->w;
-//            ++i;
 
             start_c[0] += inc_c;
             start_c[1] -= inc_c;
             start_c[2] += inc_c;
-            start_c[3] -= inc_c;                  
+            start_c[3] -= inc_c;      
+            start_c[4] += inc_c;   
+            start_c[5] -= inc_c;   
+            start_c[6] += inc_c;   
+            start_c[7] -= inc_c;               
         }
-
-        //SDL_Log("%d %.2f\n", i, start_c[0]);
     }
 
+    auto Video::circle_lite(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+
+        Uint32 *center = get_pixel_buffer(p);
+        float size_per_octant = (pal_ix_to - pal_ix_from) / 8.0f;        
+        float start_c[8], inc_c = size_per_octant / ((2.0f * M_PI * r) / 8.0f);
+        for (Sint32 i = 0; i < 8; i += 2)
+            start_c[i] = pal_ix_from + (i * size_per_octant);
+
+        start_c[1] = start_c[2] - inc_c;
+        start_c[3] = start_c[4] - inc_c;
+        start_c[5] = start_c[6] - inc_c;
+        start_c[7] = pal_ix_to;
+
+        Sint32 x = r;
+        Sint32 y = 0;
+        Sint32 bx = x * surface_->w;
+        Sint32 by = y * surface_->w;
+
+        Sint32 dx = 1 - (r << 1);
+        Sint32 dy = 1;
+        Sint32 re = 0;
+
+        while (x >= y)
+        {
+            // Upper Right: Bottom, 
+            *(center + x - by) = palette[start_c[0]]; // bottom -> top
+
+            // Upper Right: Top, y++, x--
+            *(center + y - bx) = palette[start_c[1]]; // top  -> bottom
+
+            // Upper Left: Top 
+            *(center - y - bx) = palette[start_c[2]]; // top -> bottom 
+
+            // Upper Left: Bottom,
+            *(center - x - by) = palette[start_c[3]]; // bottom top
+
+            // Bottom Left: Top
+            *(center - x + by) = palette[start_c[4]]; // top bottom
+            
+            // Bottom Left: Bottom 
+            *(center - y + bx) = palette[start_c[5]]; // bottom top
+
+            // Bottom Right: Bottom 
+            *(center + y + bx) = palette[start_c[6]]; // bottom top
+
+            // Bottom Right: Top
+            *(center + x + by) = palette[start_c[7]]; //top bottom
+
+            ++y;
+            re += dy;
+            dy += 2;
+            if ((re << 1) + dx > 0)
+            {
+                --x;
+                bx -= surface_->w;
+                re += dx;
+                dx += 2;
+            }
+            by += surface_->w;
+
+            start_c[0] += inc_c;
+            start_c[1] -= inc_c;
+            start_c[2] += inc_c;
+            start_c[3] -= inc_c;      
+            start_c[4] += inc_c;   
+            start_c[5] -= inc_c;   
+            start_c[6] += inc_c;   
+            start_c[7] -= inc_c;               
+        }
+    }
 
     auto Video::circle(const Point<Sint32> &p, const Sint32 r, const RGBAColor c) -> void {
         
@@ -874,13 +942,13 @@ namespace g80 {
             if (p.x + x >= 0 && p.x + x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
                 *(center + x - by) = c; // bottom -> top
 
-            // Upper Right: Top, 
+            // Upper Right: Top, y++, x--
             if (p.x + y >= 0 && p.x + y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
-                *(center + y - bx) = c; // top -> bottom
+                *(center + y - bx) = c; // top  -> bottom
 
-            // Upper Left: Top
+            // Upper Left: Top 
             if (p.x - y >= 0 && p.x - y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
-                *(center - y - bx) = c; // bottom top 
+                *(center - y - bx) = c; // top -> bottom 
 
             // Upper Left: Bottom,
             if (p.x - x >= 0 && p.x - x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
@@ -901,7 +969,6 @@ namespace g80 {
             // Bottom Right: Top
             if (p.x + x >= 0 && p.x + x < surface_->w && p.y + y >= 0 && p.y + y < surface_->h)
                 *(center + x + by) = c; //top bottom
-
 
             ++y;
             re += dy;

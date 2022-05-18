@@ -52,12 +52,16 @@ namespace g80 {
                 {75, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},
                 {112, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
                 {150, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},
-                {300, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
+                {188, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
+
+                {226, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},                
+                {264, SDL_MapRGBA(surface_->format, 0, 255, 0, 255)},    
+                {300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
                 
                 });
 
         // circle({1280/2, 720/2}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
-        circle_lite({1280/2, 720/2}, 200, pal, 0, 299);
+        circle(mouse_, 200, pal, 0, 299);
         return true;
     }
 

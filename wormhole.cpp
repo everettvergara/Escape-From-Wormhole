@@ -12,8 +12,7 @@ auto main(int argc, const char *argv[]) -> int {
  
     VideoConfig video_config = set_default_video_config();
     VideoDemo demo;
-
-
+    
     demo.create_window(video_config);
     demo.preprocess_states();
     demo.run();
