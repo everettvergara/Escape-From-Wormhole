@@ -92,8 +92,9 @@ namespace g80 {
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
-        auto circle_lite(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void;
-        auto circle(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void;
+        auto circle_lite(const Point<Sint32> &p, const Sint32 r, const RGBAColor c) -> void;
+        auto circle(const Point<Sint32> &p, const Sint32 r, const RGBAColor c) -> void;
+        auto circle_lite(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
 
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;        
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
@@ -718,7 +719,7 @@ namespace g80 {
         } while (p + 3 != points.end());        
     }
 
-    auto Video::circle_lite(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void {
+    auto Video::circle_lite(const Point<Sint32> &p, const Sint32 r, const RGBAColor c) -> void {
         
         Uint32 *center = get_pixel_buffer(p);
 
@@ -771,7 +772,79 @@ namespace g80 {
         }
     }
 
-    auto Video::circle(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void {
+    auto Video::circle_lite(const Point<Sint32> &p, const Sint32 r, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void {
+
+        float size_per_octant = (pal_ix_to - pal_ix_from) / 8.0f;        
+        Uint32 *center = get_pixel_buffer(p);
+        float start_c[8], inc_c = size_per_octant / (r * 0.5);
+        for (Sint32 i = 0; i < 8; ++i) {
+            start_c[i] = pal_ix_from + (i * size_per_octant);
+            SDL_Log("i: %d = %.2f\n", i, start_c[i]);
+        }
+    
+        Sint32 x = r;
+        Sint32 y = 0;
+        Sint32 bx = x * surface_->w;
+        Sint32 by = y * surface_->w;
+
+        Sint32 dx = 1 - (r << 1);
+        Sint32 dy = 1;
+        Sint32 re = 0;
+
+        Uint32 c = SDL_MapRGBA(surface_->format, 255, 255, 255, 255);
+        while (x >= y)
+        {
+            // Upper Right: Bottom, 
+            if (p.x + x >= 0 && p.x + x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
+                *(center + x - by) = palette[start_c[0]]; // bottom -> top
+
+            // Upper Right: Top, y++, x--
+            if (p.x + y >= 0 && p.x + y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
+                *(center + y - bx) = palette[start_c[1]]; // bottom  -> top
+
+            // Upper Left: Top
+            if (p.x - y >= 0 && p.x - y < surface_->w && p.y - x >= 0 && p.y - x < surface_->h)
+                *(center - y - bx) = c; // bottom top 
+
+            // Upper Left: Bottom,
+            if (p.x - x >= 0 && p.x - x < surface_->w && p.y - y >= 0 && p.y - y < surface_->h)
+                *(center - x - by) = c; // bottom top
+
+            // Bottom Left: Top
+            if (p.x - x >= 0 && p.x - x < surface_->w && p.y + y >= 0 && p.y + y < surface_->h)
+                *(center - x + by) = c; // top bottom
+            
+            // Bottom Left: Bottom 
+            if (p.x - y >= 0 && p.x - y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
+                *(center - y + bx) = c; // bottom top
+
+            // Bottom Right: Bottom 
+            if (p.x + y >= 0 && p.x + y < surface_->w && p.y + x >= 0 && p.y + x < surface_->h)
+                *(center + y + bx) = c; // bottom top
+
+            // Bottom Right: Top
+            if (p.x + x >= 0 && p.x + x < surface_->w && p.y + y >= 0 && p.y + y < surface_->h)
+                *(center + x + by) = c; //top bottom
+
+            start_c[0] += inc_c;
+            start_c[1] += inc_c;
+
+            ++y;
+            re += dy;
+            dy += 2;
+            if ((re << 1) + dx > 0)
+            {
+                --x;
+                bx -= surface_->w;
+                re += dx;
+                dx += 2;
+            }
+            by += surface_->w;
+        }
+    }
+
+
+    auto Video::circle(const Point<Sint32> &p, const Sint32 r, const RGBAColor c) -> void {
         
         Uint32 *center = get_pixel_buffer(p);
 

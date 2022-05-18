@@ -42,8 +42,18 @@ namespace g80 {
     }
 
     auto VideoDemo::update_states() -> bool {
+        Palette pal;
+        // TODO: Palette, size should be automatic based on gradients
+        pal.add_gradients(surface_->format, 300, 
+            {
+                {0, SDL_MapRGBA(surface_->format, 0, 255, 255, 255)},
+                {60, SDL_MapRGBA(surface_->format, 0, 100, 255, 255)},
+                {120, SDL_MapRGBA(surface_->format, 100, 100, 255, 255)},
+                {180, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},
+                {299, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},});
 
-        circle(mouse_, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        // circle({1280/2, 720/2}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        circle_lite({1280/2, 720/2}, 200, pal, 0, 299);
         return true;
     }
 
