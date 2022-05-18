@@ -92,6 +92,8 @@ namespace g80 {
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const RGBAColor c) -> void;
         auto line_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
        
+        auto circle_lite(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void;
+
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;        
         auto quad_bezier(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const Palette &palette, const Uint32 pal_ix_from, const Uint32 pal_ix_to) -> void;
         auto quad_bezier_lite(const Point<Sint32> &p1, const Point<Sint32> &p2, const Point<Sint32> &p3, const Sint32 max_steps, const RGBAColor c) -> void;
@@ -712,6 +714,44 @@ namespace g80 {
             line(prev, p3, palette, pal_from, pal_to);
             ++p;
         } while (p + 3 != points.end());        
-    }        
+    }
+
+    auto Video::circle_lite(Point<Sint32> p, Sint32 r, const RGBAColor c) -> void {
+        
+        Uint32 *center = get_pixel_buffer(p);
+        
+        Sint32 x = r;
+        Sint32 y = 0;
+        Sint32 bx = x * surface_->w;
+        Sint32 by = y * surface_->w;
+
+        Sint32 dx = 1 - (r << 1);
+        Sint32 dy = 1;
+        Sint32 re = 0;
+
+        while (x >= y)
+        {
+            *(center + x - by) = c;
+            *(center + y - bx) = c;
+            *(center - y - bx) = c;
+            *(center - x - by) = c;
+            *(center + x + by) = c;
+            *(center + y + bx) = c;
+            *(center - y + bx) = c;
+            *(center - x + by) = c;
+
+            ++y;
+            re += dy;
+            dy += 2;
+            if ((re << 1) + dx > 0)
+            {
+                --x;
+                bx -= surface_->w;
+                re += dx;
+                dx += 2;
+            }
+            by += surface_->w;
+        }
+    }
 }
 #endif 
