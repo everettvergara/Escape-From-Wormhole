@@ -26,9 +26,11 @@ namespace g80 {
         virtual auto update_window_surface() -> bool;
         */
 
+       auto capture_events() -> bool;
+
     private:
 
-
+        Point<Sint32> mouse_;
     };
 
     VideoDemo::VideoDemo() : Video() {
@@ -41,7 +43,26 @@ namespace g80 {
 
     auto VideoDemo::update_states() -> bool {
 
-        circle({1280/2, 50}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        circle(mouse_, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        return true;
+    }
+
+    auto VideoDemo::capture_events() -> bool {
+        SDL_Event e;
+        while(SDL_PollEvent(&e)) {
+            if(e.type == SDL_QUIT)
+                is_running_ = false;
+
+            else if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_ESCAPE)
+                    is_running_ = false;
+            }
+            
+            else if (e.type == SDL_MOUSEMOTION) {
+                mouse_.x = e.motion.x;
+                mouse_.y = e.motion.y;
+            }
+        }
         return true;
     }
 }
