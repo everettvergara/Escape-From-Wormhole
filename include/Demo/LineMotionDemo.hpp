@@ -41,8 +41,8 @@ namespace g80 {
         // line_motion_.line_motion_set({0.0f, 100.0f}, {1000.0f, 500.0f}, 50, 5);
 
         const Sint32 N = 360 * 20;
-        SinCacheF sine(N);
-        CosCacheF cosine(N);
+        SinCache<float> sine(N);
+        CosCache<float> cosine(N);
 
         explosions_accel_.reserve(N);
         explosions_.reserve(N);
@@ -69,8 +69,8 @@ namespace g80 {
     auto LineMotionDemo::update_states() -> bool {
 
         const Sint32 N = 360 * 20;
-        SinCacheF sine(N);
-        CosCacheF cosine(N);        
+        SinCache<float> sine(N);
+        CosCache<float> cosine(N);        
         Palette pal, pal2;
         pal.add_gradients(surface_->format, 
             {
