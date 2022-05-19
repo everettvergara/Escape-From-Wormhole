@@ -9,7 +9,7 @@ namespace g80 {
     // todo: remove pointmotion
 
     template<typename T>
-    class CircleMotion : public PointMotion<T> {
+    class CircleMotion {
     public:
         CircleMotion() : PointMotion<T>() {}
         ~CircleMotion() {}
