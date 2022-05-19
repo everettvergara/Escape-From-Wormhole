@@ -1,7 +1,6 @@
 #ifndef _TRIGCACHE_HPP_
 #define _TRIGCACHE_HPP_
 
-
 #include <vector>
 #include <cassert>
 #include <type_traits>
@@ -23,7 +22,6 @@ namespace g80 {
 
     public:
         TrigCache(Sint32 N) {
-            angle_values_.reserve(N);
         }
 
         auto operator[](int i) -> T & {
@@ -38,43 +36,27 @@ namespace g80 {
         AngleValues<T> angle_values_;
     };
 
-    class SinCacheF : public TrigCache<float> {
+    template<typename T>
+    class SinCache : public TrigCache<T> {
     public:
-        SinCacheF(Sint32 N) : TrigCache(N) {
-            float a = 0.0f;
-            float ainc = 2.0f * M_PI / N;
-            for (int i = 0; i < N; ++i, a += ainc)
-                angle_values_[i] = SDL_sinf(a);
+        SinCache(Sint32 N) : TrigCache<T>(N) {
+            this->angle_values_.reserve(N);
+            T a = 0.0f;
+            T ainc = 2.0f * M_PI / N;
+            for (int i = 0; i < N; ++i, a += ainc) 
+                this->angle_values_.emplace_back(SDL_sin(a));
         }
     };
 
-    class SinCache : public TrigCache<double> {
+    template<typename T>
+    class CosCache : public TrigCache<T> {
     public:
-        SinCache(Sint32 N) : TrigCache(N) {
-            double a = 0.0f;
-            double ainc = 2.0f * M_PI / N;
+        CosCache(Sint32 N) : TrigCache<T>(N) {
+            this->angle_values_.reserve(N);
+            T a = 0.0f;
+            T ainc = 2.0f * M_PI / N;
             for (int i = 0; i < N; ++i, a += ainc)
-                angle_values_[i] = SDL_sin(a);
-        }
-    };
-
-    class CosCacheF : public TrigCache<float> {
-    public:
-        CosCacheF(Sint32 N) : TrigCache(N) {
-            float a = 0.0f;
-            float ainc = 2.0f * M_PI / N;
-            for (int i = 0; i < N; ++i, a += ainc)
-                angle_values_[i] = SDL_cosf(a);
-        }
-    };
-
-    class CosCache : public TrigCache<double> {
-    public:
-        CosCache(Sint32 N) : TrigCache(N) {
-            double a = 0.0f;
-            double ainc = 2.0f * M_PI / N;
-            for (int i = 0; i < N; ++i, a += ainc)
-                angle_values_[i] = SDL_cos(a);
+                this->angle_values_.emplace_back(SDL_cos(a));
         }
     };
 }
