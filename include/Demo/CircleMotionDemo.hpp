@@ -48,6 +48,7 @@ namespace g80 {
     }
 
     auto CircleMotionDemo::update_states() -> bool {
+
         // Erase
         SDL_FillRect(surface_, NULL, 0);
         
