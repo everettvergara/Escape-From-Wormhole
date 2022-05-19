@@ -1,5 +1,5 @@
 
-#include "CircleDemo.hpp"
+#include "Demo/CircleDemo.hpp"
 #include "Palette.hpp"
 
 using namespace g80;
