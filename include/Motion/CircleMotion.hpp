@@ -6,6 +6,8 @@
 
 namespace g80 {
 
+    // todo: remove pointmotion
+
     template<typename T>
     class CircleMotion : public PointMotion<T> {
     public:
@@ -21,13 +23,11 @@ namespace g80 {
             const Sint32 end_ix, 
             const CosCache<T> &cosine_cache,
             const SinCache<T> &sine_cache) : 
-                center_(p),
-                cosine_cache_(cosine_cache),
-                sine_cache_(sine_cache) {
+                center_(p){
             
             this->set(Point<T>{
-                center_.x + radius * cosine_cache_[start_ix], 
-                center_.y + radius * sine_cache_[start_ix]}, 
+                center_.x + radius * cosine_cache[start_ix], 
+                center_.y + radius * sine_cache[start_ix]}, 
                 sz_steps, sz_trail);
             inc_ = 1.0f * (end_angle - start_angle) / sz_steps;
         }
@@ -49,8 +49,6 @@ namespace g80 {
     private:
         Point<T> center_;
         float inc_;
-        const SinCache<T> &sine_cache_;
-        const CosCache<T> &cosine_cache_;
     };
 }
 
