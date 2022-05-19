@@ -24,15 +24,17 @@ namespace g80 {
             const CosCache<T> &cosine_cache,
             const SinCache<T> &sine_cache) : 
                 center_(p){
-            
-            this->set(Point<T>{
-                center_.x + radius * cosine_cache[start_ix], 
-                center_.y + radius * sine_cache[start_ix]}, 
-                sz_steps, sz_trail);
+
+            head_ = Point<T>{center_.x + radius * cosine_cache[start_ix], center_.y + radius * sine_cache[start_ix]};
+            tail_ = {head_};
+            sz_steps_ = {sz_steps};
+            tail_step_ = {-sz_trail};
+            head_step_ = {0};
+          
             inc_ = 1.0f * (end_angle - start_angle) / sz_steps;
         }
 
-        auto next() -> bool {
+        auto next(const CosCache<T> &cosine_cache, const SinCache<T> &sine_cache) -> bool {
             // if (this->tail_step_ == this->sz_steps_) return false;
 
             // if (this->head_step_ < this->sz_steps_) {
@@ -46,7 +48,16 @@ namespace g80 {
             return true;
         }
 
+        inline auto get_head() const -> const Point<T> & {return head_;}
+        inline auto get_tail() const -> const Point<T> & {return tail_;}
+        inline auto get_head_step() const -> Sint32 {return head_step_;}
+        inline auto get_tail_step() const -> Sint32 {return tail_step_;}
+        inline auto get_size_of_step() const -> Sint32 {return sz_steps_;}
+
+
     private:
+        Point<T> head_, tail_;
+        Sint32 sz_steps_, tail_step_, head_step_;
         Point<T> center_;
         float inc_;
     };
