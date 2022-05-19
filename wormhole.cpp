@@ -1,5 +1,6 @@
 
-#include "Demo/CircleDemo.hpp"
+// tODO: Remove two - phase construction of motion
+#include "Demo/CircleMotionDemo.hpp"
 #include "Demo/LineMotionDemo.hpp"
 #include "Palette.hpp"
 
@@ -8,9 +9,8 @@ using namespace g80;
 auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
-
     VideoConfig video_config = set_default_video_config();
-    LineMotionDemo demo;
+    CircleMotionDemo demo;
 
     demo.create_window(video_config);
     demo.preprocess_states(); 

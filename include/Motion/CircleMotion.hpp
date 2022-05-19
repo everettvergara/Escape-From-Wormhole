@@ -11,7 +11,7 @@ namespace g80 {
     template<typename T>
     class CircleMotion {
     public:
-        CircleMotion() : PointMotion<T>() {}
+        CircleMotion() {}
         ~CircleMotion() {}
 
         auto circle_motion_set(
@@ -22,8 +22,10 @@ namespace g80 {
             const Sint32 start_ix, 
             const Sint32 end_ix, 
             const CosCache<T> &cosine_cache,
-            const SinCache<T> &sine_cache) : 
-                center_(p) {
+            const SinCache<T> &sine_cache) {
+
+            center_ = {p};
+            radius_ = {radius};
 
             head_ = Point<T>{center_.x + radius * cosine_cache[start_ix], center_.y + radius * sine_cache[start_ix]};
             tail_ = {head_};
@@ -42,11 +44,13 @@ namespace g80 {
             if (this->head_step_ < this->sz_steps_) {
                 head_angle_ += inc_;
 
+
+                // BUG HERE
                 if (head_angle_ >= 360.0f) head_angle_ = head_angle_ - 360.0f;
                 else if (head_angle_ < 0.0f) head_angle_ = 360.0f + head_angle_;
 
-                this->head_.x = center_.x + radius * cosine_cache[static_cast<Sint32>(head_angle_)];
-                this->head_.y = center_.y + radius * sine_cache[static_cast<Sint32>(head_angle_)];
+                this->head_.x = center_.x + radius_ * cosine_cache[static_cast<Sint32>(head_angle_)];
+                this->head_.y = center_.y + radius_ * sine_cache[static_cast<Sint32>(head_angle_)];
 
                 ++this->head_step_;
             }
@@ -54,11 +58,12 @@ namespace g80 {
             if (this->tail_step_++ >= 0) {
                 tail_angle_ += inc_;
 
+                // BUG HERE
                 if (tail_angle_ >= 360.0f) tail_angle_ = tail_angle_ - 360.0f;
                 else if (tail_angle_ < 0.0f) tail_angle_ = 360.0f + tail_angle_;
 
-                this->tail_.x = center_.x + radius * cosine_cache[static_cast<Sint32>(tail_angle_)];
-                this->tail_.y = center_.y + radius * sine_cache[static_cast<Sint32>(tail_angle_)];
+                this->tail_.x = center_.x + radius_ * cosine_cache[static_cast<Sint32>(tail_angle_)];
+                this->tail_.y = center_.y + radius_ * sine_cache[static_cast<Sint32>(tail_angle_)];
             }
 
             return true;
@@ -75,6 +80,7 @@ namespace g80 {
         Point<T> head_, tail_;
         Sint32 sz_steps_, tail_step_, head_step_;
         Point<T> center_;
+        Sint32 radius_;
         T head_angle_, tail_angle_, inc_;
     };
 }
