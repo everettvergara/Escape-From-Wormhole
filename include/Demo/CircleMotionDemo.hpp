@@ -43,12 +43,12 @@ namespace g80 {
         CosCache<float> cosine(N);
 
         whirls_.reserve(N);
-
+        // BUGGY
         for (int i = 0; i < N; ++i) {
             whirls_.emplace_back();
             whirls_[i].circle_motion_set(
                 Point<float>{static_cast<float>(rand() % surface_->w), static_cast<float>(rand() % surface_->h)},
-                10 + rand() % 100, 10 + rand() * 100, 1 + rand() % 10, rand() % N, rand() % N, cosine, sine);
+                100, 100, 3, rand() % N, rand() % N, cosine, sine);
         
         } 
 
@@ -87,8 +87,8 @@ namespace g80 {
         for (auto &w : whirls_) {
             if (!w.next(cosine, sine)) {
                 w.circle_motion_set(
-                Point<float>{static_cast<float>(rand() % surface_->w), static_cast<float>(rand() % surface_->h)},
-                10 + rand() % 100, 10 + rand() * 100, 1 + rand() % 10, rand() % N, rand() % N, cosine, sine);
+                    Point<float>{static_cast<float>(rand() % surface_->w), static_cast<float>(rand() % surface_->h)},
+                    100, 100, 3, rand() % N, rand() % N, cosine, sine);
             }  
         }
 
