@@ -44,8 +44,6 @@ namespace g80 {
 
     auto CircleDemo::update_states() -> bool {
         Palette pal;
-        // TODO: Palette, size should be automatic based on gradients
-        // todo: FIX BUG, size SHould be based on the last index + 1 
         pal.add_gradients(surface_->format,
             {
                 {0, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},

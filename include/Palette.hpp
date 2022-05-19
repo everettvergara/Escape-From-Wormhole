@@ -17,6 +17,10 @@ namespace g80 {
         Palette(const Uint32 n) : colors_(n) {
         }
         
+        auto operator[](const int i) const -> const RGBAColor & {
+            return colors_[i];
+        };
+        
         auto operator[](const int i) -> RGBAColor & {
             return colors_[i];
         };
