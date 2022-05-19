@@ -13,18 +13,22 @@ namespace g80 {
         ~CircleMotion() {}
 
         auto circle_motion_set(
-            const Sint32 start_ix, 
-            const Sint32 end_ix, 
+            const Point<T> &p, 
             const Sint32 radius,
             const Sint32 sz_steps,
             const Sint32 sz_trail,
+            const Sint32 start_ix, 
+            const Sint32 end_ix, 
             const CosCache<T> &cosine_cache,
             const SinCache<T> &sine_cache) : 
+                center_(p),
                 cosine_cache_(cosine_cache),
                 sine_cache_(sine_cache) {
             
-            this->set(start_point, sz_steps, sz_trail);
-
+            this->set(Point<T>{
+                center_.x + radius * cosine_cache_[start_ix], 
+                center_.y + radius * sine_cache_[start_ix]}, 
+                sz_steps, sz_trail);
             inc_ = 1.0f * (end_angle - start_angle) / sz_steps;
         }
 
@@ -43,6 +47,7 @@ namespace g80 {
         }
 
     private:
+        Point<T> center_;
         float inc_;
         const SinCache<T> &sine_cache_;
         const CosCache<T> &cosine_cache_;
