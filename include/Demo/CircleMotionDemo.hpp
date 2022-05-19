@@ -13,22 +13,13 @@ namespace g80 {
         CircleMotionDemo();
 
         auto preprocess_states() -> bool;
-        auto update_states() -> bool;
-
-        /*
-        virtual auto create_window(const VideoConfig &video_config) -> bool;
-        virtual auto destroy_window() -> void;
-        virtual auto preprocess_states() -> bool;
-        virtual auto run() -> bool;
-        virtual auto capture_events() -> bool;
-        virtual auto update_states() -> bool;
-        virtual auto update_window_surface() -> bool;
-        */
+        auto update_states() -> bool; 
 
     private:
-        
+        const Sint32 TN_{3600}, N_{1000};
+        SinCache<float> sine_{TN_};
+        CosCache<float> cosine_{TN_};      
         std::vector<CircleMotion<float>> whirls_;
-
     };
 
     CircleMotionDemo::CircleMotionDemo() : Video() {
@@ -36,20 +27,13 @@ namespace g80 {
     }
 
     auto CircleMotionDemo::preprocess_states() -> bool {
-        // line_motion_.line_motion_set({0.0f, 100.0f}, {1000.0f, 500.0f}, 50, 5);
 
-        const Sint32 N = 360 * 20;
-        SinCache<float> sine(N);
-        CosCache<float> cosine(N);
-
-        whirls_.reserve(N);
-        // BUGGY
-        for (int i = 0; i < N; ++i) {
+        whirls_.reserve(N_);
+        for (int i = 0; i < N_; ++i) {
             whirls_.emplace_back();
             whirls_[i].circle_motion_set(
                 Point<float>{static_cast<float>(rand() % surface_->w), static_cast<float>(rand() % surface_->h)},
-                100, 100, 3, rand() % N, rand() % N, cosine, sine);
-        
+                10 + rand() % 100, rand() % 1000, 10, rand() % 3600, rand() % 3600, cosine_, sine_);
         } 
 
         return true;
@@ -57,9 +41,6 @@ namespace g80 {
 
     auto CircleMotionDemo::update_states() -> bool {
 
-        const Sint32 N = 360 * 20;
-        SinCache<float> sine(N);
-        CosCache<float> cosine(N);        
         // Palette pal, pal2;
         // pal.add_gradients(surface_->format, 
         //     {
@@ -85,10 +66,10 @@ namespace g80 {
         }
 
         for (auto &w : whirls_) {
-            if (!w.next(cosine, sine)) {
+            if (!w.next(cosine_, sine_)) {
                 w.circle_motion_set(
                     Point<float>{static_cast<float>(rand() % surface_->w), static_cast<float>(rand() % surface_->h)},
-                    100, 100, 3, rand() % N, rand() % N, cosine, sine);
+                    10 + rand() % 100, rand() % 1000, 10, rand() % 3600, rand() % 3600, cosine_, sine_);
             }  
         }
 

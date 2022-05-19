@@ -32,6 +32,10 @@ namespace g80 {
             return angle_values_[i];
         } 
 
+        auto get_size() const -> const size_t {
+            return angle_values_.size();
+        }
+
     protected:
         AngleValues<T> angle_values_;
     };

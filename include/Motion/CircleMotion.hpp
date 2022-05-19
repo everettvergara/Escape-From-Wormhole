@@ -41,13 +41,13 @@ namespace g80 {
         auto next(const CosCache<T> &cosine_cache, const SinCache<T> &sine_cache) -> bool {
             if (this->tail_step_ == this->sz_steps_) return false;
 
+            float size = cosine_cache.get_size();
+
             if (this->head_step_ < this->sz_steps_) {
                 head_angle_ += inc_;
 
-
-                // BUG HERE
-                if (head_angle_ >= 360.0f) head_angle_ = head_angle_ - 360.0f;
-                else if (head_angle_ < 0.0f) head_angle_ = 360.0f + head_angle_;
+                if (head_angle_ >= size) head_angle_ = head_angle_ - size;
+                else if (head_angle_ < 0.0f) head_angle_ = size + head_angle_;
 
                 this->head_.x = center_.x + radius_ * cosine_cache[static_cast<Sint32>(head_angle_)];
                 this->head_.y = center_.y + radius_ * sine_cache[static_cast<Sint32>(head_angle_)];
@@ -58,9 +58,8 @@ namespace g80 {
             if (this->tail_step_++ >= 0) {
                 tail_angle_ += inc_;
 
-                // BUG HERE
-                if (tail_angle_ >= 360.0f) tail_angle_ = tail_angle_ - 360.0f;
-                else if (tail_angle_ < 0.0f) tail_angle_ = 360.0f + tail_angle_;
+                if (tail_angle_ >= size) tail_angle_ = tail_angle_ - size;
+                else if (tail_angle_ < 0.0f) tail_angle_ = size + tail_angle_;
 
                 this->tail_.x = center_.x + radius_ * cosine_cache[static_cast<Sint32>(tail_angle_)];
                 this->tail_.y = center_.y + radius_ * sine_cache[static_cast<Sint32>(tail_angle_)];
