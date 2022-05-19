@@ -1,7 +1,7 @@
 #ifndef _LINEWITHACCELMOTION_HPP_
 #define _LINEWITHACCELMOTION_HPP_
 
-#include "PointMotion.hpp"
+#include "Point.hpp"
 
 namespace g80 {
 

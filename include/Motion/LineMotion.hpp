@@ -1,7 +1,7 @@
 #ifndef _LINEMOTION_HPP_
 #define _LINEMOTION_HPP_
 
-#include "PointMotion.hpp"
+#include "Point.hpp"
 
 namespace g80 {
 

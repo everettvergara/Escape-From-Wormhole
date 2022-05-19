@@ -1,7 +1,7 @@
 #ifndef _CIRCLEMOTION_HPP_
 #define _CIRCLEMOTION_HPP_
 
-#include "PointMotion.hpp"
+#include "Point.hpp"
 #include "TrigCache.hpp"
 
 namespace g80 {
@@ -30,20 +30,30 @@ namespace g80 {
             sz_steps_ = {sz_steps};
             tail_step_ = {-sz_trail};
             head_step_ = {0};
-          
-            inc_ = 1.0f * (end_angle - start_angle) / sz_steps;
+
+            head_angle_ = start_ix;
+            tail_angle_ = start_ix;
+            inc_ = 1.0f * (end_ix - start_ix) / sz_steps;
         }
 
         auto next(const CosCache<T> &cosine_cache, const SinCache<T> &sine_cache) -> bool {
-            // if (this->tail_step_ == this->sz_steps_) return false;
+            if (this->tail_step_ == this->sz_steps_) return false;
 
-            // if (this->head_step_ < this->sz_steps_) {
-            //     this->head_ += inc_;
-            //     ++this->head_step_;
-            // }
+            if (this->head_step_ < this->sz_steps_) {
+                head_angle_ += inc_;
 
-            // if (this->tail_step_++ >= 0)
-            //     this->tail_ += inc_;
+                this->head_.x = center_.x + radius * cosine_cache[static_cast<Sint32>(head_angle_)];
+                this->head_.y = center_.y + radius * sine_cache[static_cast<Sint32>(head_angle_)];
+
+                ++this->head_step_;
+            }
+
+            if (this->tail_step_++ >= 0) {
+                tail_angle_ += inc_;
+
+                this->tail_.x = center_.x + radius * cosine_cache[static_cast<Sint32>(tail_angle_)];
+                this->tail_.y = center_.y + radius * sine_cache[static_cast<Sint32>(tail_angle_)];
+            }
 
             return true;
         }
@@ -59,7 +69,7 @@ namespace g80 {
         Point<T> head_, tail_;
         Sint32 sz_steps_, tail_step_, head_step_;
         Point<T> center_;
-        float inc_;
+        T head_angle_, tail_angle_, inc_;
     };
 }
 
