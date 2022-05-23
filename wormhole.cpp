@@ -1,8 +1,16 @@
 
 // tODO: Remove two - phase construction of motion
-#include "Demo/CircleMotionDemo.hpp"
+#include "Demo/CircleWithAccelMotionDemo.hpp"
 #include "Demo/LineMotionDemo.hpp"
 #include "Palette.hpp"
+
+// TODO: Add Fast LCM Random Number Generator
+// TODO: Add Circle Motion Accel 
+// TODO: Add Ellipse in Video
+// TODO: Add Rectangle in Video
+// TODO: Add Fade effect in Video
+// TODO: Add fill in video
+// TODO: Add fill  
 
 using namespace g80;
 
@@ -10,7 +18,7 @@ auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
     VideoConfig video_config = set_default_video_config();
-    CircleMotionDemo demo;
+    CircleWithAccelMotionDemo demo;
 
     demo.create_window(video_config);
     demo.preprocess_states(); 
