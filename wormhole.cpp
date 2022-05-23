@@ -5,7 +5,6 @@
 #include "Palette.hpp"
 
 // TODO: Add Fast LCM Random Number Generator
-// TODO: Add Circle Motion Accel 
 // TODO: Add Ellipse in Video
 // TODO: Add Rectangle in Video
 // TODO: Add Fade effect in Video
