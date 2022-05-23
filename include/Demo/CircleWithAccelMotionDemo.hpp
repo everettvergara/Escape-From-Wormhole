@@ -16,7 +16,7 @@ namespace g80 {
         auto update_states() -> bool; 
 
     private:
-        const Sint32 TN_{3600}, N_{10000};
+        const Sint32 TN_{3600}, N_{1};
         SinCache<float> sine_{TN_};
         CosCache<float> cosine_{TN_};      
         std::vector<CircleWithAccelMotion<float>> whirls_;
@@ -29,12 +29,23 @@ namespace g80 {
 
     auto CircleWithAccelMotionDemo::preprocess_states() -> bool {
 
+/*
+            const Point<T> &p, 
+            const Sint32 radius,
+            const Sint32 sz_steps,
+            const Sint32 sz_trail,
+            const Sint32 start_ix, 
+            const Sint32 end_ix, 
+            const CosCache<T> &cosine_cache,
+            const SinCache<T> &sine_cache) {
+*/
+
         whirls_.reserve(N_);
         for (int i = 0; i < N_; ++i) {
             whirls_.emplace_back();
             whirls_[i].circle_with_accel_motion_set(
-                Point<float>{static_cast<float>(rand() % surface_->w), static_cast<float>(rand() % surface_->h)},
-                10 + rand() % 100, rand() % 1000, 10, rand() % 3600, rand() % 3600, cosine_, sine_);
+                Point<float>{static_cast<float>(surface_->w / 2.0f), static_cast<float>(surface_->h / 2.0f)},
+                350, 100, 2, 0, 3599, cosine_, sine_);
         } 
 
         pal_.add_gradients(surface_->format, 
@@ -58,13 +69,13 @@ namespace g80 {
             line(w.get_head(), w.get_tail(), pal_[static_cast<int>(300.0f * (w.get_tail_step() + size_of_trail) / (w.get_size_of_step() + size_of_trail))]);  
         }
 
-        for (auto &w : whirls_) {
-            if (!w.next(cosine_, sine_)) {
-                w.circle_with_accel_motion_set(
-                    Point<float>{static_cast<float>(rand() % surface_->w), static_cast<float>(rand() % surface_->h)},
-                    10 + rand() % 100, rand() % 1000, 10, rand() % 3600, rand() % 3600, cosine_, sine_);
-            }  
-        }
+        for (int i = 0; i < N_; ++i) {
+            if (!whirls_[i].next(cosine_, sine_)) {
+                whirls_[i].circle_with_accel_motion_set(
+                Point<float>{static_cast<float>(surface_->w / 2.0f), static_cast<float>(surface_->h / 2.0f)},
+                350, 100, 2, 0, 3599, cosine_, sine_);
+            }
+        } 
 
         return true;
     }
