@@ -42,21 +42,24 @@ namespace g80 {
         }
 
         auto next(const CosCache<T> &cosine_cache, const SinCache<T> &sine_cache) -> bool {
-            // if (this->tail_step_ == this->sz_steps_) return false;
+            if (this->tail_step_ == this->sz_steps_) return false;
 
-            // float size = cosine_cache.get_size();
+            float size = cosine_cache.get_size();
 
-            // if (this->head_step_ < this->sz_steps_) {
-            //     head_angle_ += inc_;
+            if (this->head_step_ < this->sz_steps_) {
+                lisa_.angle_x += inc_x_;
+                lisa_.angle_y += inc_y_;
 
-            //     if (head_angle_ >= size) head_angle_ = head_angle_ - size;
-            //     else if (head_angle_ < 0.0f) head_angle_ = size + head_angle_;
+                if (lisa_.angle_x >= size) lisa_.angle_x = lisa_.angle_x - size;
+                else if (lisa_.angle_x < 0.0f) lisa_.angle_x = size + lisa_.angle_x;
+                if (lisa_.angle_y >= size) lisa_.angle_y = lisa_.angle_y - size;
+                else if (lisa_.angle_y < 0.0f) lisa_.angle_y = size + lisa_.angle_y;
 
-            //     this->head_.x = center_.x + radius_ * cosine_cache[static_cast<Sint32>(head_angle_)];
-            //     this->head_.y = center_.y + radius_ * sine_cache[static_cast<Sint32>(head_angle_)];
+                this->head_.x = lisa.p.x + lisa.radius_x * cosine_cache[static_cast<Sint32>(head_angle_)];
+                this->head_.y = lisa.p.y + lisa.radius_y * sine_cache[static_cast<Sint32>(head_angle_)];
 
-            //     ++this->head_step_;
-            // }
+                ++this->head_step_;
+            }
 
             // if (this->tail_step_++ >= 0) {
             //     tail_angle_ += inc_;
