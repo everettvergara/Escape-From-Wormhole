@@ -1,10 +1,8 @@
 
 #include <iostream>
 // tODO: Remove two - phase construction of motion
-#include "Demo/CircleWithAccelMotionDemo.hpp"
-#include "Demo/LineMotionDemo.hpp"
+#include "Demo/LissajousMotionDemo.hpp"
 #include "Palette.hpp"
-#include "LCMRND.hpp"
 
 // Lissajous Motion
 // QuadBezier Motion
@@ -25,7 +23,7 @@ auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
     VideoConfig video_config = set_default_video_config();
-    CircleWithAccelMotionDemo demo;
+    LissajousMotionDemo demo;
 
     demo.create_window(video_config);
     demo.preprocess_states(); 

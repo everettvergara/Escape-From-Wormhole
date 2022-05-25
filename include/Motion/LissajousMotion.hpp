@@ -21,18 +21,20 @@ namespace g80 {
         ~LissajousMotion() {}
 
         auto lissajous_motion_set(
-            const Lissajous &lisa,
+            const Lissajous<T> &lisa,
             const Sint32 sz_steps,
             const Sint32 sz_trail,
             const CosCache<T> &cosine_cache,
-            const SinCache<T> &sine_cache) : 
-            lisa_(lisa) {
-
+            const SinCache<T> &sine_cache) {
+                
+            lisa_ = lisa;
             head_ = Point<T>{
-                lisa_.p.x + lisa_.radius_x * cosine_cache[angle_x], 
-                lisa_.p.y + lisa_.radius_y * sine_cache[angle_y]};
+                lisa_.p.x + lisa_.radius_x * cosine_cache[lisa.angle_x], 
+                lisa_.p.y + lisa_.radius_y * sine_cache[lisa.angle_y]};
 
             tail_ = {head_};
+            tail_angle_x_ = lisa_.angle_x;
+            tail_angle_y_ = lisa_.angle_y;
             sz_steps_ = {sz_steps};
             tail_step_ = {-sz_trail};
             head_step_ = {0};
@@ -55,36 +57,39 @@ namespace g80 {
                 if (lisa_.angle_y >= size) lisa_.angle_y = lisa_.angle_y - size;
                 else if (lisa_.angle_y < 0.0f) lisa_.angle_y = size + lisa_.angle_y;
 
-                this->head_.x = lisa.p.x + lisa.radius_x * cosine_cache[static_cast<Sint32>(head_angle_)];
-                this->head_.y = lisa.p.y + lisa.radius_y * sine_cache[static_cast<Sint32>(head_angle_)];
+                head_.x = lisa_.p.x + lisa_.radius_x * cosine_cache[static_cast<Sint32>(lisa_.angle_x)];
+                head_.y = lisa_.p.y + lisa_.radius_y * sine_cache[static_cast<Sint32>(lisa_.angle_y)];
 
-                ++this->head_step_;
+                ++head_step_;
             }
 
-            // if (this->tail_step_++ >= 0) {
-            //     tail_angle_ += inc_;
+            if (tail_step_++ >= 0) {
+                tail_angle_x_ += inc_x_;
+                tail_angle_y_ += inc_y_;
 
-            //     if (tail_angle_ >= size) tail_angle_ = tail_angle_ - size;
-            //     else if (tail_angle_ < 0.0f) tail_angle_ = size + tail_angle_;
+                if (tail_angle_x_ >= size) tail_angle_x_ = tail_angle_x_ - size;
+                else if (tail_angle_x_ < 0.0f) tail_angle_x_ = size + tail_angle_x_;
+                if (tail_angle_y_ >= size) tail_angle_y_ = tail_angle_y_ - size;
+                else if (tail_angle_y_ < 0.0f) tail_angle_y_ = size + tail_angle_y_;
 
-            //     this->tail_.x = center_.x + radius_ * cosine_cache[static_cast<Sint32>(tail_angle_)];
-            //     this->tail_.y = center_.y + radius_ * sine_cache[static_cast<Sint32>(tail_angle_)];
-            // }
+                tail_.x = lisa_.p.x + lisa_.radius_x * cosine_cache[static_cast<Sint32>(tail_angle_x_)];
+                tail_.y = lisa_.p.y + lisa_.radius_y * sine_cache[static_cast<Sint32>(tail_angle_y_)];
+            }
 
             return true;
         }
 
-        // inline auto get_head() const -> const Point<T> & {return head_;}
-        // inline auto get_tail() const -> const Point<T> & {return tail_;}
-        // inline auto get_head_step() const -> Sint32 {return head_step_;}
-        // inline auto get_tail_step() const -> Sint32 {return tail_step_;}
-        // inline auto get_size_of_step() const -> Sint32 {return sz_steps_;}
-
+        inline auto get_head() const -> const Point<T> & {return head_;}
+        inline auto get_tail() const -> const Point<T> & {return tail_;}
+        inline auto get_head_step() const -> Sint32 {return head_step_;}
+        inline auto get_tail_step() const -> Sint32 {return tail_step_;}
+        inline auto get_size_of_step() const -> Sint32 {return sz_steps_;}
 
     private:
-        Lissajous lisa_;
+        Lissajous<T> lisa_;
         Point<T> head_, tail_;
         Sint32 sz_steps_, tail_step_, head_step_;
+        T tail_angle_x_, tail_angle_y_;
         T inc_x_, inc_y_;
     };
 }
