@@ -17,7 +17,7 @@ namespace g80 {
         auto update_states() -> bool; 
 
     private:
-        const Sint32 TN_{3600}, N_{1000};
+        const Sint32 TN_{3600}, N_{300};
         SinCache<float> sine_{TN_};
         CosCache<float> cosine_{TN_};      
         std::vector<LissajousMotion<float>> whirls_;
@@ -34,8 +34,8 @@ namespace g80 {
         for (int i = 0; i < N_; ++i) {
             whirls_.emplace_back();
             
-            float angle_x = 100.0f * (lcm_rnd() % 1000);
-            float angle_y = 100.0f * (lcm_rnd() % 1000);
+            float angle_x = 100.0f + (lcm_rnd() % 3600);
+            float angle_y = 100.0f + (lcm_rnd() % 3600);
 
             whirls_[i].lissajous_motion_set(
                     Lissajous<float> {
@@ -43,7 +43,7 @@ namespace g80 {
                         100.0f + (lcm_rnd() % 300), 100.0f + (lcm_rnd() % 300),
                         angle_x, angle_y,
                         angle_x + (lcm_rnd() % 3600), angle_y + (lcm_rnd() % 3600)},
-                    100, 10, cosine_, sine_);
+                    10 + lcm_rnd() % 100, 2, cosine_, sine_);
         } 
 
         pal_.add_gradients(surface_->format, 
@@ -64,15 +64,15 @@ namespace g80 {
         // Draw
         for (auto &w : whirls_) {
             Sint32 size_of_trail = w.get_head_step() - w.get_tail_step();
-            //pset(w.get_head(), pal_[static_cast<int>(300.0f * (w.get_tail_step() + size_of_trail) / (w.get_size_of_step() + size_of_trail))]);  
+            // pset(w.get_head(), pal_[static_cast<int>(300.0f * (w.get_tail_step() + size_of_trail) / (w.get_size_of_step() + size_of_trail))]);  
             line(w.get_head(), w.get_tail(), pal_[static_cast<int>(300.0f * (w.get_tail_step() + size_of_trail) / (w.get_size_of_step() + size_of_trail))]);  
         }
 
         for (auto &w : whirls_) {
             if (!w.next(cosine_, sine_)) {
 
-                float angle_x = 100.0f * (lcm_rnd() % 1000);
-                float angle_y = 100.0f * (lcm_rnd() % 1000);
+                float angle_x = 100.0f + (lcm_rnd() % 3600);
+                float angle_y = 100.0f + (lcm_rnd() % 3600);
 
                 w.lissajous_motion_set(
                     Lissajous<float> {
@@ -80,7 +80,7 @@ namespace g80 {
                         100.0f + (lcm_rnd() % 300), 100.0f + (lcm_rnd() % 300),
                         angle_x, angle_y,
                         angle_x + (lcm_rnd() % 3600), angle_y + (lcm_rnd() % 3600)},
-                    100, 10, cosine_, sine_);
+                    10 + lcm_rnd() % 100, 2, cosine_, sine_);
                 } 
             }  
         return true;
