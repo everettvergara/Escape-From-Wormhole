@@ -66,7 +66,7 @@ namespace g80 {
         // Draw
         for (auto &w : whirls_) {
             Sint32 size_of_trail = w.get_head_step() - w.get_tail_step();
-            line(w.get_head(), w.get_tail(), pal_[static_cast<int>(300.0f * (w.get_tail_step() + size_of_trail) / (w.get_size_of_step() + size_of_trail))]);  
+            line(w.get_head(), w.get_tail(), pal_[static_cast<int>(300.0f * (w.get_tail_step()  / (w.get_size_of_step() + size_of_trail))]);  
         }
 
         for (int i = 0; i < N_; ++i) {

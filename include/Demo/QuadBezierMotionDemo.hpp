@@ -15,26 +15,16 @@ namespace g80 {
 
         auto preprocess_states() -> bool;
         auto update_states() -> bool;
-
-        /*
-        virtual auto create_window(const VideoConfig &video_config) -> bool;
-        virtual auto destroy_window() -> void;
-        virtual auto preprocess_states() -> bool;
-        virtual auto run() -> bool;
-        virtual auto capture_events() -> bool;
-        virtual auto update_states() -> bool;
-        virtual auto update_window_surface() -> bool;
-        */
-
        auto capture_events() -> bool;
 
     private:
-        const Sint32 TrigCacheN_{3600};
+        const Sint32 TrigCacheN_{10000};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
-        float inner_radius_{50}, mid_radius_{350}, outer_radius_{700};
+        float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
+        Palette pal_;
     };
 
     QuadBezierMotionDemo::QuadBezierMotionDemo() : Video() {
@@ -58,31 +48,50 @@ namespace g80 {
             p3.y = surface_->h / 2 + outer_radius_ * sine_[i];  
 
             Sint32 steps = 10 + lcm_rnd() % 100;
-            Sint32 trail = 11 - steps / 110.0f;
+            Sint32 trail = 2; // 11 - steps / 110.0f;
             quad_bezier_motion_[i].quad_bezier_set(p1, p2, p3, steps, trail);
         }
+
+        pal_.add_gradients(surface_->format,
+            {
+                {0, SDL_MapRGBA(surface_->format, 0, 0, 0, 255)},
+                {25, SDL_MapRGBA(surface_->format, 0, 0, 100, 255)},
+                {50, SDL_MapRGBA(surface_->format, 0, 100, 255, 255)},
+                {75, SDL_MapRGBA(surface_->format, 100, 255, 255, 255)},
+                {100, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
+                
+                });        
         return true;
     }
 
     auto QuadBezierMotionDemo::update_states() -> bool {
-        // Palette pal;
-        // pal.add_gradients(surface_->format,
-        //     {
-        //         {0, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
-        //         {38, SDL_MapRGBA(surface_->format, 0, 255, 0, 255)},
-        //         {75, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},
-        //         {112, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
-        //         {150, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},
-        //         {188, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
 
-        //         {226, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},                
-        //         {264, SDL_MapRGBA(surface_->format, 0, 255, 0, 255)},    
-        //         {300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
-                
-        //         });
+        SDL_FillRect(surface_, NULL, 0);
 
-        // // circle({1280/2, 720/2}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
-        // circle(mouse_, r_, pal, 0, 299);
+
+        for (auto &qb : quad_bezier_motion_) {
+            RGBAColor c = pal_[100 * qb.get_tail_step() / qb.get_size_of_step()];
+            line(qb.get_head(), qb.get_tail(), c);
+        }
+
+        for (Sint32 i = 0; i < TrigCacheN_; ++i) {
+            if (!quad_bezier_motion_[i].next()) {
+                Point<float> p1, p2, p3;
+                p1.x = surface_->w + inner_radius_ * cosine_[i];  
+                p1.y = surface_->h / 2 + inner_radius_ * sine_[i];  
+
+                p2.x = surface_->w / 2 + mid_radius_ * cosine_[i];  
+                p2.y = surface_->h / 2 + mid_radius_ * sine_[i];  
+
+                p3.x = surface_->w / 2 + outer_radius_ * cosine_[i];  
+                p3.y = surface_->h / 2 + outer_radius_ * sine_[i];  
+
+                Sint32 steps = 10 + lcm_rnd() % 100;
+                Sint32 trail = 2; //11 - steps / 110.0f;
+                quad_bezier_motion_[i].quad_bezier_set(p1, p2, p3, steps, trail);
+            }
+        }
+
         return true;
     }
 
