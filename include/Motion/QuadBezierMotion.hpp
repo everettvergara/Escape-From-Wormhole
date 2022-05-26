@@ -11,6 +11,10 @@ namespace g80 {
     public:
         QuadBezierMotion() {}
 
+        auto operator>(const QuadBezierMotion &rhs) const -> bool {
+            return tail_step_ > rhs.tail_step_;
+        }
+
         auto quad_bezier_set(
             const Point<T> &p1,
             const Point<T> &p2,
