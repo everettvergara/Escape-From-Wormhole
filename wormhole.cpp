@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include "QuadBezierMotionDemo.hpp"
-
+#include "PriorityList.hpp"
 
 // 3d in 2d graphics
 
@@ -16,12 +16,14 @@ using namespace g80;
 auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
-    VideoConfig video_config = set_default_video_config();
-    QuadBezierMotionDemo demo;
+    PriorityList pl(100);
 
-    demo.create_window(video_config);
-    demo.preprocess_states(); 
-    demo.run(); 
+    // VideoConfig video_config = set_default_video_config();
+    // QuadBezierMotionDemo demo;
+
+    // demo.create_window(video_config);
+    // demo.preprocess_states(); 
+    // demo.run(); 
 }
 
 auto set_default_video_config() -> VideoConfig { 
