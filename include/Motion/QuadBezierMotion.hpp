@@ -46,7 +46,14 @@ namespace g80 {
             }
 
             return true;
-        }    
+        }   
+
+        inline auto get_head() const -> const Point<T> & {return head_;}
+        inline auto get_tail() const -> const Point<T> & {return tail_;}
+        inline auto get_head_step() const -> Sint32 {return head_step_;}
+        inline auto get_tail_step() const -> Sint32 {return tail_step_;}
+        inline auto get_size_of_step() const -> Sint32 {return sz_steps_;}
+
     private:
         Point<T> p1_, p2_, p3_;
         Point<T> d1_, d2_;
