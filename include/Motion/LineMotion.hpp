@@ -15,7 +15,7 @@ namespace g80 {
             const Point<T> &start_point, 
             const Point<T> &end_point, 
             const Sint32 sz_steps,
-            const Sint32 sz_trail) {
+            const Sint32 sz_trail) -> void {
             
             head_ = {start_point};
             tail_ = {start_point};
