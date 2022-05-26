@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Video.hpp"
-#include "Motion/QuadBezierMotion.hpp"
+#include "QuadBezierMotion.hpp"
 #include "TrigCache.hpp"
 #include "LCMRND.hpp"
 
@@ -33,8 +33,6 @@ namespace g80 {
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
         float inner_radius_{50}, mid_radius_{350}, outer_radius_{700};
-        QuadBezierMotion<float>
-
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
     };
@@ -67,24 +65,24 @@ namespace g80 {
     }
 
     auto QuadBezierMotionDemo::update_states() -> bool {
-        Palette pal;
-        pal.add_gradients(surface_->format,
-            {
-                {0, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
-                {38, SDL_MapRGBA(surface_->format, 0, 255, 0, 255)},
-                {75, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},
-                {112, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
-                {150, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},
-                {188, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
+        // Palette pal;
+        // pal.add_gradients(surface_->format,
+        //     {
+        //         {0, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
+        //         {38, SDL_MapRGBA(surface_->format, 0, 255, 0, 255)},
+        //         {75, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},
+        //         {112, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
+        //         {150, SDL_MapRGBA(surface_->format, 255, 0, 255, 255)},
+        //         {188, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
 
-                {226, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},                
-                {264, SDL_MapRGBA(surface_->format, 0, 255, 0, 255)},    
-                {300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
+        //         {226, SDL_MapRGBA(surface_->format, 0, 0, 255, 255)},                
+        //         {264, SDL_MapRGBA(surface_->format, 0, 255, 0, 255)},    
+        //         {300, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
                 
-                });
+        //         });
 
-        // circle({1280/2, 720/2}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
-        circle(mouse_, r_, pal, 0, 299);
+        // // circle({1280/2, 720/2}, 200, SDL_MapRGBA(surface_->format, 255, 0, 0, 255));
+        // circle(mouse_, r_, pal, 0, 299);
         return true;
     }
 
@@ -100,10 +98,10 @@ namespace g80 {
             }
             
             else if (e.type == SDL_MOUSEMOTION) {
-                mouse_.x = e.motion.x;
-                mouse_.y = e.motion.y;
-                if (r_ >100 || r_ <1) rn_ *= -1;
-                r_ += rn_;
+                // mouse_.x = e.motion.x;
+                // mouse_.y = e.motion.y;
+                // if (r_ >100 || r_ <1) rn_ *= -1;
+                // r_ += rn_;
                 
             }
         }

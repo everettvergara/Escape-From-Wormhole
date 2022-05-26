@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "Demo/QuadBezierMotionDemo.hpp"
+#include "QuadBezierMotionDemo.hpp"
 
 
 // 3d in 2d graphics

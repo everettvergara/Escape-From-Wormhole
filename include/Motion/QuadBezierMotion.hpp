@@ -19,14 +19,14 @@ namespace g80 {
             const Sint32 sz_trail) -> void {
 
             p1_ = p1; p2_ = p2; p3_ = p3;
-            d1 = p2_ - p1_;
-            d2 = p3_ - p2_;
+            d1_ = p2_ - p1_;
+            d2_ = p3_ - p2_;
 
             head_ = {p1_};
             tail_ = {p1_};
-            sz_steps_ = {sz_steps};
+            sz_steps_ = {static_cast<T>(sz_steps)};
             head_step_ = {0};
-            tail_step_ = {-sz_trail};
+            tail_step_ = {static_cast<T>(-sz_trail)};
         }
 
         auto next() -> bool {
@@ -34,15 +34,15 @@ namespace g80 {
 
             if (head_step_ < sz_steps_) {
                 ++head_step_;
-                auto cp1 = lerp_point_b_less_a(p1, d1, head_step_, max_steps);
-                auto cp2 = lerp_point_b_less_a(p2, d2, head_step_, max_steps);
-                head_ = lerp_point(cp1, cp2, head_step_, max_steps);
+                auto cp1 = lerp_point_b_less_a(p1_, d1_, head_step_, sz_steps_);
+                auto cp2 = lerp_point_b_less_a(p2_, d2_, head_step_, sz_steps_);
+                head_ = lerp_point(cp1, cp2, head_step_, sz_steps_);
             }
 
             if (tail_step_++ >= 0) {
-                auto cp1 = lerp_point_b_less_a(p1, d1, tail_step_, max_steps);
-                auto cp2 = lerp_point_b_less_a(p2, d2, tail_step_, max_steps);
-                tail_ = lerp_point(cp1, cp2, tail_step_, max_steps);
+                auto cp1 = lerp_point_b_less_a(p1_, d1_, tail_step_, sz_steps_);
+                auto cp2 = lerp_point_b_less_a(p2_, d2_, tail_step_, sz_steps_);
+                tail_ = lerp_point(cp1, cp2, tail_step_, sz_steps_);
             }
 
             return true;
