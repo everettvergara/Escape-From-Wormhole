@@ -18,9 +18,10 @@ namespace g80 {
        auto capture_events() -> bool;
 
     private:
-        const Sint32 TrigCacheN_{10000};
+        const Sint32 TrigCacheN_{36000};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
+        Point<float> origin_;
         float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
@@ -33,13 +34,14 @@ namespace g80 {
 
     auto QuadBezierMotionDemo::preprocess_states() -> bool {
         
+        origin_ = {static_cast<float>(surface_->w), static_cast<float>(surface_->h / 2)};
         quad_bezier_motion_.reserve(TrigCacheN_);
         for (Sint32 i = 0; i < TrigCacheN_; ++i) {
             quad_bezier_motion_.emplace_back();
 
             Point<float> p1, p2, p3;
-            p1.x = surface_->w + inner_radius_ * cosine_[i];  
-            p1.y = surface_->h / 2 + inner_radius_ * sine_[i];  
+            p1.x = origin_.x + inner_radius_ * cosine_[i];  
+            p1.y = origin_.y + inner_radius_ * sine_[i];  
 
             p2.x = surface_->w / 2 + mid_radius_ * cosine_[i];  
             p2.y = surface_->h / 2 + mid_radius_ * sine_[i];  
@@ -48,7 +50,7 @@ namespace g80 {
             p3.y = surface_->h / 2 + outer_radius_ * sine_[i];  
 
             Sint32 steps = 10 + lcm_rnd() % 100;
-            Sint32 trail = 2; // 11 - steps / 110.0f;
+            Sint32 trail = 1; // 11 - steps / 110.0f;
             quad_bezier_motion_[i].quad_bezier_set(p1, p2, p3, steps, trail);
         }
 
@@ -70,15 +72,16 @@ namespace g80 {
 
 
         for (auto &qb : quad_bezier_motion_) {
-            RGBAColor c = pal_[100 * qb.get_tail_step() / qb.get_size_of_step()];
+            RGBAColor c = pal_[100 * qb.get_head_step() / qb.get_size_of_step()];
+            // pset(qb.get_head(), c);
             line(qb.get_head(), qb.get_tail(), c);
         }
 
         for (Sint32 i = 0; i < TrigCacheN_; ++i) {
             if (!quad_bezier_motion_[i].next()) {
                 Point<float> p1, p2, p3;
-                p1.x = surface_->w + inner_radius_ * cosine_[i];  
-                p1.y = surface_->h / 2 + inner_radius_ * sine_[i];  
+                p1.x = origin_.x + inner_radius_ * cosine_[i];  
+                p1.y = origin_.y + inner_radius_ * sine_[i];  
 
                 p2.x = surface_->w / 2 + mid_radius_ * cosine_[i];  
                 p2.y = surface_->h / 2 + mid_radius_ * sine_[i];  
@@ -87,7 +90,7 @@ namespace g80 {
                 p3.y = surface_->h / 2 + outer_radius_ * sine_[i];  
 
                 Sint32 steps = 10 + lcm_rnd() % 100;
-                Sint32 trail = 2; //11 - steps / 110.0f;
+                Sint32 trail = 1; //11 - steps / 110.0f;
                 quad_bezier_motion_[i].quad_bezier_set(p1, p2, p3, steps, trail);
             }
         }
@@ -107,11 +110,8 @@ namespace g80 {
             }
             
             else if (e.type == SDL_MOUSEMOTION) {
-                // mouse_.x = e.motion.x;
-                // mouse_.y = e.motion.y;
-                // if (r_ >100 || r_ <1) rn_ *= -1;
-                // r_ += rn_;
-                
+                origin_.x = static_cast<float>(e.motion.x);
+                origin_.y = static_cast<float>(e.motion.y);
             }
         }
         return true;
