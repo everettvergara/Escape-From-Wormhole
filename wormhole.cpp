@@ -16,7 +16,7 @@ using namespace g80;
 auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
-    PriorityList pl(100);
+    PriorityList pl(100, 1000);
 
     // VideoConfig video_config = set_default_video_config();
     // QuadBezierMotionDemo demo;

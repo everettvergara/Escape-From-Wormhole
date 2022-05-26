@@ -8,21 +8,36 @@ namespace g80 {
 
     class PriorityList {
     public:
-        PriorityList(size_t max_ixs) : max_ixs_(max_ixs) {
+        PriorityList(size_t max_ix, size_t max_list) : 
+            max_ix_(max_ix),
+            max_list_(max_list) {
 
-            for (size_t i = 0; i < max_ixs_; ++i) {
+            ixs_.reserve(max_ix + 1);
+            list_.reserve(max_list_ + 1);
+            list_prev_.reserve(max_list_ + 1);
+            list_ix_.reserve(max_list_ + 1);
 
-            }
+            for (size_t i = 0; i <= max_ix_; ++i) ixs_.emplace_back(max_list_);
+            for (size_t i = 0; i <= max_list_; ++i) list_.emplace_back(max_list_);
+            for (size_t i = 0; i <= max_list_; ++i) list_prev_.emplace_back(i);
+            for (size_t i = 0; i <= max_list_; ++i) list_ix_.emplace_back(max_ix_);
+        }
+
+        auto add(size_t ix, size_t list_ix) -> void {
+            list_[list_ix] = ixs_[ix];
+            list_prev[ixs_[ix]] = list_ix;
+            ixs_[ix] = list_ix;
+            list_prev_[list_ix] = list_ix;
         }
 
     private:
-        const size_t max_ixs_;
+        const size_t max_ix_, max_list_;
         
         // How it works?
         //
         // ixs[i]:
         //  0   1   2   3   4   5   IN
-        //  |
+        //  |   LN  LN  LN  LN  LN  LN
         //  v
         //
         //  list[i]
@@ -40,10 +55,10 @@ namespace g80 {
         //
         
         
-        const std::vector<size_t> ixs_;
-        const std::vector<size_t> list_;
-        const std::vector<size_t> list_prev_;
-        const std::vector<size_t> list_ix_;
+        std::vector<size_t> ixs_;
+        std::vector<size_t> list_;
+        std::vector<size_t> list_prev_;
+        // std::vector<size_t> list_ix_;
         
     };
 }
