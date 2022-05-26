@@ -1,13 +1,7 @@
 
 #include <iostream>
-// tODO: Remove two - phase construction of motion
-#include "Demo/LissajousMotionDemo.hpp"
-#include "Palette.hpp"
+#include "Demo/QuadBezierMotionDemo.hpp"
 
-// Lissajous Motion
-// QuadBezier Motion
-// Cubic Motion 
-// Catmulrom Motion
 
 // 3d in 2d graphics
 
@@ -23,7 +17,7 @@ auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
     VideoConfig video_config = set_default_video_config();
-    LissajousMotionDemo demo;
+    QuadBezierMotionDemo demo;
 
     demo.create_window(video_config);
     demo.preprocess_states(); 
