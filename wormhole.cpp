@@ -15,7 +15,7 @@ using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
-
+/*
     PriorityList pl(3, 5);
     pl.debug();
     pl.add(0, 0);
@@ -28,6 +28,8 @@ auto main(int argc, const char *argv[]) -> int {
         std::cout << pl.get_node_from_nix(cur) << "\n";
         cur = pl.get_next_after(cur);
     }
+
+*/    
     
 // //    pl.add(0, 0);
 

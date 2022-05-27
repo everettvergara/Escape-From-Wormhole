@@ -3,8 +3,23 @@
 
 #include <iostream>
 #include <vector>
-#include <SDL.h>
 
+/*
+    PriorityList pl(3, 5);
+    pl.debug();
+    pl.add(0, 0);
+    pl.add(0, 2);
+    pl.add(0, 4);
+    
+    auto group = 0;
+    auto cur = pl.get_next_after(group);
+    while (cur != pl.get_tail_group_ix(group)) {
+        std::cout << pl.get_node_from_nix(cur) << "\n";
+        cur = pl.get_next_after(cur);
+    }
+
+*/   
+s
 namespace g80 {
 
     class PriorityList {
