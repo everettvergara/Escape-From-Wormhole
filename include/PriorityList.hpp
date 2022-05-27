@@ -16,13 +16,36 @@ namespace g80 {
             next_.reserve(list_size);
             prev_.reserve(list_size);
 
+            // Init Head
+            auto tix = get_tail_ix(0);
+            for (size_t i = 0; i < sz_group; ++i) {
+                next_.emplace_back(tix + i);
+                prev_.emplace_back(tix);
+            }
+            
+            // Init Tail
+            for (size_t i = tix; i < tix + sz_group; ++i) {
+                next_.emplace_back(i);
+                prev_.emplace_back(i - tix);
+            }
         }
 
-        inline auto get_tail_ix(size_t tail) -> size_t {return sz_group_ + tail;}
-        inline auto get_node_ix(size_t node) -> size_t {return (sz_group_ << 1) + node;}
+        inline auto get_tail_ix(const size_t tail) -> const size_t {return sz_group_ + tail;}
+        inline auto get_node_ix(const size_t node) -> const size_t {return (sz_group_ << 1) + node;}
 
-        auto add(size_t ix, size_t list_ix) -> void {
+        auto add(const size_t gix, const size_t node) -> void {
+            auto nix = get_node_ix(node);
 
+            //
+            // n:    head --> new --> node --> tail <-            //
+            // p: -> head <-- new <-- node <-- tail   
+            // 
+
+            // Add nix to head
+            next_[nix] = next_[gix];
+            prev_[nix] = gix;
+            prev_[next_[gix]] = nix
+            next_[gix] = nix;
         }
 
         auto del(size_t list_ix) -> void {
@@ -32,24 +55,24 @@ namespace g80 {
 
         auto debug() -> void {
             
-            std::cout << "IXS_:\n";            
-            for (size_t i = 0; i < ixs_.size(); ++i) std::cout << "\t" << i;
-            std::cout << "\n";
-            for (size_t i = 0; i < ixs_.size(); ++i) std::cout << "\t" << ixs_[i];
+            // std::cout << "IXS_:\n";            
+            // for (size_t i = 0; i < ixs_.size(); ++i) std::cout << "\t" << i;
+            // std::cout << "\n";
+            // for (size_t i = 0; i < ixs_.size(); ++i) std::cout << "\t" << ixs_[i];
 
-            std::cout << "\n";
-            std::cout << "LIST_:\n";            
-            for (size_t i = 0; i < list_.size(); ++i) std::cout << "\t" << i;
-            std::cout << "\n";
-            for (size_t i = 0; i < list_.size(); ++i) std::cout << "\t" << list_[i];
+            // std::cout << "\n";
+            // std::cout << "LIST_:\n";            
+            // for (size_t i = 0; i < list_.size(); ++i) std::cout << "\t" << i;
+            // std::cout << "\n";
+            // for (size_t i = 0; i < list_.size(); ++i) std::cout << "\t" << list_[i];
 
-            std::cout << "\n";
-            std::cout << "PREV_LIST_:\n";            
-            for (size_t i = 0; i < list_prev_.size(); ++i) std::cout << "\t" << i;
-            std::cout << "\n";
-            for (size_t i = 0; i < list_prev_.size(); ++i) std::cout << "\t" << list_prev_[i];
+            // std::cout << "\n";
+            // std::cout << "PREV_LIST_:\n";            
+            // for (size_t i = 0; i < list_prev_.size(); ++i) std::cout << "\t" << i;
+            // std::cout << "\n";
+            // for (size_t i = 0; i < list_prev_.size(); ++i) std::cout << "\t" << list_prev_[i];
 
-            std::cout << "\n" << std::endl;
+            // std::cout << "\n" << std::endl;
         }
 
     private:
@@ -66,6 +89,7 @@ namespace g80 {
         // add (h, n), n = groups + 1 + n
         //
         //  add(0, 0) h = 0, n = 6
+        // 
 
         size_t sz_group_, sz_node_;
         std::vector<size_t> next_;
