@@ -76,12 +76,6 @@ namespace g80 {
 
         SDL_FillRect(surface_, NULL, 0);
 
-        // for (auto &qb : quad_bezier_motion_) {
-        //     RGBAColor c = pal_[100 * qb.get_head_step() / qb.get_size_of_step()];
-        //     // pset(qb.get_head(), c);
-        //     line(qb.get_head(), qb.get_tail(), c);
-        // }
-
         for (size_t group = 0; group < 110; ++group) {
             auto cur = pl_.get_next_after(group);
             auto tail = pl_.get_tail_group_ix(group);
