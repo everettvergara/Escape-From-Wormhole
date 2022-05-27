@@ -18,7 +18,7 @@ namespace g80 {
        auto capture_events() -> bool;
 
     private:
-        const Sint32 TrigCacheN_{3600};
+        const Sint32 TrigCacheN_{36000};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
         Point<float> origin_;
@@ -58,7 +58,7 @@ namespace g80 {
 
         pal_.add_gradients(surface_->format,
             {
-                {0, SDL_MapRGBA(surface_->format, 0, 0, 0, 255)},
+                {0, SDL_MapRGBA(surface_->format, 100, 0, 0, 255)},
                 {25, SDL_MapRGBA(surface_->format, 0, 0, 100, 255)},
                 {50, SDL_MapRGBA(surface_->format, 0, 100, 255, 255)},
                 {75, SDL_MapRGBA(surface_->format, 100, 255, 255, 255)},
