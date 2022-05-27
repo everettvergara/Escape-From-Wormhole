@@ -20,7 +20,7 @@ namespace g80 {
             auto tix = get_tail_ix(0);
             for (size_t i = 0; i < sz_group; ++i) {
                 next_.emplace_back(tix + i);
-                prev_.emplace_back(tix);
+                prev_.emplace_back(i);
             }
             
             // Init Tail
@@ -30,7 +30,7 @@ namespace g80 {
             }
 
             // Init Nodes
-            auto nix = get_node_ix(0)
+            auto nix = get_node_ix(0);
             for (size_t i = nix; i < nix + sz_node; ++i) {
                 next_.emplace_back(i);
                 prev_.emplace_back(i);
@@ -51,7 +51,7 @@ namespace g80 {
             if (is_nix_connected(nix)) del_nix(nix);
             next_[nix] = next_[gix];
             prev_[nix] = gix;
-            prev_[next_[gix]] = nix
+            prev_[next_[gix]] = nix;
             next_[gix] = nix;
         }
 
@@ -74,7 +74,7 @@ namespace g80 {
             std::cout << "\n";
             for (size_t i = 0; i < next_.size(); ++i) std::cout << "\t" << next_[i];
 
-            std::cout << "prev_:\n";            
+            std::cout << "\nprev_:\n";            
             for (size_t i = 0; i < prev_.size(); ++i) std::cout << "\t" << i;
             std::cout << "\n";
             for (size_t i = 0; i < prev_.size(); ++i) std::cout << "\t" << prev_[i];

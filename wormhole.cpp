@@ -16,7 +16,9 @@ using namespace g80;
 auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
-//     PriorityList pl(5, 10);
+    PriorityList pl(3, 5);
+    pl.debug();
+
 //     pl.add(0, 1);
 // //    pl.add(0, 0);
 
@@ -25,12 +27,12 @@ auto main(int argc, const char *argv[]) -> int {
 
 //     pl.debug();
     
-    VideoConfig video_config = set_default_video_config();
-    QuadBezierMotionDemo demo;
+    // VideoConfig video_config = set_default_video_config();
+    // QuadBezierMotionDemo demo;
 
-    demo.create_window(video_config);
-    demo.preprocess_states(); 
-    demo.run(); 
+    // demo.create_window(video_config);
+    // demo.preprocess_states(); 
+    // demo.run(); 
 }
 
 auto set_default_video_config() -> VideoConfig { 
