@@ -19,8 +19,15 @@ auto main(int argc, const char *argv[]) -> int {
     PriorityList pl(3, 5);
     pl.debug();
     pl.add(0, 0);
-    pl.add(0, 1);
-    pl.debug();
+    pl.add(0, 2);
+    pl.add(0, 4);
+    
+    auto group = 0;
+    auto cur = pl.get_next_after(group);
+    while (cur != pl.get_tail_group_ix(group)) {
+        std::cout << cur << "\n";
+    }
+    
 // //    pl.add(0, 0);
 
 

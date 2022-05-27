@@ -17,7 +17,7 @@ namespace g80 {
             prev_.reserve(list_size);
 
             // Init Head
-            auto tix = get_tail_ix(0);
+            auto tix = get_tail_group_ix(0);
             for (size_t i = 0; i < sz_group; ++i) {
                 next_.emplace_back(tix + i);
                 prev_.emplace_back(i);
@@ -37,10 +37,14 @@ namespace g80 {
             }
         }
 
-        inline auto get_tail_ix(const size_t tail) -> const size_t {return sz_group_ + tail;}
+        inline auto get_node_from_nix(const size_t nix) -> const size_t {return nix - (sz_group_ << 1);}
+
+        inline auto get_next_after(const size_t nix) -> const size_t {return next_[nix];}
+        inline auto get_tail_group_ix(const size_t group) -> const size_t {return sz_group_ + group;}
         inline auto get_node_ix(const size_t node) -> const size_t {return (sz_group_ << 1) + node;}
         inline auto is_node_connected(const size_t node) -> const bool {auto nix = get_node_ix(node); return next_[nix] != nix;}
         inline auto is_nix_connected(const size_t nix) -> const bool {return next_[nix] != nix;}
+
 
         inline auto add(const size_t gix, const size_t node) -> void {
             auto nix = get_node_ix(node);
