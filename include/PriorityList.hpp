@@ -28,6 +28,8 @@ namespace g80 {
                 next_.emplace_back(i);
                 prev_.emplace_back(i - tix);
             }
+
+            // Init 
         }
 
         inline auto get_tail_ix(const size_t tail) -> const size_t {return sz_group_ + tail;}
@@ -37,7 +39,7 @@ namespace g80 {
             auto nix = get_node_ix(node);
 
             //
-            // n:    head --> new --> node --> tail <-            //
+            // n:    head --> new --> node --> tail <-           
             // p: -> head <-- new <-- node <-- tail   
             // 
 
@@ -48,8 +50,18 @@ namespace g80 {
             next_[gix] = nix;
         }
 
-        auto del(size_t list_ix) -> void {
-            //list_prev_[list_ix] = 
+        auto del(size_t node) -> void {
+            auto nix = get_node_ix(node);
+            
+            //
+            // n:    head -->  node --> tail <-    
+            //       new -->
+            // p: -> head  <-- node <-- tail   
+            //              <-- new
+            prev_[next_[nix]] = prev_[nix];
+            next_[prev_[nix]] = next_[nix];
+            next_[nix] = nix;
+            prev_[nix] = nix;
         }
 
 
@@ -83,8 +95,8 @@ namespace g80 {
         //
         //      0   1   2   3   4   5   6   7   8   9   10  11  12  13  14
         //      h0  h1  h2  t0  t1  t2  n0  n1  n2  n3  n4  n5  n6  n7  n8
-        // n:   t0  t1  t2  t0  t1  t2  
-        // p:   h0  h1  h2  h0  h1  h2
+        // n:   t0  t1  t2  t0  t1  t2  n0  n1  n2  n3  n4  n5  n6  n7  n8
+        // p:   h0  h1  h2  h0  h1  h2  n0  n1  n2  n3  n4  n5  n6  n7  n8
 
         // add (h, n), n = groups + 1 + n
         //
