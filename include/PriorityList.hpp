@@ -40,44 +40,46 @@ namespace g80 {
         inline auto get_tail_ix(const size_t tail) -> const size_t {return sz_group_ + tail;}
         inline auto get_node_ix(const size_t node) -> const size_t {return (sz_group_ << 1) + node;}
         inline auto is_node_connected(const size_t node) -> const bool {auto nix = get_node_ix(node); return next_[nix] != nix;}
+        inline auto is_nix_connected(const size_t nix) -> const bool {return next_[nix] != nix;}
 
-        auto add(const size_t gix, const size_t node) -> void {
+        inline auto add(const size_t gix, const size_t node) -> void {
             auto nix = get_node_ix(node);
+            add_nix(gix, nix);
+        }
+
+        inline auto add_nix(const size_t gix, const size_t nix) -> void {
+            if (is_nix_connected(nix)) del_nix(nix);
             next_[nix] = next_[gix];
             prev_[nix] = gix;
             prev_[next_[gix]] = nix
             next_[gix] = nix;
         }
 
-        auto del(size_t node) -> void {
+        inline auto del(const size_t node) -> void {
             auto nix = get_node_ix(node);
+            del_nix(nix);
+        }
+
+        inline auto del_nix(const size_t nix) -> void {
             prev_[next_[nix]] = prev_[nix];
             next_[prev_[nix]] = next_[nix];
             next_[nix] = nix;
             prev_[nix] = nix;
         }
 
-
         auto debug() -> void {
             
-            // std::cout << "IXS_:\n";            
-            // for (size_t i = 0; i < ixs_.size(); ++i) std::cout << "\t" << i;
-            // std::cout << "\n";
-            // for (size_t i = 0; i < ixs_.size(); ++i) std::cout << "\t" << ixs_[i];
+            std::cout << "next_:\n";            
+            for (size_t i = 0; i < next_.size(); ++i) std::cout << "\t" << i;
+            std::cout << "\n";
+            for (size_t i = 0; i < next_.size(); ++i) std::cout << "\t" << next_[i];
 
-            // std::cout << "\n";
-            // std::cout << "LIST_:\n";            
-            // for (size_t i = 0; i < list_.size(); ++i) std::cout << "\t" << i;
-            // std::cout << "\n";
-            // for (size_t i = 0; i < list_.size(); ++i) std::cout << "\t" << list_[i];
+            std::cout << "prev_:\n";            
+            for (size_t i = 0; i < prev_.size(); ++i) std::cout << "\t" << i;
+            std::cout << "\n";
+            for (size_t i = 0; i < prev_.size(); ++i) std::cout << "\t" << prev_[i];
 
-            // std::cout << "\n";
-            // std::cout << "PREV_LIST_:\n";            
-            // for (size_t i = 0; i < list_prev_.size(); ++i) std::cout << "\t" << i;
-            // std::cout << "\n";
-            // for (size_t i = 0; i < list_prev_.size(); ++i) std::cout << "\t" << list_prev_[i];
-
-            // std::cout << "\n" << std::endl;
+            std::cout << "\n" << std::endl;
         }
 
     private:
