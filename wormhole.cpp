@@ -25,7 +25,8 @@ auto main(int argc, const char *argv[]) -> int {
     auto group = 0;
     auto cur = pl.get_next_after(group);
     while (cur != pl.get_tail_group_ix(group)) {
-        std::cout << cur << "\n";
+        std::cout << pl.get_node_from_nix(cur) << "\n";
+        cur = pl.get_next_after(cur);
     }
     
 // //    pl.add(0, 0);
