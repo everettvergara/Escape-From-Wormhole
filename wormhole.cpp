@@ -18,8 +18,9 @@ auto main(int argc, const char *argv[]) -> int {
 
     PriorityList pl(3, 5);
     pl.debug();
-
-//     pl.add(0, 1);
+    pl.add(0, 0);
+    pl.add(0, 1);
+    pl.debug();
 // //    pl.add(0, 0);
 
 
