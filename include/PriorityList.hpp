@@ -19,12 +19,11 @@
     }
 
 */   
-s
-namespace g80 {
 
+namespace g80 {
     class PriorityList {
     public:
-        PriorityList(size_t sz_group, size_t sz_node) : 
+        PriorityList(const size_t sz_group, const size_t sz_node) : 
             sz_group_(sz_group), sz_node_(sz_node) {
 
             size_t list_size = sz_group_ * 2 + sz_node_;
@@ -53,13 +52,11 @@ namespace g80 {
         }
 
         inline auto get_node_from_nix(const size_t nix) -> const size_t {return nix - (sz_group_ << 1);}
-
         inline auto get_next_after(const size_t nix) -> const size_t {return next_[nix];}
         inline auto get_tail_group_ix(const size_t group) -> const size_t {return sz_group_ + group;}
         inline auto get_node_ix(const size_t node) -> const size_t {return (sz_group_ << 1) + node;}
         inline auto is_node_connected(const size_t node) -> const bool {auto nix = get_node_ix(node); return next_[nix] != nix;}
         inline auto is_nix_connected(const size_t nix) -> const bool {return next_[nix] != nix;}
-
 
         inline auto add(const size_t gix, const size_t node) -> void {
             auto nix = get_node_ix(node);
@@ -111,11 +108,6 @@ namespace g80 {
         //      h0  h1  h2  t0  t1  t2  n0  n1  n2  n3  n4  n5  n6  n7  n8
         // n:   t0  t1  t2  t0  t1  t2  n0  n1  n2  n3  n4  n5  n6  n7  n8
         // p:   h0  h1  h2  h0  h1  h2  n0  n1  n2  n3  n4  n5  n6  n7  n8
-
-        // add (h, n), n = groups + 1 + n
-        //
-        //  add(0, 0) h = 0, n = 6
-        // 
 
         size_t sz_group_, sz_node_;
         std::vector<size_t> next_;

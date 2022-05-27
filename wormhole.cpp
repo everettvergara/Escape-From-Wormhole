@@ -1,7 +1,8 @@
 
 #include <iostream>
+#include "BetterQuadBezierMotionDemo.hpp"
 #include "QuadBezierMotionDemo.hpp"
-#include "PriorityList.hpp"
+
 
 // 3d in 2d graphics
 
@@ -15,35 +16,13 @@ using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
-/*
-    PriorityList pl(3, 5);
-    pl.debug();
-    pl.add(0, 0);
-    pl.add(0, 2);
-    pl.add(0, 4);
-    
-    auto group = 0;
-    auto cur = pl.get_next_after(group);
-    while (cur != pl.get_tail_group_ix(group)) {
-        std::cout << pl.get_node_from_nix(cur) << "\n";
-        cur = pl.get_next_after(cur);
-    }
 
-*/    
-    
-// //    pl.add(0, 0);
+    VideoConfig video_config = set_default_video_config();
+    QuadBezierMotionDemo demo;
 
-
-//     // pl.add(0, 4);
-
-//     pl.debug();
-    
-    // VideoConfig video_config = set_default_video_config();
-    // QuadBezierMotionDemo demo;
-
-    // demo.create_window(video_config);
-    // demo.preprocess_states(); 
-    // demo.run(); 
+    demo.create_window(video_config);
+    demo.preprocess_states(); 
+    demo.run(); 
 }
 
 auto set_default_video_config() -> VideoConfig { 
@@ -51,7 +30,7 @@ auto set_default_video_config() -> VideoConfig {
         "Escape from The Wormhole",
         {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720},
         SDL_WINDOW_SHOWN,
-        60
+        120
     }; 
     return video_config;
 }

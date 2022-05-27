@@ -18,7 +18,7 @@ namespace g80 {
        auto capture_events() -> bool;
 
     private:
-        const Sint32 TrigCacheN_{36000};
+        const size_t TrigCacheN_{36000};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
         Point<float> origin_;

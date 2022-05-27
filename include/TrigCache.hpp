@@ -21,7 +21,7 @@ namespace g80 {
         "Trig Cache must have a floating-point type");
 
     public:
-        TrigCache(Sint32 N) {
+        TrigCache(size_t N) {
         }
 
         auto operator[](int i) -> T & {
@@ -43,7 +43,7 @@ namespace g80 {
     template<typename T>
     class SinCache : public TrigCache<T> {
     public:
-        SinCache(Sint32 N) : TrigCache<T>(N) {
+        SinCache(size_t N) : TrigCache<T>(N) {
             this->angle_values_.reserve(N);
             T a = 0.0f;
             T ainc = 2.0f * M_PI / N;
@@ -55,7 +55,7 @@ namespace g80 {
     template<typename T>
     class CosCache : public TrigCache<T> {
     public:
-        CosCache(Sint32 N) : TrigCache<T>(N) {
+        CosCache(size_t N) : TrigCache<T>(N) {
             this->angle_values_.reserve(N);
             T a = 0.0f;
             T ainc = 2.0f * M_PI / N;
