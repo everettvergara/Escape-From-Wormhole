@@ -29,21 +29,20 @@ namespace g80 {
                 prev_.emplace_back(i - tix);
             }
 
-            // Init 
+            // Init Nodes
+            auto nix = get_node_ix(0)
+            for (size_t i = nix; i < nix + sz_node; ++i) {
+                next_.emplace_back(i);
+                prev_.emplace_back(i);
+            }
         }
 
         inline auto get_tail_ix(const size_t tail) -> const size_t {return sz_group_ + tail;}
         inline auto get_node_ix(const size_t node) -> const size_t {return (sz_group_ << 1) + node;}
+        inline auto is_node_connected(const size_t node) -> const bool {auto nix = get_node_ix(node); return next_[nix] != nix;}
 
         auto add(const size_t gix, const size_t node) -> void {
             auto nix = get_node_ix(node);
-
-            //
-            // n:    head --> new --> node --> tail <-           
-            // p: -> head <-- new <-- node <-- tail   
-            // 
-
-            // Add nix to head
             next_[nix] = next_[gix];
             prev_[nix] = gix;
             prev_[next_[gix]] = nix
@@ -52,12 +51,6 @@ namespace g80 {
 
         auto del(size_t node) -> void {
             auto nix = get_node_ix(node);
-            
-            //
-            // n:    head -->  node --> tail <-    
-            //       new -->
-            // p: -> head  <-- node <-- tail   
-            //              <-- new
             prev_[next_[nix]] = prev_[nix];
             next_[prev_[nix]] = next_[nix];
             next_[nix] = nix;
