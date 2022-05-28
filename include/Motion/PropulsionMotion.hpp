@@ -62,6 +62,7 @@ namespace g80 {
         inline auto get_orad() -> Sint32 {return orad_;}
         inline auto get_irad_dist() -> Sint32 {return irad_dist_;}
         inline auto get_orad_dist() -> Sint32 {return orad_dist_;}
+        inline auto get_blasts() const-> const std::vector<LineMotion<float>> & {return blasts_;}
 
     private:
         Point<Sint32> center_;
