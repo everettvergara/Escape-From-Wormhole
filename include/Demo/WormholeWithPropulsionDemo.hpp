@@ -80,7 +80,7 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 150, 50, 150, 255)},
                 });
 
-        prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 200, cosine_, sine_, 0);        
+        prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 100, cosine_, sine_, 0);        
         return true;
     }
 
