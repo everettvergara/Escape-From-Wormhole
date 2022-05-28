@@ -57,6 +57,23 @@ namespace g80 {
             return Point<Sint32>(center_.x + orad_dist_ * cosine[aix], center_.y + orad_dist_ * sine[aix] );
         }
 
+        template<typename T>
+        auto next(const CosCache<T> &cosine, const SinCache<T> &sine) -> void {
+            for (auto &b : blasts_) {
+                if (!b.next()) {
+                    Point<Sint32> p, t;
+                    auto raix = lcm_rnd() % cosine.get_size();
+                    auto rirad = 1 + lcm_rnd() % irad_; 
+                    p.x = get_irad_center(cosine, sine, raix).x + rirad * cosine[raix]; 
+                    p.y = get_irad_center(cosine, sine, raix).y + rirad * sine[raix]; 
+                    t.x = get_orad_center(cosine, sine, raix).x + rirad * cosine[raix]; 
+                    t.y = get_orad_center(cosine, sine, raix).y + rirad * sine[raix]; 
+
+                    b.line_motion_set(p, t, 20, 2);
+                }
+            }
+        }
+
         inline auto get_center() -> Point<Sint32> {return center_;}
         inline auto get_irad() -> Sint32 {return irad_;}
         inline auto get_orad() -> Sint32 {return orad_;}
