@@ -7,6 +7,7 @@
 #include "TrigCache.hpp"
 #include "LCMRND.hpp"
 #include "PriorityList.hpp"
+#include "PropulsionMotion.hpp"
 
 
 namespace g80 {
@@ -29,6 +30,7 @@ namespace g80 {
         Palette pal_;
 
         PriorityList pl_{110, TrigCacheN_};
+        PropulsionMotion prop_{};
 
     };
 
@@ -68,7 +70,9 @@ namespace g80 {
                 {75, SDL_MapRGBA(surface_->format, 100, 255, 255, 255)},
                 {100, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
                 
-                });        
+                });
+
+        prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 20, 60, mid_radius_ * 3, mid_radius_ * 3 + 50);        
         return true;
     }
 
