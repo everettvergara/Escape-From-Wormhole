@@ -23,7 +23,7 @@ namespace g80 {
         const size_t TrigCacheN_{30000};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
-        Point<float> origin_;
+        Point<float> origin_, craft_;
         float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
@@ -43,6 +43,7 @@ namespace g80 {
     auto WormholeWithPropulsionDemo::preprocess_states() -> bool {
         
         origin_ = {static_cast<float>(surface_->w), static_cast<float>(surface_->h / 2)};
+        craft_ = origin_;
         quad_bezier_motion_.reserve(TrigCacheN_);
 
         for (Sint32 i = 0; i < TrigCacheN_; ++i) {
@@ -131,7 +132,7 @@ namespace g80 {
         // RGBAColor inner_c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
         // RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
 
-        auto angle_point = origin_ -  Point<float>(surface_->w / 2, surface_->h / 2);
+        auto angle_point = craft_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
 
         
@@ -226,6 +227,8 @@ namespace g80 {
             else if (e.type == SDL_MOUSEMOTION) {
                 // origin_.x = static_cast<float>(e.motion.x);
                 // origin_.y = static_cast<float>(e.motion.y);
+                craft_.x = static_cast<float>(e.motion.x);
+                craft_.y = static_cast<float>(e.motion.y);                
             }
         }
         return true;
