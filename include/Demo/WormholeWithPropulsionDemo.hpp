@@ -27,7 +27,7 @@ namespace g80 {
         float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
-        Palette pal_;
+        Palette pal_, prop_pal_;
 
         PriorityList pl_{110, TrigCacheN_};
         PropulsionMotion prop_{1000};
@@ -70,6 +70,14 @@ namespace g80 {
                 {75, SDL_MapRGBA(surface_->format, 100, 255, 255, 255)},
                 {100, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
                 
+                });
+
+        prop_pal_.add_gradients(surface_->format,
+            {
+                {0, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
+                {50, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
+                {75, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
+                {100, SDL_MapRGBA(surface_->format, 150, 50, 150, 255)},
                 });
 
         prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 200, cosine_, sine_, 0);        
@@ -121,11 +129,15 @@ namespace g80 {
         auto angle_point = origin_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
         Sint32 ai = a >= 0 ? TrigCacheN_ / 2.0f * a : TrigCacheN_ + TrigCacheN_ / 2.0f * a;
-        circle(prop_.get_center(), prop_.get_irad_dist(), orbit_c);
-        circle(prop_.get_irad_center(cosine_, sine_, ai), prop_.get_irad(), inner_c);
-        circle(prop_.get_orad_center(cosine_, sine_, ai), prop_.get_orad(), outer_c);
+        // circle(prop_.get_center(), prop_.get_irad_dist(), orbit_c);
+        // circle(prop_.get_irad_center(cosine_, sine_, ai), prop_.get_irad(), inner_c);
+        // circle(prop_.get_orad_center(cosine_, sine_, ai), prop_.get_orad(), outer_c);
 
-        for (auto &b : prop_.get_blasts()) line(b.get_head(), b.get_tail(), inner_c);
+
+        for (auto &b : prop_.get_blasts()) {
+            RGBAColor pc = 100.0f * b.get_head_step() / b.get_size_of_step();
+            line(b.get_head(), b.get_tail(), prop_pal_[pc]);
+        }
         prop_.next(cosine_, sine_, ai);
 
         // Point<float> craft {surface_->w / 2 + mid_radius_ * 3 * cosine_[ai], surface_->h / 2 + mid_radius_ * 3 * sine_[ai]};
