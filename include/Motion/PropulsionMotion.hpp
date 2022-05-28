@@ -7,6 +7,7 @@
 #include <SDL.h>
 #include "TrigCache.hpp"
 #include "LineMotion.hpp"
+#include "LineWithAccelMotion.hpp"
 #include "LCMRND.hpp"
 
 namespace g80 {
@@ -23,7 +24,8 @@ namespace g80 {
             const Sint32 irad_dist,
             const Sint32 orad_dist,
             const CosCache<T> cosine,
-            const SinCache<T> sine) -> void {
+            const SinCache<T> sine,
+            const Sint32 aix) -> void {
 
             center_ = {center}; 
             irad_ = {irad}; 
@@ -38,12 +40,13 @@ namespace g80 {
                 Point<Sint32> p, t;
                 auto raix = lcm_rnd() % cosine.get_size();
                 auto rirad = 1 + lcm_rnd() % irad_; 
-                p.x = get_irad_center(cosine, sine, raix).x + rirad * cosine[raix]; 
-                p.y = get_irad_center(cosine, sine, raix).y + rirad * sine[raix]; 
-                t.x = get_orad_center(cosine, sine, raix).x + rirad * cosine[raix]; 
-                t.y = get_orad_center(cosine, sine, raix).y + rirad * sine[raix]; 
+                auto f = orad_ / irad_;
+                p.x = get_irad_center(cosine, sine, aix).x + rirad * cosine[raix]; 
+                p.y = get_irad_center(cosine, sine, aix).y + rirad * sine[raix]; 
+                t.x = get_orad_center(cosine, sine, aix).x + rirad * f * cosine[raix]; 
+                t.y = get_orad_center(cosine, sine, aix).y + rirad * f * sine[raix]; 
 
-                blasts_[i].line_motion_set(p, t, 20, 2);
+                blasts_[i].line_with_accel_motion_set(p, t, 1 + lcm_rnd() % 10, 2);
             }
         }
 
@@ -58,18 +61,19 @@ namespace g80 {
         }
 
         template<typename T>
-        auto next(const CosCache<T> &cosine, const SinCache<T> &sine) -> void {
+        auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> void {
             for (auto &b : blasts_) {
                 if (!b.next()) {
                     Point<Sint32> p, t;
                     auto raix = lcm_rnd() % cosine.get_size();
                     auto rirad = 1 + lcm_rnd() % irad_; 
-                    p.x = get_irad_center(cosine, sine, raix).x + rirad * cosine[raix]; 
-                    p.y = get_irad_center(cosine, sine, raix).y + rirad * sine[raix]; 
-                    t.x = get_orad_center(cosine, sine, raix).x + rirad * cosine[raix]; 
-                    t.y = get_orad_center(cosine, sine, raix).y + rirad * sine[raix]; 
+                    auto f = orad_ / irad_;
+                    p.x = get_irad_center(cosine, sine, aix).x + rirad * cosine[raix]; 
+                    p.y = get_irad_center(cosine, sine, aix).y + rirad * sine[raix]; 
+                    t.x = get_orad_center(cosine, sine, aix).x + rirad * f * cosine[raix]; 
+                    t.y = get_orad_center(cosine, sine, aix).y + rirad * f * sine[raix]; 
 
-                    b.line_motion_set(p, t, 20, 2);
+                    b.line_with_accel_motion_set(p, t,  1 + lcm_rnd() % 10, 2);
                 }
             }
         }
@@ -79,13 +83,13 @@ namespace g80 {
         inline auto get_orad() -> Sint32 {return orad_;}
         inline auto get_irad_dist() -> Sint32 {return irad_dist_;}
         inline auto get_orad_dist() -> Sint32 {return orad_dist_;}
-        inline auto get_blasts() const-> const std::vector<LineMotion<float>> & {return blasts_;}
+        inline auto get_blasts() const-> const std::vector<LineWithAccelMotion<float>> & {return blasts_;}
 
     private:
         Point<Sint32> center_;
         Sint32 irad_, orad_, irad_dist_, orad_dist_;
         Sint32 blasts_n_;
-        std::vector<LineMotion<float>> blasts_;
+        std::vector<LineWithAccelMotion<float>> blasts_;
     };
 
 }

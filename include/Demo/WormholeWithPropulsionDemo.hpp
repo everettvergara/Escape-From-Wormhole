@@ -20,7 +20,7 @@ namespace g80 {
         auto capture_events() -> bool;
 
     private:
-        const size_t TrigCacheN_{10000};
+        const size_t TrigCacheN_{30000};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
         Point<float> origin_;
@@ -30,7 +30,7 @@ namespace g80 {
         Palette pal_;
 
         PriorityList pl_{110, TrigCacheN_};
-        PropulsionMotion prop_{100};
+        PropulsionMotion prop_{1000};
 
     };
 
@@ -72,8 +72,7 @@ namespace g80 {
                 
                 });
 
-        prop_.set_propulsion_motion(
-            {surface_->w / 2, surface_->h / 2}, 20, 60, mid_radius_ * 3, mid_radius_ * 3 + 50, cosine_, sine_);        
+        prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 200, cosine_, sine_, 0);        
         return true;
     }
 
@@ -119,8 +118,6 @@ namespace g80 {
         RGBAColor inner_c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
         RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
 
-
-                
         auto angle_point = origin_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
         Sint32 ai = a >= 0 ? TrigCacheN_ / 2.0f * a : TrigCacheN_ + TrigCacheN_ / 2.0f * a;
@@ -128,10 +125,8 @@ namespace g80 {
         circle(prop_.get_irad_center(cosine_, sine_, ai), prop_.get_irad(), inner_c);
         circle(prop_.get_orad_center(cosine_, sine_, ai), prop_.get_orad(), outer_c);
 
-        for (auto &b : prop_.get_blasts()) 
-            line(b.get_head(), b.get_tail(), inner_c);
-        
-        prop_.next(cosine_, sine_);
+        for (auto &b : prop_.get_blasts()) line(b.get_head(), b.get_tail(), inner_c);
+        prop_.next(cosine_, sine_, ai);
 
         // Point<float> craft {surface_->w / 2 + mid_radius_ * 3 * cosine_[ai], surface_->h / 2 + mid_radius_ * 3 * sine_[ai]};
         // circle(craft, 20, c);
