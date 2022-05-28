@@ -6,7 +6,7 @@
 
 // 3d in 2d graphics
 // TODO: cnaghed int to size_t
-
+// TODO: Add Blur effect
 // TODO: Add Ellipse in Video
 // TODO: Add Rectangle in Video
 // TODO: Add Fade effect in Video
