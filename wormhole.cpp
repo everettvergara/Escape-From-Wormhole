@@ -1,7 +1,6 @@
 
 #include <iostream>
-#include "BetterQuadBezierMotionDemo.hpp"
-#include "QuadBezierMotionDemo.hpp"
+#include "WormholeWithPropulsionDemo.hpp"
 
 
 // 3d in 2d graphics
@@ -13,14 +12,13 @@
 // TODO: Add fill in video
 // TODO: Add fill  
 
-
 using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;
 auto main(int argc, const char *argv[]) -> int {
 
     VideoConfig video_config = set_default_video_config();
-    BetterQuadBezierMotionDemo demo;
+    WormholeWithPropulsionDemo demo;
 
     demo.create_window(video_config);
     demo.preprocess_states(); 
