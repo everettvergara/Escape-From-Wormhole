@@ -128,6 +128,10 @@ namespace g80 {
         circle(prop_.get_irad_center(cosine_, sine_, ai), prop_.get_irad(), inner_c);
         circle(prop_.get_orad_center(cosine_, sine_, ai), prop_.get_orad(), outer_c);
 
+        for (auto &b : prop_.get_blasts()) 
+            line(b.get_head(), b.get_tail(), inner_c);
+        
+        prop_.next(cosine_, sine_);
 
         // Point<float> craft {surface_->w / 2 + mid_radius_ * 3 * cosine_[ai], surface_->h / 2 + mid_radius_ * 3 * sine_[ai]};
         // circle(craft, 20, c);
