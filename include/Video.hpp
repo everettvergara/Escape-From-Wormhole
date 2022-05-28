@@ -49,6 +49,7 @@ namespace g80 {
         inline auto get_video_width() const -> Sint32;
         inline auto get_video_height() const -> Sint32;
         inline auto get_pixel_buffer(const Point<Sint32> &p) const -> Uint32 *;
+        inline auto get_pixel_buffer(const Sint32 x, const Sint32 y) -> Uint32 *;
 
         // User Def Functions
         virtual auto create_window(const VideoConfig &video_config) -> bool;
@@ -145,6 +146,10 @@ namespace g80 {
 
     auto Video::get_pixel_buffer(const Point<Sint32> &p) const -> Uint32 * {
         return pixel_start_ + surface_->w * p.y + p.x;
+    }
+    
+    auto Video::get_pixel_buffer(const Sint32 x, const Sint32 y) -> Uint32 * {
+        return pixel_start_ + surface_->w * y + x;
     }
 
     auto Video::create_window(const VideoConfig &video_config) -> bool {

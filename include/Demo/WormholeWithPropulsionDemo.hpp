@@ -30,7 +30,9 @@ namespace g80 {
         Palette pal_, prop_pal_;
 
         PriorityList pl_{110, TrigCacheN_};
-        PropulsionMotion prop_{1000};
+        PropulsionMotion prop_{1500};
+        PropulsionMotion prop_left_{1500};
+        PropulsionMotion prop_right_{1500};
 
     };
 
@@ -81,6 +83,9 @@ namespace g80 {
                 });
 
         prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 100, cosine_, sine_, 0);        
+        prop_left_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 100, cosine_, sine_, 1500);        
+        prop_right_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 100, cosine_, sine_, TrigCacheN_ - 1500);        
+        
         return true;
     }
 
@@ -123,22 +128,76 @@ namespace g80 {
         }
 
         RGBAColor orbit_c = SDL_MapRGBA(surface_->format, 255, 0, 255, 255);
-        RGBAColor inner_c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
-        RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
+        // RGBAColor inner_c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
+        // RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
 
         auto angle_point = origin_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
+
+        
         Sint32 ai = a >= 0 ? TrigCacheN_ / 2.0f * a : TrigCacheN_ + TrigCacheN_ / 2.0f * a;
-        // circle(prop_.get_center(), prop_.get_irad_dist(), orbit_c);
+        Sint32 ai_left = ai + 1500 >= TrigCacheN_ ? ai + 1500 - TrigCacheN_ : ai + 1500;
+        Sint32 ai_right =  ai - 1500 < 0 ? TrigCacheN_ + (ai - 1500) : ai - 1500;
+
+        circle(prop_.get_center(), prop_.get_irad_dist(), orbit_c);
         // circle(prop_.get_irad_center(cosine_, sine_, ai), prop_.get_irad(), inner_c);
         // circle(prop_.get_orad_center(cosine_, sine_, ai), prop_.get_orad(), outer_c);
 
 
-        for (auto &b : prop_.get_blasts()) {
-            RGBAColor pc = 100.0f * b.get_head_step() / b.get_size_of_step();
-            line(b.get_head(), b.get_tail(), prop_pal_[pc]);
+        for (auto &tb : prop_.get_blasts()) {
+            RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
+            line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
         }
         prop_.next(cosine_, sine_, ai);
+
+
+        for (auto &tb : prop_left_.get_blasts()) {
+            RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
+            line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
+        }
+        prop_left_.next(cosine_, sine_, ai_left);
+
+        for (auto &tb : prop_right_.get_blasts()) {
+            RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
+            line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
+        }
+        prop_right_.next(cosine_, sine_, ai_right);
+
+        // for (int y = 1; y < surface_->h - 1; ++y) {
+        //     for (int x = 1; x < surface_->w - 1; ++x ) {
+        //         Uint8 tr = 0, tg = 0, tb = 0, ta = 0;
+        //         Uint32 r = 0, g = 0, b = 0, a = 0;
+        //         SDL_GetRGBA(*get_pixel_buffer(x, y), surface_->format, &tr, &tg, &tb, &ta);
+        //         r = tr; g = tg; b = tb; a = ta;
+
+        //         SDL_GetRGBA(*get_pixel_buffer(x - 1, y - 1), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; a += ta;
+
+        //         SDL_GetRGBA(*get_pixel_buffer(x, y - 1), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; a += ta;
+                
+        //         SDL_GetRGBA(*get_pixel_buffer(x + 1, y - 1), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; a += ta;
+                
+        //         SDL_GetRGBA(*get_pixel_buffer(x + 1, y), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; a += ta;
+                
+        //         SDL_GetRGBA(*get_pixel_buffer(x + 1, y + 1), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; a += ta;
+                
+        //         SDL_GetRGBA(*get_pixel_buffer(x, y + 1), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; a += ta;
+                
+        //         SDL_GetRGBA(*get_pixel_buffer(x - 1, y + 1), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; a += ta;
+                
+        //         SDL_GetRGBA(*get_pixel_buffer(x - 1, y), surface_->format, &tr, &tg, &tb, &ta);
+        //         r += tr; g += tg; b += tb; // a += ta / 2;
+                
+        //         *get_pixel_buffer(x, y) = SDL_MapRGBA(surface_->format, r / 9, g / 9, b / 9, 255);
+
+        //     }
+        // }
 
         // Point<float> craft {surface_->w / 2 + mid_radius_ * 3 * cosine_[ai], surface_->h / 2 + mid_radius_ * 3 * sine_[ai]};
         // circle(craft, 20, c);
@@ -165,8 +224,8 @@ namespace g80 {
             }
             
             else if (e.type == SDL_MOUSEMOTION) {
-                origin_.x = static_cast<float>(e.motion.x);
-                origin_.y = static_cast<float>(e.motion.y);
+                // origin_.x = static_cast<float>(e.motion.x);
+                // origin_.y = static_cast<float>(e.motion.y);
             }
         }
         return true;
