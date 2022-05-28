@@ -27,9 +27,20 @@ namespace g80 {
         }
 
         template<typename T>
-        inline auto get_irad(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> Point<Sint32> {
-            return Point<Sint32>(center_.x + irad_ * cosine[aix]);
+        inline auto get_irad_center(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> Point<Sint32> {
+            return Point<Sint32>(center_.x + irad_dist_ * cosine[aix], center_.y + irad_dist_ * sine[aix] );
         }
+
+        template<typename T>
+        inline auto get_orad_center(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> Point<Sint32> {
+            return Point<Sint32>(center_.x + orad_dist_ * cosine[aix], center_.y + orad_dist_ * sine[aix] );
+        }
+
+        inline auto get_center() -> Point<Sint32> {return center_;}
+        inline auto get_irad() -> Sint32 {return irad_;}
+        inline auto get_orad() -> Sint32 {return orad_;}
+        inline auto get_irad_dist() -> Sint32 {return irad_dist_;}
+        inline auto get_orad_dist() -> Sint32 {return orad_dist_;}
 
     private:
         Point<Sint32> center_;

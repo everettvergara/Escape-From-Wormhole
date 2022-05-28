@@ -114,15 +114,19 @@ namespace g80 {
             if (prev != curr) pl_.add(curr, i);
         }
 
-        // RGBAColor c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
-        // RGBAColor c2 = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
+        RGBAColor orbit_c = SDL_MapRGBA(surface_->format, 255, 0, 255, 255);
+        RGBAColor inner_c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
+        RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
 
-        // circle(Point<Sint32>(surface_->w / 2, surface_->h / 2), mid_radius_ * 3, c);
 
-        
-        // auto angle_point = origin_ -  Point<float>(surface_->w / 2, surface_->h / 2);
-        // float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
-        // Sint32 ai = a >= 0 ? TrigCacheN_ / 2.0f * a : TrigCacheN_ + TrigCacheN_ / 2.0f * a;
+                
+        auto angle_point = origin_ -  Point<float>(surface_->w / 2, surface_->h / 2);
+        float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
+        Sint32 ai = a >= 0 ? TrigCacheN_ / 2.0f * a : TrigCacheN_ + TrigCacheN_ / 2.0f * a;
+        circle(prop_.get_center(), prop_.get_irad_dist(), orbit_c);
+        circle(prop_.get_irad_center(cosine_, sine_, ai), prop_.get_irad(), inner_c);
+        circle(prop_.get_orad_center(cosine_, sine_, ai), prop_.get_orad(), outer_c);
+
 
         // Point<float> craft {surface_->w / 2 + mid_radius_ * 3 * cosine_[ai], surface_->h / 2 + mid_radius_ * 3 * sine_[ai]};
         // circle(craft, 20, c);
