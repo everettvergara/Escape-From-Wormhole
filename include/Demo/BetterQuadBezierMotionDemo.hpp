@@ -19,7 +19,7 @@ namespace g80 {
         auto capture_events() -> bool;
 
     private:
-        const size_t TrigCacheN_{20000};
+        const size_t TrigCacheN_{10000};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
         Point<float> origin_;
@@ -127,6 +127,7 @@ namespace g80 {
         
         for (int prop = ai - 100; prop <= ai + 100; prop += 20) {
             auto t = prop > 0 ? prop : TrigCacheN_ + prop;
+            if (t >= TrigCacheN_) t -= TrigCacheN_;
             Point<float> inner {surface_->w / 2 + mid_radius_ * 3 *  cosine_[t], surface_->h / 2 + mid_radius_ * 3 * sine_[t]};
             Point<float> outer {surface_->w / 2 + outer_radius_ * cosine_[t], surface_->h / 2 + outer_radius_  * sine_[t]};
             line(inner, outer, c2);
