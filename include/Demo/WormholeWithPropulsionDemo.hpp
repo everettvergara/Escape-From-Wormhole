@@ -30,7 +30,7 @@ namespace g80 {
         Palette pal_;
 
         PriorityList pl_{110, TrigCacheN_};
-        PropulsionMotion prop_{};
+        PropulsionMotion prop_{100};
 
     };
 
@@ -72,7 +72,8 @@ namespace g80 {
                 
                 });
 
-        prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 20, 60, mid_radius_ * 3, mid_radius_ * 3 + 50);        
+        prop_.set_propulsion_motion(
+            {surface_->w / 2, surface_->h / 2}, 20, 60, mid_radius_ * 3, mid_radius_ * 3 + 50, cosine_, sine_);        
         return true;
     }
 
