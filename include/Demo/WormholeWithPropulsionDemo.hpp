@@ -32,7 +32,7 @@ namespace g80 {
         
         Point<float> origin_, craft_, center_;
         Sint32 origin_angle_{0}, origin_radius_from_center_{1280/2};
-        Sint32 origin_angle_inc_{1};
+        Sint32 origin_angle_inc_{0};
         float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
         //float corrected_prop_offset_{60};
         

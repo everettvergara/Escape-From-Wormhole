@@ -89,20 +89,26 @@ namespace g80 {
             const CosCache<T> &cosine, 
             const SinCache<T> &sine, 
             const Sint32 inner_angle_ix, 
-
-            // Assumes: 
-            // origin_angle_ix in terms of cosine/sine cache of inner_angle_ix and outer_angle_ix
             const Sint32 origin_angle_ix) -> void {
 
-            Sint32 outer_angle_ix = inner_angle_ix;
-            auto trig_cache_half = cosine.get_size() / 2;
+            auto trig_cache_half = cosine.get_size() >> 1;
             
+            // todo: compute outer angle
+            //
+            //  outer_angle = f(deg) = k * deg ^ 2
+            //  k = trig_cache_half / (deg * deg)
+
+            // T k = 1.0f ; // * trig_cache_half / (trig_cache_half * trig_cache_half);
+            Sint32 outer_angle_ix = 1.3 * inner_angle_ix; // k * inner_angle_ix * inner_angle_ix;
+            // SDL_Log("%.6f %d %d", k, outer_angle_ix, inner_angle_ix);
             auto ref_outer_angle_ix = outer_angle_ix - origin_angle_ix;
             if (ref_outer_angle_ix < 0) ref_outer_angle_ix = cosine.get_size() + ref_outer_angle_ix;
             
             T lerp = 1.0f * (ref_outer_angle_ix >= trig_cache_half ? cosine.get_size() - ref_outer_angle_ix : ref_outer_angle_ix) / trig_cache_half;
             auto couter_radius_dist_from_center = inner_radius_dist_from_center_ + lerp * (outer_radius_dist_from_center_ - inner_radius_dist_from_center_);
-            
+
+
+
             for (auto &b : blasts_) {
                 if (!b.next()) {
                     Point<Sint32> blast_from, blast_to;
@@ -111,8 +117,8 @@ namespace g80 {
                     auto rnd_outer_radius = rnd_inner_radius * f_;
                     blast_from.x = (center_.x + inner_radius_dist_from_center_ * cosine[inner_angle_ix]) + rnd_inner_radius * cosine[rnd_inner_angle_ix];
                     blast_from.y = (center_.y + inner_radius_dist_from_center_ * sine[inner_angle_ix]) + rnd_inner_radius * sine[rnd_inner_angle_ix];
-                    blast_to.x = (center_.x + couter_radius_dist_from_center * cosine[inner_angle_ix]) + rnd_outer_radius * cosine[rnd_inner_angle_ix];
-                    blast_to.y = (center_.y + couter_radius_dist_from_center * sine[inner_angle_ix]) + rnd_outer_radius * sine[rnd_inner_angle_ix]; 
+                    blast_to.x = (center_.x + couter_radius_dist_from_center * cosine[outer_angle_ix]) + rnd_outer_radius * cosine[rnd_inner_angle_ix];
+                    blast_to.y = (center_.y + couter_radius_dist_from_center * sine[outer_angle_ix]) + rnd_outer_radius * sine[rnd_inner_angle_ix]; 
                     b.line_with_accel_motion_set(blast_from, blast_to,  1 + lcm_rnd() % sz_blast_steps_, sz_blast_trail_);
                 }
             }
