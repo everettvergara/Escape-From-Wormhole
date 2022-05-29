@@ -81,13 +81,13 @@ namespace g80 {
         inline auto get_orad() -> Sint32 {return orad_;}
         inline auto get_irad_dist() -> Sint32 {return irad_dist_;}
         inline auto get_orad_dist() -> Sint32 {return orad_dist_;}
-        inline auto get_blasts() const-> const std::vector<LineWithAccelMotion<float>> & {return blasts_;}
+        inline auto get_blasts() const-> const std::vector<LineWithAccelMotion<T>> & {return blasts_;}
 
     private:
         Point<Sint32> center_;
         Sint32 irad_, orad_, irad_dist_, orad_dist_;
         Sint32 blasts_n_;
-        std::vector<LineWithAccelMotion<float>> blasts_;
+        std::vector<LineWithAccelMotion<T>> blasts_;
         T f_;
     };
 
