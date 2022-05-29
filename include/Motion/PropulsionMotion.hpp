@@ -11,72 +11,90 @@
 #include "LCMRND.hpp"
 
 namespace g80 {
+/*
+
+    Flow: blasts from <inner radius> will
+    be projected to the <outer radius> 
+            
+              __ <inner radius>
+             |/_|-------------- <center> ----------------- <origin>
+             /  
+            / <inner_outer_dist>
+       ____/
+      |  _/|------------------  
+      |____|<outer radius> 
+
+    Inner outer distance decreases as the inner radius approaches origin.    
+
+*/
+
 
     template<typename T>
     class PropulsionMotion {
     public:
-        PropulsionMotion(Sint32 blasts_n) : blasts_n_(blasts_n) {}
+        PropulsionMotion() {}
         
         auto set_propulsion_motion(
             const Point<Sint32> &center, 
-            const Sint32 irad, 
-            const Sint32 orad, 
-            const Sint32 irad_dist,
-            const Sint32 orad_dist,
+            const Sint32 inner_radius, 
+            const Sint32 outer_radius, 
+            const Sint32 inner_radius_dist_from_center,
+            const Sint32 outer_radius_dist_from_center,
+            const Sint32 blasts_n,
             const CosCache<T> cosine,
             const SinCache<T> sine,
             const Sint32 aix,
             const Sint32 aox) -> void {
 
             center_ = {center}; 
-            irad_ = {irad}; 
-            orad_ = {orad};
-            irad_dist_ = {irad_dist};
-            orad_dist_ = {orad_dist};
-            f_ = {static_cast<T>(orad_ / irad_)};
+            inner_radius_ = {inner_radius}; 
+            outer_radius_ = {outer_radius};
+            inner_radius_dist_from_center_ = {inner_radius_dist_from_center};
+            outer_radius_dist_from_center_ = {outer_radius_dist_from_center};
+            f_ = {static_cast<T>(outer_radius_ / inner_radius_)};
 
-            blasts_.reserve(blasts_n_);
-            for (Sint32 i = 0; i < blasts_n_; ++i) {
+            blasts_.reserve(blasts_n);
+            for (Sint32 i = 0; i < blasts_n; ++i) {
                 blasts_.emplace_back();
 
                 Point<Sint32> p, t;
                 auto raix = lcm_rnd() % cosine.get_size();
-                auto rirad = 1 + lcm_rnd() % irad_; 
-                auto riradf = rirad * f_;
-                p.x = get_irad_center(cosine, sine, aix).x + rirad * cosine[raix]; 
-                p.y = get_irad_center(cosine, sine, aix).y + rirad * sine[raix]; 
-                t.x = get_orad_center(cosine, sine, aix).x + riradf * cosine[raix]; 
-                t.y = get_orad_center(cosine, sine, aix).y + riradf * sine[raix]; 
+                auto rinner_radius = 1 + lcm_rnd() % inner_radius_; 
+                auto rinner_radiusf = rinner_radius * f_;
+                p.x = get_inner_radius_center(cosine, sine, aix).x + rinner_radius * cosine[raix]; 
+                p.y = get_inner_radius_center(cosine, sine, aix).y + rinner_radius * sine[raix]; 
+                t.x = get_outer_radius_center(cosine, sine, aix).x + rinner_radiusf * cosine[raix]; 
+                t.y = get_outer_radius_center(cosine, sine, aix).y + rinner_radiusf * sine[raix]; 
 
                 blasts_[i].line_with_accel_motion_set(p, t, 1 + lcm_rnd() % 10, 2);
             }
         }
 
-        inline auto get_irad_center(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> Point<Sint32> {
-            return Point<Sint32>(center_.x + irad_dist_ * cosine[aix], center_.y + irad_dist_ * sine[aix] );
+        inline auto get_inner_radius_center(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> Point<Sint32> {
+            return Point<Sint32>(center_.x + inner_radius_dist_from_center_ * cosine[aix], center_.y + inner_radius_dist_from_center_ * sine[aix] );
         }
 
-        inline auto get_orad_center(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> Point<Sint32> {
-            return Point<Sint32>(center_.x + orad_dist_ * cosine[aix], center_.y + orad_dist_ * sine[aix] );
+        inline auto get_outer_radius_center(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> Point<Sint32> {
+            return Point<Sint32>(center_.x + outer_radius_dist_from_center_ * cosine[aix], center_.y + outer_radius_dist_from_center_ * sine[aix] );
         }
 
         auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix, const Sint32 aox/*, const Sint32 a_origin_ix*/) -> void {
 
             // aox - a_origin_ix)
             T lerp = 1.0f * (aox >= cosine.get_size() / 2 ? cosine.get_size() - aox : aox) / cosine.get_size();
-            auto corad_dist = irad_dist_ + lerp * (orad_dist_ - irad_dist_);
+            auto couter_radius_dist_from_center = inner_radius_dist_from_center_ + lerp * (outer_radius_dist_from_center_ - inner_radius_dist_from_center_);
 
             for (auto &b : blasts_) {
                 if (!b.next()) {
                     Point<Sint32> p, t;
                     auto raix = lcm_rnd() % cosine.get_size();
-                    auto rirad = 1 + lcm_rnd() % irad_; 
-                    auto riradf = rirad * f_;
-                    p.x = get_irad_center(cosine, sine, aix).x + rirad * cosine[raix]; 
-                    p.y = get_irad_center(cosine, sine, aix).y + rirad * sine[raix]; 
+                    auto rinner_radius = 1 + lcm_rnd() % inner_radius_; 
+                    auto rinner_radiusf = rinner_radius * f_;
+                    p.x = get_inner_radius_center(cosine, sine, aix).x + rinner_radius * cosine[raix]; 
+                    p.y = get_inner_radius_center(cosine, sine, aix).y + rinner_radius * sine[raix]; 
 
-                    t.x = (center_.x + corad_dist * cosine[aix]) + riradf * cosine[raix];
-                    t.y = (center_.y + corad_dist * sine[aix])+ riradf * sine[raix]; 
+                    t.x = (center_.x + couter_radius_dist_from_center * cosine[aix]) + rinner_radiusf * cosine[raix];
+                    t.y = (center_.y + couter_radius_dist_from_center * sine[aix])+ rinner_radiusf * sine[raix]; 
 
                     b.line_with_accel_motion_set(p, t,  1 + lcm_rnd() % 10, 2);
                 }
@@ -84,17 +102,16 @@ namespace g80 {
         }
 
         inline auto get_center() -> Point<Sint32> {return center_;}
-        inline auto get_irad() -> Sint32 {return irad_;}
-        inline auto get_orad() -> Sint32 {return orad_;}
-        inline auto get_irad_dist() -> Sint32 {return irad_dist_;}
-        inline auto get_orad_dist() -> Sint32 {return orad_dist_;}
+        inline auto get_inner_radius() -> Sint32 {return inner_radius_;}
+        inline auto get_outer_radius() -> Sint32 {return outer_radius_;}
+        inline auto get_inner_radius_dist_from_center() -> Sint32 {return inner_radius_dist_from_center_;}
+        inline auto get_outer_radius_dist_from_center() -> Sint32 {return outer_radius_dist_from_center_;}
 
         inline auto get_blasts() const-> const std::vector<LineWithAccelMotion<T>> & {return blasts_;}
 
     private:
         Point<Sint32> center_;
-        Sint32 irad_, orad_, irad_dist_, orad_dist_;
-        Sint32 blasts_n_;
+        Sint32 inner_radius_, outer_radius_, inner_radius_dist_from_center_, outer_radius_dist_from_center_;
         std::vector<LineWithAccelMotion<T>> blasts_;
         T f_;
     };

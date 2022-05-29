@@ -41,9 +41,9 @@ namespace g80 {
         Palette pal_, prop_pal_;
 
         PriorityList pl_{110, TrigCacheN_};
-        PropulsionMotion<float> prop_{2500};
-        PropulsionMotion<float> prop_left_{2500};
-        PropulsionMotion<float> prop_right_{2500};
+        PropulsionMotion<float> prop_{};
+        PropulsionMotion<float> prop_left_{};
+        PropulsionMotion<float> prop_right_{};
 
     };
 
@@ -98,9 +98,9 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
-        prop_.set_propulsion_motion(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 300, cosine_, sine_, 0, 0);        
-        prop_left_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 100, 100);        
-        prop_right_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 100, TrigCacheN_ - 100);        
+        prop_.set_propulsion_motion(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 300, 2500, cosine_, sine_, 0, 0);        
+        prop_left_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, 100, 100);        
+        prop_right_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, TrigCacheN_ - 100, TrigCacheN_ - 100);        
         
         return true;
     }
@@ -168,7 +168,7 @@ namespace g80 {
         // Sint32 ai_left = ai + 200 >= TrigCacheCraftN_ ? ai + 200 - TrigCacheCraftN_ : ai + 200;
         // Sint32 ai_right =  ai - 200 < 0 ? TrigCacheCraftN_ + (ai - 200) : ai - 200;
 
-        circle(prop_.get_center(), prop_.get_irad_dist(), guide_c);
+        // circle(prop_.get_center(), prop_.get_irad_dist(), guide_c);
         circle(center_, mid_radius_, guide_c);
         
         Point<float> t {center_.x + mid_radius_ * cosine_craft_[ai], center_.y + mid_radius_ * sine_craft_[ai]};
@@ -177,8 +177,8 @@ namespace g80 {
         quad_bezier(origin_, t, t2, 50, guide_c);
         line(origin_, t, guide_c); 
         line(t, t2, guide_c); 
-        circle(prop_.get_irad_center(cosine_craft_, sine_craft_, ai), prop_.get_irad(), guide_c);
-        circle(prop_.get_orad_center(cosine_craft_, sine_craft_, ai), prop_.get_orad(), guide_c);
+        // circle(prop_.get_irad_center(cosine_craft_, sine_craft_, ai), prop_.get_irad(), guide_c);
+        // circle(prop_.get_orad_center(cosine_craft_, sine_craft_, ai), prop_.get_orad(), guide_c);
 
         for (auto &tb : prop_.get_blasts()) {
             RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
