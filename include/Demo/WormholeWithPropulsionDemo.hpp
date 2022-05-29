@@ -23,8 +23,15 @@ namespace g80 {
         const size_t TrigCacheN_{7200};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
+
+        const size_t TrigCacheCraftN_{3600};
+        CosCache<float> cosine_craft_{TrigCacheCraftN_};
+        SinCache<float> sine_craft_{TrigCacheCraftN_};        
+        
+        
         Point<float> origin_, craft_, center_;
-        float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
+        float inner_radius_{10}, mid_radius_{100}, outer_radius_{600};
+        float corrected_prop_offset_{360};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
         Palette pal_, prop_pal_;
@@ -33,7 +40,6 @@ namespace g80 {
         PropulsionMotion<float> prop_{1500};
         PropulsionMotion<float> prop_left_{1500};
         PropulsionMotion<float> prop_right_{1500};
-
 
     };
 
@@ -130,41 +136,51 @@ namespace g80 {
             if (prev != curr) pl_.add(curr, i);
         }
 
-        RGBAColor orbit_c = SDL_MapRGBA(surface_->format, 255, 0, 255, 255);
-        //RGBAColor inner_c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
-        //RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
+        RGBAColor guide_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
+        RGBAColor corrected_c = SDL_MapRGBA(surface_->format, 0, 255, 0, 255);
 
         auto angle_point = craft_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
 
-        Sint32 ai = a >= 0 ? TrigCacheN_ / 2.0f * a : TrigCacheN_ + TrigCacheN_ / 2.0f * a;
-        Sint32 ai_left = ai + 200 >= TrigCacheN_ ? ai + 200 - TrigCacheN_ : ai + 200;
-        Sint32 ai_right =  ai - 200 < 0 ? TrigCacheN_ + (ai - 200) : ai - 200;
+        float corrected_a = a * 180.0f;
+        corrected_a = corrected_a > 90.0f ? 180 - corrected_a : (corrected_a < -90 ? -180 - corrected_a : corrected_a);
+        corrected_a_offset = corrected_a / 90.0f * corrected_prop_offset_;
+        SDL_Log("%.2f %.2f %.2f", a * 180.0f, corrected_a, corrected_a_offset);
 
-        circle(prop_.get_center(), prop_.get_irad_dist(), orbit_c);
-        //surface_->w / 2 + mid_radius_ * cosine_[90];
-        //line(origin_, center)
-        // circle(prop_.get_irad_center(cosine_, sine_, ai), prop_.get_irad(), inner_c);
-        // circle(prop_.get_orad_center(cosine_, sine_, ai), prop_.get_orad(), outer_c);
+
+        Sint32 ai = a >= 0 ? TrigCacheCraftN_ / 2.0f * a : TrigCacheCraftN_ + TrigCacheCraftN_ / 2.0f * a;
+        Sint32 ai_left = ai + 200 >= TrigCacheCraftN_ ? ai + 200 - TrigCacheCraftN_ : ai + 200;
+        Sint32 ai_right =  ai - 200 < 0 ? TrigCacheCraftN_ + (ai - 200) : ai - 200;
+
+        circle(prop_.get_center(), prop_.get_irad_dist(), guide_c);
+        circle(center_, mid_radius_, guide_c);
+        Point<float> t {center_.x + mid_radius_ * cosine_craft_[ai], center_.y + mid_radius_ * sine_craft_[ai]};
+        Point<float> t2 {center_.x + outer_radius_ * cosine_craft_[ai], center_.y + outer_radius_ * sine_craft_[ai]};
+
+        quad_bezier(origin_, t, t2, 50, guide_c);
+        line(origin_, t, guide_c); 
+        line(t, t2, guide_c); 
+        circle(prop_.get_irad_center(cosine_craft_, sine_craft_, ai), prop_.get_irad(), guide_c);
+        circle(prop_.get_orad_center(cosine_craft_, sine_craft_, ai), prop_.get_orad(), guide_c);
 
         for (auto &tb : prop_.get_blasts()) {
             RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
             line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
         }
-        prop_.next(cosine_, sine_, ai);
+        prop_.next(cosine_craft_, sine_craft_, ai);
 
 
-        for (auto &tb : prop_left_.get_blasts()) {
-            RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
-            line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
-        }
-        prop_left_.next(cosine_, sine_, ai_left);
+        // for (auto &tb : prop_left_.get_blasts()) {
+        //     RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
+        //     line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
+        // }
+        // prop_left_.next(cosine_craft_, sine_craft_, ai_left);
 
-        for (auto &tb : prop_right_.get_blasts()) {
-            RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
-            line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
-        }
-        prop_right_.next(cosine_, sine_, ai_right);
+        // for (auto &tb : prop_right_.get_blasts()) {
+        //     RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
+        //     line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
+        // }
+        // prop_right_.next(cosine_craft_, sine_craft_, ai_right);
 
         return true;
     }
