@@ -97,7 +97,7 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
-        prop_.set(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 300, 1000, cosine_, sine_, 0, 0);        
+        prop_.set(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 100, 1000, cosine_, sine_, 0, 0);        
         
         return true;
     }
@@ -186,7 +186,7 @@ namespace g80 {
         auto angle_point = craft_ -  center_;
         auto a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
         auto ai = a >= 0 ? TrigCacheCraftN_ / 2.0f * a : TrigCacheCraftN_ + TrigCacheCraftN_ / 2.0f * a;
-        prop_.next(cosine_craft_, sine_craft_, ai, ai, a_origin_i_new);
+        prop_.next(cosine_craft_, sine_craft_, ai, a_origin_i_new);
 
         // SDL_Log("%.2f %.2f", ai, a_origin_i_new);
 
