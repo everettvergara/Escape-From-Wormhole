@@ -61,6 +61,10 @@ namespace g80 {
         }
 
         auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix, const Sint32 aox) -> void {
+
+            T lerp = 1.0f * (aox >= cosine.get_size() / 2 ? cosine.get_size() - aox : aox) / cosine.get_size();
+            auto corad_dist = irad_dist_ + lerp * (orad_dist_ - irad_dist_);
+
             for (auto &b : blasts_) {
                 if (!b.next()) {
                     Point<Sint32> p, t;
@@ -69,8 +73,9 @@ namespace g80 {
                     auto riradf = rirad * f_;
                     p.x = get_irad_center(cosine, sine, aix).x + rirad * cosine[raix]; 
                     p.y = get_irad_center(cosine, sine, aix).y + rirad * sine[raix]; 
-                    t.x = get_orad_center(cosine, sine, aox).x + riradf * cosine[raix]; 
-                    t.y = get_orad_center(cosine, sine, aox).y + riradf * sine[raix]; 
+
+                    t.x = (center_.x + corad_dist * cosine[aix]) + riradf * cosine[raix];
+                    t.y = (center_.y + corad_dist * sine[aix])+ riradf * sine[raix]; 
 
                     b.line_with_accel_motion_set(p, t,  1 + lcm_rnd() % 10, 2);
                 }
@@ -82,6 +87,7 @@ namespace g80 {
         inline auto get_orad() -> Sint32 {return orad_;}
         inline auto get_irad_dist() -> Sint32 {return irad_dist_;}
         inline auto get_orad_dist() -> Sint32 {return orad_dist_;}
+
         inline auto get_blasts() const-> const std::vector<LineWithAccelMotion<T>> & {return blasts_;}
 
     private:
