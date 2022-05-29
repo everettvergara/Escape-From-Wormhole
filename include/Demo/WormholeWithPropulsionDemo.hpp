@@ -23,7 +23,7 @@ namespace g80 {
         const size_t TrigCacheN_{7200};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
-        Point<float> origin_, craft_;
+        Point<float> origin_, craft_, center_;
         float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
@@ -34,6 +34,7 @@ namespace g80 {
         PropulsionMotion<float> prop_left_{1500};
         PropulsionMotion<float> prop_right_{1500};
 
+
     };
 
     WormholeWithPropulsionDemo::WormholeWithPropulsionDemo() : Video() {
@@ -42,7 +43,8 @@ namespace g80 {
 
     auto WormholeWithPropulsionDemo::preprocess_states() -> bool {
         
-        origin_ = {static_cast<float>(surface_->w), static_cast<float>(surface_->h / 2)};
+        center_ = {static_cast<float>(surface_->w / 2), static_cast<float>(surface_->h / 2)};
+        origin_ = {static_cast<float>(surface_->w), center_.y};
         craft_ = origin_;
         quad_bezier_motion_.reserve(TrigCacheN_);
 
@@ -53,11 +55,11 @@ namespace g80 {
             p1.x = origin_.x + inner_radius_ * cosine_[i];  
             p1.y = origin_.y + inner_radius_ * sine_[i];  
 
-            p2.x = surface_->w / 2 + mid_radius_ * cosine_[i];  
-            p2.y = surface_->h / 2 + mid_radius_ * sine_[i];  
+            p2.x = center_.x + mid_radius_ * cosine_[i];  
+            p2.y = center_.y + mid_radius_ * sine_[i];  
 
-            p3.x = surface_->w / 2 + outer_radius_ * cosine_[i];  
-            p3.y = surface_->h / 2 + outer_radius_ * sine_[i];  
+            p3.x = center_.x + outer_radius_ * cosine_[i];  
+            p3.y = center_.y + outer_radius_ * sine_[i];  
 
             Sint32 steps = 10 + lcm_rnd() % 100;
             Sint32 trail = 1; // 11 - steps / 110.0f;
@@ -83,9 +85,9 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
-        prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 0);        
-        prop_left_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 100);        
-        prop_right_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 100);        
+        prop_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 0);        
+        prop_left_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 100);        
+        prop_right_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 100);        
         
         return true;
     }
@@ -113,11 +115,11 @@ namespace g80 {
                 p1.x = origin_.x + inner_radius_ * cosine_[i];  
                 p1.y = origin_.y + inner_radius_ * sine_[i];  
 
-                p2.x = surface_->w / 2 + mid_radius_ * cosine_[i];  
-                p2.y = surface_->h / 2 + mid_radius_ * sine_[i];  
+                p2.x = center_.x + mid_radius_ * cosine_[i];  
+                p2.y = center_.y + mid_radius_ * sine_[i];  
 
-                p3.x = surface_->w / 2 + outer_radius_ * cosine_[i];  
-                p3.y = surface_->h / 2 + outer_radius_ * sine_[i];  
+                p3.x = center_.x + outer_radius_ * cosine_[i];  
+                p3.y = center_.y + outer_radius_ * sine_[i];  
 
                 Sint32 steps = 10 + lcm_rnd() % 100;
                 Sint32 trail = 1; //11 - steps / 110.0f;
@@ -130,7 +132,7 @@ namespace g80 {
 
         RGBAColor orbit_c = SDL_MapRGBA(surface_->format, 255, 0, 255, 255);
         //RGBAColor inner_c = SDL_MapRGBA(surface_->format, 255, 0, 0, 255);
-        RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
+        //RGBAColor outer_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
 
         auto angle_point = craft_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
