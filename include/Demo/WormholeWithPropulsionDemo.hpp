@@ -80,12 +80,12 @@ namespace g80 {
                 {0, SDL_MapRGBA(surface_->format, 255, 255, 255, 255)},
                 {50, SDL_MapRGBA(surface_->format, 255, 255, 0, 255)},
                 {75, SDL_MapRGBA(surface_->format, 255, 0, 0, 255)},
-                {100, SDL_MapRGBA(surface_->format, 150, 50, 150, 255)},
+                {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
         prop_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 0);        
-        prop_left_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 1500);        
-        prop_right_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 1500);        
+        prop_left_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 100);        
+        prop_right_.set_propulsion_motion({surface_->w / 2, surface_->h / 2}, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 100);        
         
         return true;
     }
@@ -136,8 +136,8 @@ namespace g80 {
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
 
         Sint32 ai = a >= 0 ? TrigCacheN_ / 2.0f * a : TrigCacheN_ + TrigCacheN_ / 2.0f * a;
-        Sint32 ai_left = ai + 1500 >= TrigCacheN_ ? ai + 1500 - TrigCacheN_ : ai + 1500;
-        Sint32 ai_right =  ai - 1500 < 0 ? TrigCacheN_ + (ai - 1500) : ai - 1500;
+        Sint32 ai_left = ai + 200 >= TrigCacheN_ ? ai + 200 - TrigCacheN_ : ai + 200;
+        Sint32 ai_right =  ai - 200 < 0 ? TrigCacheN_ + (ai - 200) : ai - 200;
 
         circle(prop_.get_center(), prop_.get_irad_dist(), orbit_c);
         //surface_->w / 2 + mid_radius_ * cosine_[90];
