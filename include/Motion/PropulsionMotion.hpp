@@ -60,8 +60,9 @@ namespace g80 {
             return Point<Sint32>(center_.x + orad_dist_ * cosine[aix], center_.y + orad_dist_ * sine[aix] );
         }
 
-        auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix, const Sint32 aox) -> void {
+        auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix, const Sint32 aox/*, const Sint32 a_origin_ix*/) -> void {
 
+            // aox - a_origin_ix)
             T lerp = 1.0f * (aox >= cosine.get_size() / 2 ? cosine.get_size() - aox : aox) / cosine.get_size();
             auto corad_dist = irad_dist_ + lerp * (orad_dist_ - irad_dist_);
 
