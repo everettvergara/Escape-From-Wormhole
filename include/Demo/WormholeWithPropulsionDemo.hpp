@@ -20,7 +20,7 @@ namespace g80 {
         auto capture_events() -> bool;
 
     private:
-        const size_t TrigCacheN_{7200};
+        const size_t TrigCacheN_{3600};
         CosCache<float> cosine_{TrigCacheN_};
         SinCache<float> sine_{TrigCacheN_};
 
@@ -28,18 +28,17 @@ namespace g80 {
         CosCache<float> cosine_craft_{TrigCacheCraftN_};
         SinCache<float> sine_craft_{TrigCacheCraftN_};        
         
-        
         Point<float> origin_, craft_, center_;
-        float inner_radius_{10}, mid_radius_{100}, outer_radius_{600};
-        float corrected_prop_offset_{45};
+        float inner_radius_{10}, mid_radius_{100}, outer_radius_{800};
+        float corrected_prop_offset_{60};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
         Palette pal_, prop_pal_;
 
         PriorityList pl_{110, TrigCacheN_};
-        PropulsionMotion<float> prop_{1500};
-        PropulsionMotion<float> prop_left_{1500};
-        PropulsionMotion<float> prop_right_{1500};
+        PropulsionMotion<float> prop_{2500};
+        PropulsionMotion<float> prop_left_{2500};
+        PropulsionMotion<float> prop_right_{2500};
 
     };
 
@@ -91,7 +90,7 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
-        prop_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 0, 0);        
+        prop_.set_propulsion_motion(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 50, cosine_, sine_, 0, 0);        
         prop_left_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 100, 100);        
         prop_right_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 100, TrigCacheN_ - 100);        
         
@@ -136,8 +135,8 @@ namespace g80 {
             if (prev != curr) pl_.add(curr, i);
         }
 
-        RGBAColor guide_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
-        RGBAColor corrected_c = SDL_MapRGBA(surface_->format, 0, 255, 0, 255);
+        // RGBAColor guide_c = SDL_MapRGBA(surface_->format, 255, 255, 0, 255);
+        // RGBAColor corrected_c = SDL_MapRGBA(surface_->format, 0, 255, 0, 255);
 
         auto angle_point = craft_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
@@ -159,20 +158,20 @@ namespace g80 {
 
 
         Sint32 ai = a >= 0 ? TrigCacheCraftN_ / 2.0f * a : TrigCacheCraftN_ + TrigCacheCraftN_ / 2.0f * a;
-        Sint32 ai_left = ai + 200 >= TrigCacheCraftN_ ? ai + 200 - TrigCacheCraftN_ : ai + 200;
-        Sint32 ai_right =  ai - 200 < 0 ? TrigCacheCraftN_ + (ai - 200) : ai - 200;
+        // Sint32 ai_left = ai + 200 >= TrigCacheCraftN_ ? ai + 200 - TrigCacheCraftN_ : ai + 200;
+        // Sint32 ai_right =  ai - 200 < 0 ? TrigCacheCraftN_ + (ai - 200) : ai - 200;
 
-        circle(prop_.get_center(), prop_.get_irad_dist(), guide_c);
-        circle(center_, mid_radius_, guide_c);
+        // circle(prop_.get_center(), prop_.get_irad_dist(), guide_c);
+        // circle(center_, mid_radius_, guide_c);
         
         Point<float> t {center_.x + mid_radius_ * cosine_craft_[ai], center_.y + mid_radius_ * sine_craft_[ai]};
         Point<float> t2 {center_.x + outer_radius_ * cosine_craft_[ai], center_.y + outer_radius_ * sine_craft_[ai]};
 
-        quad_bezier(origin_, t, t2, 50, guide_c);
-        line(origin_, t, guide_c); 
-        line(t, t2, guide_c); 
-        circle(prop_.get_irad_center(cosine_craft_, sine_craft_, ai), prop_.get_irad(), guide_c);
-        circle(prop_.get_orad_center(cosine_craft_, sine_craft_, ai), prop_.get_orad(), guide_c);
+        // quad_bezier(origin_, t, t2, 50, guide_c);
+        // line(origin_, t, guide_c); 
+        // line(t, t2, guide_c); 
+        // circle(prop_.get_irad_center(cosine_craft_, sine_craft_, ai), prop_.get_irad(), guide_c);
+        // circle(prop_.get_orad_center(cosine_craft_, sine_craft_, ai), prop_.get_orad(), guide_c);
 
         for (auto &tb : prop_.get_blasts()) {
             RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
