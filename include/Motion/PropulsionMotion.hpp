@@ -83,19 +83,27 @@ namespace g80 {
             const SinCache<T> &sine, 
             const Sint32 inner_angle_ix, 
             const Sint32 outer_angle_ix, 
-            const Sint32 origin_angle_ix = 0) -> void {
 
-            // aox - a_origin_ix)
-            T lerp = 1.0f * (outer_angle_ix >= cosine.get_size() / 2 ? cosine.get_size() - outer_angle_ix : outer_angle_ix) / cosine.get_size();
+            // Assumes: 
+            // origin_angle_ix in terms of cosine/sine cache of inner_angle_ix and outer_angle_ix
+            const Sint32 origin_angle_ix) -> void {
+
+
+            auto trig_cache_half = cosine.get_size() / 2;
+            
+            auto ref_inner_angle_ix = inner_angle_ix - origin_angle_ix;
+            if (ref_inner_angle_ix < 0) ref_inner_angle_ix = cosine.get_size() + ref_inner_angle_ix;
+            
+            // T lerp = 1.0f * (outer_angle_ix >= cosine.get_size() / 2 ? cosine.get_size() - outer_angle_ix : outer_angle_ix) / cosine.get_size();
+            T lerp = 1.0f * (ref_inner_angle_ix >= trig_cache_half ? cosine.get_size() - ref_inner_angle_ix : ref_inner_angle_ix) / trig_cache_half;
             auto couter_radius_dist_from_center = inner_radius_dist_from_center_ + lerp * (outer_radius_dist_from_center_ - inner_radius_dist_from_center_);
-
+            SDL_Log("%.2f", lerp);
             for (auto &b : blasts_) {
                 if (!b.next()) {
                     Point<Sint32> blast_from, blast_to;
                     auto rnd_inner_angle_ix = lcm_rnd() % cosine.get_size();
                     auto rnd_inner_radius = 1 + lcm_rnd() % inner_radius_; 
                     auto rnd_outer_radius = rnd_inner_radius * f_;
-
                     blast_from.x = (center_.x + inner_radius_dist_from_center_ * cosine[inner_angle_ix]) + rnd_inner_radius * cosine[rnd_inner_angle_ix];
                     blast_from.y = (center_.y + inner_radius_dist_from_center_ * sine[inner_angle_ix]) + rnd_inner_radius * sine[rnd_inner_angle_ix];
                     blast_to.x = (center_.x + couter_radius_dist_from_center * cosine[inner_angle_ix]) + rnd_outer_radius * cosine[rnd_inner_angle_ix];
