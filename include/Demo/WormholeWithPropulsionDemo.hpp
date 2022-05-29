@@ -31,7 +31,7 @@ namespace g80 {
         
         Point<float> origin_, craft_, center_;
         float inner_radius_{10}, mid_radius_{100}, outer_radius_{600};
-        float corrected_prop_offset_{360};
+        float corrected_prop_offset_{45};
         
         std::vector<QuadBezierMotion<float>> quad_bezier_motion_;
         Palette pal_, prop_pal_;
@@ -157,8 +157,6 @@ namespace g80 {
         auto new_a = a + corrected_a_offset;
         new_a = new_a >= TrigCacheCraftN_ ? new_a - TrigCacheCraftN_ : new_a;
 
-        // SDL_Log("%.2f %.2f %.2f", a * 180.0f, corrected_a, corrected_a_offset);
-
 
         Sint32 ai = a >= 0 ? TrigCacheCraftN_ / 2.0f * a : TrigCacheCraftN_ + TrigCacheCraftN_ / 2.0f * a;
         Sint32 ai_left = ai + 200 >= TrigCacheCraftN_ ? ai + 200 - TrigCacheCraftN_ : ai + 200;
@@ -180,8 +178,9 @@ namespace g80 {
             RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
             line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
         }
-        prop_.next(cosine_craft_, sine_craft_, ai, new_a);
+        prop_.next(cosine_craft_, sine_craft_, ai, ai + new_a);
 
+        // SDL_Log("%d %.2f", ai, new_a);
 
         // for (auto &tb : prop_left_.get_blasts()) {
         //     RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
