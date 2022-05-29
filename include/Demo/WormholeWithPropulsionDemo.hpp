@@ -41,9 +41,8 @@ namespace g80 {
         Palette pal_, prop_pal_;
 
         PriorityList pl_{110, TrigCacheN_};
-        PropulsionMotion<float> prop_{};
-        PropulsionMotion<float> prop_left_{};
-        PropulsionMotion<float> prop_right_{};
+        PropulsionMotion<float> prop_{10, 2};
+
 
     };
 
@@ -98,9 +97,7 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
-        prop_.set(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 300, 2500, cosine_, sine_, 0, 0);        
-        prop_left_.set(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, 100, 100);        
-        prop_right_.set(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, TrigCacheN_ - 100, TrigCacheN_ - 100);        
+        prop_.set(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 300, 1000, cosine_, sine_, 0, 0);        
         
         return true;
     }
@@ -179,12 +176,12 @@ namespace g80 {
         // circle(prop_.get_irad_center(cosine_craft_, sine_craft_, ai), prop_.get_irad(), guide_c);
         // circle(prop_.get_orad_center(cosine_craft_, sine_craft_, ai), prop_.get_orad(), guide_c);
 
+        // Animate the propulsion blasts 
         for (auto &tb : prop_.get_blasts()) {
             RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
             line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
         }
-        // prop_.next(cosine_craft_, sine_craft_, ai, ai + new_a);
-
+        
         auto a_origin_i_new = 1.0f * origin_angle_ / TrigCacheN_ * TrigCacheCraftN_;
         auto angle_point = craft_ -  center_;
         auto a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;

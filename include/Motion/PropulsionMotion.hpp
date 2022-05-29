@@ -1,7 +1,7 @@
 #ifndef PROPULSION_MOTION_HPP
 #define PROPULSION_MOTION_HPP
 
-// This Propulsion Motion is Specific to Wormhole
+// This Propulsion Motion is Specific to Wormhole Module
     
 #include <vector>
 #include <SDL.h>
@@ -13,11 +13,12 @@
 namespace g80 {
 /*
 
-    Flow: blasts from <inner radius> will
+    Flow:
+    Blasts from <inner radius> will
     be projected to the <outer radius> 
             
               __ <inner radius>
-             |/_|-------------- <center> ----------------- <origin>
+             |/_| <-------------- <center> ----------------- <origin>
              /  
             / <inner_outer_dist>
        ____/
@@ -27,12 +28,17 @@ namespace g80 {
     Inner outer distance decreases as the inner radius approaches origin.    
 
 */
-
+    template<typename T>
+    using Blasts = std::vector<LineWithAccelMotion<T>>;
 
     template<typename T>
     class PropulsionMotion {
     public:
-        PropulsionMotion() {}
+        PropulsionMotion(
+            Sint32 sz_blast_steps, 
+            Sint32 sz_blast_trail) :
+            sz_blast_steps_{sz_blast_steps}, 
+            sz_blast_trail_{sz_blast_trail} {}
         
         auto set(
             const Point<Sint32> &center, 
@@ -57,6 +63,7 @@ namespace g80 {
             for (Sint32 i = 0; i < blasts_n; ++i) {
                 blasts_.emplace_back();
 
+                // TODO: Combine this part with next;
                 Point<Sint32> p, t;
                 auto rnd_inner_angle_ix = lcm_rnd() % cosine.get_size();
                 auto rnd_inner_radius = 1 + lcm_rnd() % inner_radius_; 
@@ -88,16 +95,14 @@ namespace g80 {
             // origin_angle_ix in terms of cosine/sine cache of inner_angle_ix and outer_angle_ix
             const Sint32 origin_angle_ix) -> void {
 
-
             auto trig_cache_half = cosine.get_size() / 2;
             
-            auto ref_inner_angle_ix = inner_angle_ix - origin_angle_ix;
-            if (ref_inner_angle_ix < 0) ref_inner_angle_ix = cosine.get_size() + ref_inner_angle_ix;
+            auto ref_outer_angle_ix = outer_angle_ix - origin_angle_ix;
+            if (ref_outer_angle_ix < 0) ref_outer_angle_ix = cosine.get_size() + ref_outer_angle_ix;
             
-            // T lerp = 1.0f * (outer_angle_ix >= cosine.get_size() / 2 ? cosine.get_size() - outer_angle_ix : outer_angle_ix) / cosine.get_size();
-            T lerp = 1.0f * (ref_inner_angle_ix >= trig_cache_half ? cosine.get_size() - ref_inner_angle_ix : ref_inner_angle_ix) / trig_cache_half;
+            T lerp = 1.0f * (ref_outer_angle_ix >= trig_cache_half ? cosine.get_size() - ref_outer_angle_ix : ref_outer_angle_ix) / trig_cache_half;
             auto couter_radius_dist_from_center = inner_radius_dist_from_center_ + lerp * (outer_radius_dist_from_center_ - inner_radius_dist_from_center_);
-            SDL_Log("%.2f", lerp);
+            
             for (auto &b : blasts_) {
                 if (!b.next()) {
                     Point<Sint32> blast_from, blast_to;
@@ -119,13 +124,13 @@ namespace g80 {
         inline auto get_inner_radius_dist_from_center() -> Sint32 {return inner_radius_dist_from_center_;}
         inline auto get_outer_radius_dist_from_center() -> Sint32 {return outer_radius_dist_from_center_;}
 
-        inline auto get_blasts() const-> const std::vector<LineWithAccelMotion<T>> & {return blasts_;}
+        inline auto get_blasts() const-> const Blasts<T> & {return blasts_;}
 
     private:
+        Sint32 sz_blast_steps_{10}, sz_blast_trail_{2};
         Point<Sint32> center_;
         Sint32 inner_radius_, outer_radius_, inner_radius_dist_from_center_, outer_radius_dist_from_center_;
-        Sint32 sz_blast_steps_{10}, sz_blast_trail_{2};
-        std::vector<LineWithAccelMotion<T>> blasts_;
+        Blasts<T> blasts_;
         T f_;
     };
 
