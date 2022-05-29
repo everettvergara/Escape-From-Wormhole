@@ -2,6 +2,7 @@
 #include <iostream>
 #include "WormholeWithPropulsionDemo.hpp"
 
+// todo: need to do catmulrom spline motion
 
 // 3d in 2d graphics
 // TODO: cnaghed int to size_t
