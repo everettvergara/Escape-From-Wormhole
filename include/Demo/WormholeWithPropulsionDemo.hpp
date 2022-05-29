@@ -98,9 +98,9 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
-        prop_.set_propulsion_motion(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 300, 2500, cosine_, sine_, 0, 0);        
-        prop_left_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, 100, 100);        
-        prop_right_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, TrigCacheN_ - 100, TrigCacheN_ - 100);        
+        prop_.set(center_, 10, 40, mid_radius_ * 3, mid_radius_ * 3 + 300, 2500, cosine_, sine_, 0, 0);        
+        prop_left_.set(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, 100, 100);        
+        prop_right_.set(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, 2500, cosine_, sine_, TrigCacheN_ - 100, TrigCacheN_ - 100);        
         
         return true;
     }

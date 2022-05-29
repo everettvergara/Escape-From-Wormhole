@@ -34,7 +34,7 @@ namespace g80 {
     public:
         PropulsionMotion() {}
         
-        auto set_propulsion_motion(
+        auto set(
             const Point<Sint32> &center, 
             const Sint32 inner_radius, 
             const Sint32 outer_radius, 
@@ -78,10 +78,15 @@ namespace g80 {
             return Point<Sint32>(center_.x + outer_radius_dist_from_center_ * cosine[aix], center_.y + outer_radius_dist_from_center_ * sine[aix] );
         }
 
-        auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix, const Sint32 aox/*, const Sint32 a_origin_ix*/) -> void {
+        auto next(
+            const CosCache<T> &cosine, 
+            const SinCache<T> &sine, 
+            const Sint32 inner_angle_ix, 
+            const Sint32 outer_angle_ix, 
+            const Sint32 origin_angle_ix = 0) -> void {
 
             // aox - a_origin_ix)
-            T lerp = 1.0f * (aox >= cosine.get_size() / 2 ? cosine.get_size() - aox : aox) / cosine.get_size();
+            T lerp = 1.0f * (outer_angle_ix >= cosine.get_size() / 2 ? cosine.get_size() - outer_angle_ix : outer_angle_ix) / cosine.get_size();
             auto couter_radius_dist_from_center = inner_radius_dist_from_center_ + lerp * (outer_radius_dist_from_center_ - inner_radius_dist_from_center_);
 
             for (auto &b : blasts_) {
@@ -90,11 +95,12 @@ namespace g80 {
                     auto raix = lcm_rnd() % cosine.get_size();
                     auto rinner_radius = 1 + lcm_rnd() % inner_radius_; 
                     auto rinner_radiusf = rinner_radius * f_;
-                    p.x = get_inner_radius_center(cosine, sine, aix).x + rinner_radius * cosine[raix]; 
-                    p.y = get_inner_radius_center(cosine, sine, aix).y + rinner_radius * sine[raix]; 
 
-                    t.x = (center_.x + couter_radius_dist_from_center * cosine[aix]) + rinner_radiusf * cosine[raix];
-                    t.y = (center_.y + couter_radius_dist_from_center * sine[aix])+ rinner_radiusf * sine[raix]; 
+                    p.x = center_.x + inner_radius_dist_from_center_ * cosine[inner_angle_ix] + rinner_radius * cosine[raix];
+                    p.y = center_.y + inner_radius_dist_from_center_ * sine[inner_angle_ix] + rinner_radius * sine[raix];
+
+                    t.x = (center_.x + couter_radius_dist_from_center * cosine[inner_angle_ix]) + rinner_radiusf * cosine[raix];
+                    t.y = (center_.y + couter_radius_dist_from_center * sine[inner_angle_ix])+ rinner_radiusf * sine[raix]; 
 
                     b.line_with_accel_motion_set(p, t,  1 + lcm_rnd() % 10, 2);
                 }
