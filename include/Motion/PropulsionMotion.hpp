@@ -25,7 +25,8 @@ namespace g80 {
             const Sint32 orad_dist,
             const CosCache<T> cosine,
             const SinCache<T> sine,
-            const Sint32 aix) -> void {
+            const Sint32 aix,
+            const Sint32 aox) -> void {
 
             center_ = {center}; 
             irad_ = {irad}; 
@@ -59,7 +60,7 @@ namespace g80 {
             return Point<Sint32>(center_.x + orad_dist_ * cosine[aix], center_.y + orad_dist_ * sine[aix] );
         }
 
-        auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix) -> void {
+        auto next(const CosCache<T> &cosine, const SinCache<T> &sine, const Sint32 aix, const Sint32 aox) -> void {
             for (auto &b : blasts_) {
                 if (!b.next()) {
                     Point<Sint32> p, t;
@@ -68,8 +69,8 @@ namespace g80 {
                     auto riradf = rirad * f_;
                     p.x = get_irad_center(cosine, sine, aix).x + rirad * cosine[raix]; 
                     p.y = get_irad_center(cosine, sine, aix).y + rirad * sine[raix]; 
-                    t.x = get_orad_center(cosine, sine, aix).x + riradf * cosine[raix]; 
-                    t.y = get_orad_center(cosine, sine, aix).y + riradf * sine[raix]; 
+                    t.x = get_orad_center(cosine, sine, aox).x + riradf * cosine[raix]; 
+                    t.y = get_orad_center(cosine, sine, aox).y + riradf * sine[raix]; 
 
                     b.line_with_accel_motion_set(p, t,  1 + lcm_rnd() % 10, 2);
                 }

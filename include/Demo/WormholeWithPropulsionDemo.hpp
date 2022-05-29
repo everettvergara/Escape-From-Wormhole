@@ -91,9 +91,9 @@ namespace g80 {
                 {100, SDL_MapRGBA(surface_->format, 50, 20, 150, 255)},
                 });
 
-        prop_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 0);        
-        prop_left_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 100);        
-        prop_right_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 100);        
+        prop_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 0, 0);        
+        prop_left_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, 100, 100);        
+        prop_right_.set_propulsion_motion(center_, 10, 60, mid_radius_ * 3, mid_radius_ * 3 + 30, cosine_, sine_, TrigCacheN_ - 100, TrigCacheN_ - 100);        
         
         return true;
     }
@@ -142,10 +142,22 @@ namespace g80 {
         auto angle_point = craft_ -  Point<float>(surface_->w / 2, surface_->h / 2);
         float a = SDL_atan2f(angle_point.y, angle_point.x) / M_PI;
 
-        float corrected_a = a * 180.0f;
-        corrected_a = corrected_a > 90.0f ? 180 - corrected_a : (corrected_a < -90 ? -180 - corrected_a : corrected_a);
-        corrected_a_offset = corrected_a / 90.0f * corrected_prop_offset_;
-        SDL_Log("%.2f %.2f %.2f", a * 180.0f, corrected_a, corrected_a_offset);
+
+        // float corrected_a = a * 180.0f;
+        // corrected_a = corrected_a > 90.0f ? 180 - corrected_a : (corrected_a < -90 ? -180 - corrected_a : corrected_a);
+        // auto corrected_a_offset = corrected_a / 90.0f * corrected_prop_offset_;
+        // auto new_a = a + corrected_a_offset;
+
+        auto TrigCacheCraftN_2 = TrigCacheCraftN_ / 2.0f;
+        auto TrigCacheCraftN_4 = TrigCacheCraftN_ / 4.0f;
+
+        float corrected_a = a * TrigCacheCraftN_2;
+        corrected_a = corrected_a > TrigCacheCraftN_4 ? TrigCacheCraftN_2 - corrected_a : (corrected_a < -TrigCacheCraftN_4 ? -TrigCacheCraftN_2 - corrected_a : corrected_a);
+        auto corrected_a_offset = corrected_a / TrigCacheCraftN_4 * corrected_prop_offset_;
+        auto new_a = a + corrected_a_offset;
+        new_a = new_a >= TrigCacheCraftN_ ? new_a - TrigCacheCraftN_ : new_a;
+
+        // SDL_Log("%.2f %.2f %.2f", a * 180.0f, corrected_a, corrected_a_offset);
 
 
         Sint32 ai = a >= 0 ? TrigCacheCraftN_ / 2.0f * a : TrigCacheCraftN_ + TrigCacheCraftN_ / 2.0f * a;
@@ -154,6 +166,7 @@ namespace g80 {
 
         circle(prop_.get_center(), prop_.get_irad_dist(), guide_c);
         circle(center_, mid_radius_, guide_c);
+        
         Point<float> t {center_.x + mid_radius_ * cosine_craft_[ai], center_.y + mid_radius_ * sine_craft_[ai]};
         Point<float> t2 {center_.x + outer_radius_ * cosine_craft_[ai], center_.y + outer_radius_ * sine_craft_[ai]};
 
@@ -167,7 +180,7 @@ namespace g80 {
             RGBAColor pc = 100.0f * tb.get_head_step() / tb.get_size_of_step();
             line(tb.get_head(), tb.get_tail(), prop_pal_[pc]);
         }
-        prop_.next(cosine_craft_, sine_craft_, ai);
+        prop_.next(cosine_craft_, sine_craft_, ai, new_a);
 
 
         // for (auto &tb : prop_left_.get_blasts()) {
