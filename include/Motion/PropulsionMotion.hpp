@@ -58,15 +58,15 @@ namespace g80 {
                 blasts_.emplace_back();
 
                 Point<Sint32> p, t;
-                auto raix = lcm_rnd() % cosine.get_size();
-                auto rinner_radius = 1 + lcm_rnd() % inner_radius_; 
-                auto rinner_radiusf = rinner_radius * f_;
-                p.x = get_inner_radius_center(cosine, sine, aix).x + rinner_radius * cosine[raix]; 
-                p.y = get_inner_radius_center(cosine, sine, aix).y + rinner_radius * sine[raix]; 
-                t.x = get_outer_radius_center(cosine, sine, aix).x + rinner_radiusf * cosine[raix]; 
-                t.y = get_outer_radius_center(cosine, sine, aix).y + rinner_radiusf * sine[raix]; 
+                auto rnd_inner_angle_ix = lcm_rnd() % cosine.get_size();
+                auto rnd_inner_radius = 1 + lcm_rnd() % inner_radius_; 
+                auto rnd_inner_radiusf = rnd_inner_radius * f_;
+                p.x = get_inner_radius_center(cosine, sine, aix).x + rnd_inner_radius * cosine[rnd_inner_angle_ix]; 
+                p.y = get_inner_radius_center(cosine, sine, aix).y + rnd_inner_radius * sine[rnd_inner_angle_ix]; 
+                t.x = get_outer_radius_center(cosine, sine, aix).x + rnd_inner_radiusf * cosine[rnd_inner_angle_ix]; 
+                t.y = get_outer_radius_center(cosine, sine, aix).y + rnd_inner_radiusf * sine[rnd_inner_angle_ix]; 
 
-                blasts_[i].line_with_accel_motion_set(p, t, 1 + lcm_rnd() % 10, 2);
+                blasts_[i].line_with_accel_motion_set(p, t, 1 + lcm_rnd() % sz_blast_steps_, sz_blast_trail_);
             }
         }
 
@@ -91,18 +91,16 @@ namespace g80 {
 
             for (auto &b : blasts_) {
                 if (!b.next()) {
-                    Point<Sint32> p, t;
-                    auto raix = lcm_rnd() % cosine.get_size();
-                    auto rinner_radius = 1 + lcm_rnd() % inner_radius_; 
-                    auto rinner_radiusf = rinner_radius * f_;
+                    Point<Sint32> blast_from, blast_to;
+                    auto rnd_inner_angle_ix = lcm_rnd() % cosine.get_size();
+                    auto rnd_inner_radius = 1 + lcm_rnd() % inner_radius_; 
+                    auto rnd_outer_radius = rnd_inner_radius * f_;
 
-                    p.x = center_.x + inner_radius_dist_from_center_ * cosine[inner_angle_ix] + rinner_radius * cosine[raix];
-                    p.y = center_.y + inner_radius_dist_from_center_ * sine[inner_angle_ix] + rinner_radius * sine[raix];
-
-                    t.x = (center_.x + couter_radius_dist_from_center * cosine[inner_angle_ix]) + rinner_radiusf * cosine[raix];
-                    t.y = (center_.y + couter_radius_dist_from_center * sine[inner_angle_ix])+ rinner_radiusf * sine[raix]; 
-
-                    b.line_with_accel_motion_set(p, t,  1 + lcm_rnd() % 10, 2);
+                    blast_from.x = (center_.x + inner_radius_dist_from_center_ * cosine[inner_angle_ix]) + rnd_inner_radius * cosine[rnd_inner_angle_ix];
+                    blast_from.y = (center_.y + inner_radius_dist_from_center_ * sine[inner_angle_ix]) + rnd_inner_radius * sine[rnd_inner_angle_ix];
+                    blast_to.x = (center_.x + couter_radius_dist_from_center * cosine[inner_angle_ix]) + rnd_outer_radius * cosine[rnd_inner_angle_ix];
+                    blast_to.y = (center_.y + couter_radius_dist_from_center * sine[inner_angle_ix]) + rnd_outer_radius * sine[rnd_inner_angle_ix]; 
+                    b.line_with_accel_motion_set(blast_from, blast_to,  1 + lcm_rnd() % sz_blast_steps_, sz_blast_trail_);
                 }
             }
         }
@@ -118,6 +116,7 @@ namespace g80 {
     private:
         Point<Sint32> center_;
         Sint32 inner_radius_, outer_radius_, inner_radius_dist_from_center_, outer_radius_dist_from_center_;
+        Sint32 sz_blast_steps_{10}, sz_blast_trail_{2};
         std::vector<LineWithAccelMotion<T>> blasts_;
         T f_;
     };
