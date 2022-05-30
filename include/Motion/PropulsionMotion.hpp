@@ -99,7 +99,7 @@ namespace g80 {
             //  k = trig_cache_half / (deg * deg)
 
             // T k = 1.0f ; // * trig_cache_half / (trig_cache_half * trig_cache_half);
-            Sint32 outer_angle_ix = 1.3 * inner_angle_ix; // k * inner_angle_ix * inner_angle_ix;
+            Sint32 outer_angle_ix = 1.025f * inner_angle_ix; // k * inner_angle_ix * inner_angle_ix;
             // SDL_Log("%.6f %d %d", k, outer_angle_ix, inner_angle_ix);
             auto ref_outer_angle_ix = outer_angle_ix - origin_angle_ix;
             if (ref_outer_angle_ix < 0) ref_outer_angle_ix = cosine.get_size() + ref_outer_angle_ix;
