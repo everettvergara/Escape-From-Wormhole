@@ -36,7 +36,6 @@ namespace g80 {
             delete p;
             p = nullptr;
         }
-
     };
 }
 
