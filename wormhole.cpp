@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "WormholeWithPropulsionDemo.hpp"
+#include "Demo/WormholeWithPropulsionDemo.hpp"
 
 // todo: need to do catmulrom spline motion
 
@@ -16,7 +16,7 @@
 using namespace g80;
 
 auto set_default_video_config() -> VideoConfig;
-auto main(int argc, const char *argv[]) -> int {
+auto main(int argc, char *argv[]) -> int {
 
     VideoConfig video_config = set_default_video_config();
     WormholeWithPropulsionDemo demo;

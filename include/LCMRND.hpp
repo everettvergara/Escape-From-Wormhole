@@ -2,13 +2,13 @@
 #define _LCMRND_HPP_
 
 #include <SDL.h>
-
+#include <ctime>
 namespace g80 {
 
     constexpr Sint32 MAX_LCM_RND = 2147483647;
 
     inline auto lcm_rnd() -> Sint32 {
-        static std::time_t now = time(&now);
+        static std::time_t now = time(NULL);
         static Uint32 seed = now;
         static Uint32 a = 1103515245;
         static Uint32 c = 12345;

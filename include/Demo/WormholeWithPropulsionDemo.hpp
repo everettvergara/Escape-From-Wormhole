@@ -3,11 +3,11 @@
 
 #include <vector>
 #include "Video.hpp"
-#include "QuadBezierMotion.hpp"
+#include "Motion/QuadBezierMotion.hpp"
 #include "TrigCache.hpp"
 #include "LCMRND.hpp"
 #include "PriorityList.hpp"
-#include "PropulsionMotion.hpp"
+#include "Motion/PropulsionMotion.hpp"
 
 // TODO: Create a separate demo for wormhole and combine them here for refactoring
 // 
