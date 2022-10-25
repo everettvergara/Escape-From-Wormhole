@@ -26,6 +26,16 @@ namespace g80::video {
             x_(x), y_(y) {
         }
 
+        // template<typename U>
+        // auto const & () -> base_point<U> {
+        //     return base_point<U>()
+        // }
+
+        // template<typename U>
+        // friend base_point(const base_point<U> &r) : 
+        //     x_(static_cast<T>(r.x_)), y_(static_cast<T>(r.y_)) {
+        // }
+
         inline auto set_x(T x) -> void {
             x_ = {x};
         }
