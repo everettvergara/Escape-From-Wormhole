@@ -9,19 +9,21 @@ namespace g80::video {
 
     template<typename T>
     class base_point {
-
         static_assert(
-            std::is_same_v<T, int8_t>::value || std::is_same_v<T, uint8_t>::value || 
-            std::is_same_v<T, int16_t>::value || std::is_same_v<T, uint16_t>::value || 
-            std::is_same_v<T, int32_t>::value || std::is_same_v<T, uint32_t>::value || 
-            std::is_same_v<T, int64_t>::value || std::is_same_v<T, uint64_t>::value || 
-            std::is_same_v<T, float>::value || std::is_same_v<T, double>::value || 
-            std::is_same_v<T, long double>::value, "Type not allowed as point"); 
+            std::is_same_v<T, int8_t> || std::is_same_v<T, uint8_t> || 
+            std::is_same_v<T, int16_t> || std::is_same_v<T, uint16_t> || 
+            std::is_same_v<T, int32_t> || std::is_same_v<T, uint32_t> || 
+            std::is_same_v<T, int64_t> || std::is_same_v<T, uint64_t> || 
+            std::is_same_v<T, float> || std::is_same_v<T, double> || 
+            std::is_same_v<T, long double>, "Type not allowed as point"); 
 
     private:
         T x_, y_;
 
     public:
+
+        base_point(T x, T y) : x_(x), y_(y) {
+        }
 
         inline auto set_x(T x) -> void {
             x_ = {x};
