@@ -22,7 +22,8 @@ namespace g80::video {
 
     public:
 
-        base_point(T x, T y) : x_(x), y_(y) {
+        base_point(T x, T y) : 
+            x_(x), y_(y) {
         }
 
         inline auto set_x(T x) -> void {
