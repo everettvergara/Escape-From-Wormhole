@@ -2,19 +2,16 @@
 
 #include <functional>
 #include <vector>
+#include "script.hpp"
 
 namespace g80::test {
-
-    struct script {
-        const wchar_t                   *name;
-        std::function<auto () -> bool>  fn;
-    };
-
     class scenario {
-    
     private:
         const wchar_t       *name_;
         std::vector<script> scripts_;
+
+    protected:
+        auto add_script(script &&s) -> script & {return scripts_.emplace_back(std::move(s));}
 
     public:
         scenario(const wchar_t *name) : name_(name) {}
