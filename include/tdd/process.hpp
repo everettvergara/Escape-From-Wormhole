@@ -8,9 +8,9 @@
 #include <iomanip>
 #include "scenario.hpp"
 #include "common.hpp"
-#include "include/console/color.hpp"
+#include "console/color.hpp"
 
-namespace g80::test {
+namespace g80::tdd {
 
     class process {
     private:
@@ -21,7 +21,7 @@ namespace g80::test {
         process(const wchar_t *name) : name_(name) {}
         inline auto get_name() -> const wchar_t * {return name_;}
         inline auto get_scenarios() -> const std::vector<std::unique_ptr<scenario>> & {return scenarios_;}
-        auto add_scenario(std::unique_ptr<scenario> s) -> void {scenarios_.emplace_back(std::move(s));}
+        auto add_scenario(std::unique_ptr<scenario> &&s) -> void {scenarios_.emplace_back(std::move(s));}
         
         auto run() -> std::tuple<size_t, size_t> {
             std::wcout << "\nTesting " << name_ << "\n" << std::endl;

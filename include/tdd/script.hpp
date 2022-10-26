@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace g80::test {
+namespace g80::tdd {
     struct script {
         const wchar_t                   *name;
         std::function<auto () -> bool>  fn;

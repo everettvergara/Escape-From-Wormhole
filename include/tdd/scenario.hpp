@@ -4,7 +4,7 @@
 #include <vector>
 #include "script.hpp"
 
-namespace g80::test {
+namespace g80::tdd {
     class scenario {
     private:
         const wchar_t       *name_;

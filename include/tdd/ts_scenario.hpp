@@ -4,7 +4,10 @@
 #include "script.hpp"
 
 namespace g80::worm::tdd {
-    class test : public g80::test::scenario {
+
+    using namespace g80::tdd;
+
+    class ts_scenario : public scenario {
     private:
 
         auto always_true() -> bool {return true;}
@@ -12,8 +15,8 @@ namespace g80::worm::tdd {
 
     public:
 
-        test(const wchar_t *name) : g80::test::scenario(name) {
-            add_script(g80::test::script(L"Always True", std::bind(&test::always_true, this)));
+        ts_scenario(const wchar_t *name) : scenario(name) {
+            add_script(script(L"Always True", std::bind(&ts_scenario::always_true, this)));
         }
     };
 }
