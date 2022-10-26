@@ -11,7 +11,7 @@ namespace g80::test {
         std::vector<script> scripts_;
 
     protected:
-        auto add_script(script &&s) -> script & {return scripts_.emplace_back(std::move(s));}
+        auto add_script(script &&s) -> void {scripts_.emplace_back(std::move(s));}
 
     public:
         scenario(const wchar_t *name) : name_(name) {}
