@@ -2,9 +2,7 @@
 
 #include <cstdint>
 #include <cassert>
-#include <tuple>
 #include <iostream>
-
 
 namespace g80::video {
     template<typename T>
