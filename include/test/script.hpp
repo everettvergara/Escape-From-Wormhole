@@ -18,6 +18,5 @@ namespace g80::test {
 
         auto operator=(const script &r) -> script & = delete;
         auto operator=(script &&r) -> script & = delete;
-
     };
 }
