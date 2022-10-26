@@ -44,9 +44,9 @@ namespace g80::tdd {
 
             using namespace g80::console::color;
             std::wcout  << "\n\nResult Summary\n"
-                        << FORE_COLOR_GREEN << std::left << std::setw(9) << "Passed" << RESET << ":" << FORE_COLOR_GREEN << std::setw(15) << std::right << ptotal << "\n"
-                        << FORE_COLOR_RED << std::left << std::setw(9) << "Failed" << RESET << ":" << FORE_COLOR_RED << std::setw(15) << std::setfill(L' ') << std::right << ototal - ptotal << "\n"
-                        << RESET << std::left << std::setw(9) << "Total" << ":" << std::setw(15) << std::setfill(L' ') << std::right << ototal << "\n" << std::endl;
+                        << "Passed: " << FORE_COLOR_GREEN << ptotal << RESET << "\n"
+                        << "Failed: " << FORE_COLOR_RED << (ototal - ptotal) << RESET << "\n"
+                        << "Total: " << ototal << "\n" << std::endl;
 
             return {ototal, ptotal};
         }        
