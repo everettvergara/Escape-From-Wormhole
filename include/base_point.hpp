@@ -28,5 +28,28 @@ namespace g80::video {
             return base_point<U>(static_cast<U>(x), static_cast<U>(y));
         }
 
+        auto operator+=(const base_point<T> &r) -> base_point<T> & {
+            x += r.x; y += r.y; return *this;        
+        }
+
+        auto operator-=(const base_point<T> &r) -> base_point<T> & {
+            x -= r.x; y -= r.y; return *this;        
+        }
+
+        auto operator*=(const T s) -> base_point<T> & {
+            x *= s; y *= s; return *this;        
+        }
+
+        auto operator*=(const base_point<T> &r) -> base_point<T> & {
+            x *= r.x; y *= r.y; return *this;        
+        }
+
+        auto operator/=(const T s) -> base_point<T> & {
+            x /= s; y /= s; return *this; 
+        }
+
+        auto operator/=(const base_point<T> &r) -> base_point<T> & {
+            x /= r.x; y /= r.y; return *this;        
+        }
     };
 }
