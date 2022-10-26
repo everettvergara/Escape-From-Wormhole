@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../include/test/scenario.hpp"
-#include "../../../include/test/script.hpp"
+#include "scenario.hpp"
+#include "script.hpp"
 
 namespace g80::worm::tdd {
     class test : public g80::test::scenario {
