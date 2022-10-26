@@ -12,22 +12,23 @@
 
 namespace g80::test {
 
-    class scenario_group {
+    class process {
     private:
         const wchar_t                           *name_;
         std::vector<std::unique_ptr<scenario>>  scenarios_;
 
     public:
-        scenario_group(const wchar_t *name) : name_(name) {}
+        process(const wchar_t *name) : name_(name) {}
         inline auto get_name() -> const wchar_t * {return name_;}
         inline auto get_scenarios() -> const std::vector<std::unique_ptr<scenario>> & {return scenarios_;}
         auto add_scenario(std::unique_ptr<scenario> s) -> void {scenarios_.emplace_back(std::move(s));}
-        auto run() -> void {
-            std::wcout << "\nProcessing scenarios for " << name_ << "...\n" << std::endl;
+        
+        auto run() -> std::tuple<size_t, size_t> {
+            std::wcout << "\nTesting " << name_ << "\n" << std::endl;
 
             size_t ototal{0}, ptotal{0}, no{1};
             for(auto &scenario : scenarios_) {
-                std::wcout << "[" << no << "/" << scenarios_.size() << "] " << scenario->get_name() << std::endl;
+                std::wcout << "[" << no++ << "/" << scenarios_.size() << "] " << scenario->get_name() << std::endl;
                 for(auto &script : scenario->get_scripts()) {
                     auto start{std::chrono::high_resolution_clock::now()};
                     auto passed = script.fn();
@@ -47,7 +48,7 @@ namespace g80::test {
                         << FORE_COLOR_RED << std::left << std::setw(9) << "Failed" << RESET << ":" << FORE_COLOR_RED << std::setw(15) << std::setfill(L' ') << std::right << ototal - ptotal << "\n"
                         << RESET << std::left << std::setw(9) << "Total" << ":" << std::setw(15) << std::setfill(L' ') << std::right << ototal << "\n" << std::endl;
 
+            return {ototal, ptotal};
         }        
     };
-
 }
