@@ -32,6 +32,10 @@ namespace g80::video {
 
     template<typename T> auto operator==(const base_point<T> &l, const base_point<T> &r) -> bool {return l.x == r.x && l.y == r.y;}
     template<typename T> auto operator!=(const base_point<T> &l, const base_point<T> &r) -> bool {return l.x != r.x || l.y != r.y;}
+    template<typename T> auto operator>=(const base_point<T> &l, const base_point<T> &r) -> bool {return l.x >= r.x && l.y >= r.y;}
+    template<typename T> auto operator>(const base_point<T> &l, const base_point<T> &r) -> bool {return l.x > r.x && l.y > r.y;}
+    template<typename T> auto operator<=(const base_point<T> &l, const base_point<T> &r) -> bool {return l.x <= r.x && l.y <= r.y;}
+    template<typename T> auto operator<(const base_point<T> &l, const base_point<T> &r) -> bool {return l.x < r.x && l.y < r.y;}
     template<typename T> auto operator+(base_point<T> l, const base_point<T> &r) -> base_point<T> {l += r; return l;}
     template<typename T> auto operator-(base_point<T> l, const base_point<T> &r) -> base_point<T> {l -= r; return l;}
     template<typename T> auto operator*(base_point<T> l, const T &s) -> base_point<T> {l *= s; return l;}
