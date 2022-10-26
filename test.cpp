@@ -1,6 +1,5 @@
 #include <iostream>
-#include "base_point.hpp"
-
+// #include "test/"
 auto main() -> int {
 
     g80::video::base_point<float> point(10, 20);
