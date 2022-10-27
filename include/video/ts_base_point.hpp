@@ -45,14 +45,34 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
-        auto cast_conversion_int64() -> bool {
+        auto cast_conversion() -> bool {
             auto check{0};
             
             for(auto &p : points_) {
                 base_point<int64_t> p64 = static_cast<base_point<int64_t>>(*p);
+                base_point<int32_t> p32 = static_cast<base_point<int32_t>>(*p);
+                base_point<int16_t> p16 = static_cast<base_point<int16_t>>(*p);
+                base_point<int8_t> p8 = static_cast<base_point<int8_t>>(*p);
+                base_point<uint64_t> pu64 = static_cast<base_point<uint64_t>>(*p);
+                base_point<uint32_t> pu32 = static_cast<base_point<uint32_t>>(*p);
+                base_point<uint16_t> pu16 = static_cast<base_point<uint16_t>>(*p);
+                base_point<uint8_t> pu8 = static_cast<base_point<uint8_t>>(*p);
+                base_point<float> pf = static_cast<base_point<float>>(*p);
+                base_point<double> pd = static_cast<base_point<double>>(*p);
+                base_point<long double> pld = static_cast<base_point<long double>>(*p);
                 check += p64.x == static_cast<int64_t>(p->x) && p64.y == static_cast<int64_t>(p->y);
+                check += p32.x == static_cast<int32_t>(p->x) && p32.y == static_cast<int32_t>(p->y);
+                check += p16.x == static_cast<int16_t>(p->x) && p16.y == static_cast<int16_t>(p->y);
+                check += p8.x == static_cast<int8_t>(p->x) && p8.y == static_cast<int8_t>(p->y);
+                check += pu64.x == static_cast<uint64_t>(p->x) && pu64.y == static_cast<uint64_t>(p->y);
+                check += pu32.x == static_cast<uint32_t>(p->x) && pu32.y == static_cast<uint32_t>(p->y);
+                check += pu16.x == static_cast<uint16_t>(p->x) && pu16.y == static_cast<uint16_t>(p->y);
+                check += pu8.x == static_cast<uint8_t>(p->x) && pu8.y == static_cast<uint8_t>(p->y);
+                check += pf.x == static_cast<float>(p->x) && pf.y == static_cast<float>(p->y);
+                check += pd.x == static_cast<double>(p->x) && pd.y == static_cast<double>(p->y);
+                check += pld.x == static_cast<long double>(p->x) && pld.y == static_cast<long double>(p->y);
             }
-            return check == N;
+            return check == N * 11;
         }
 
 
@@ -63,7 +83,7 @@ namespace g80::worm::tdd {
             
             add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
             add_script(script(L"Constructor base_point<T>(ix, iy)", std::bind(&ts_base_point<T>::constructor, this)));
-            add_script(script(L"Type cast cast_conversion_int64", std::bind(&ts_base_point<T>::cast_conversion_int64, this)));
+            add_script(script(L"Type cast cast_conversion", std::bind(&ts_base_point<T>::cast_conversion, this)));
         }
     };
 }
