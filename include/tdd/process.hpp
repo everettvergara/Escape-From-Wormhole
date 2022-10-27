@@ -24,12 +24,12 @@ namespace g80::tdd {
         auto add_scenario(std::unique_ptr<scenario> &&s) -> void {scenarios_.emplace_back(std::move(s));}
         
         auto run() -> std::tuple<size_t, size_t> {
-            std::wcout << "\nTesting " << name_ << " - {" << scenarios_.size() << " scenario/s}\n" << std::endl;
+            std::wcout << "\nTesting " << name_ << " - {" << scenarios_.size() << " scenario/s}\n";
 
             size_t ototal{0}, ptotal{0}, no{1};
             for(auto &scenario : scenarios_) {
-
-                std::wcout << "[" << no++ << "/" << scenarios_.size() << "] " << scenario->get_name() << " - {" << scenario->get_scripts().size() << " script/s}" << std::endl;
+                std::wcout << "\n[" << no++ << "/" << scenarios_.size() << "] " << scenario->get_name() << " - {" << scenario->get_scripts().size() << " script/s}" << std::endl;
+                ototal += scenario->get_scripts().size();
                 for(auto &script : scenario->get_scripts()) {
                     auto start{std::chrono::high_resolution_clock::now()};
                     auto passed = script.fn();
@@ -40,7 +40,6 @@ namespace g80::tdd {
                                 << elapsed.count()
                                 << std::setw(0) << std::left << "ns] " << script.name << "" << std::endl;
                 }
-                ototal += scenarios_.size();
             }
 
             using namespace g80::console::color;

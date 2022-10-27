@@ -23,8 +23,10 @@ namespace g80::worm::tdd {
         auto init() -> bool {
             xys_.reserve(N);
             for(size_t i{0}; i < N; ++i) {
-                T x{rand() % M - O}, y{rand() % M - O};
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
                 xys_.emplace_back(std::tuple<T, T>(x, y));
+
             }
             return true;
         }
