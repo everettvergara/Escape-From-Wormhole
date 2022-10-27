@@ -162,11 +162,26 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto is_equal_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_)
+                check += p == p;
+            return check == N;
+        }
+
+        auto is_not_equal_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_)
+                check += p != base_point<T>(~p.x, ~p.y);
+            return check == N;
+        }
+
+
+
     public:
 
         ts_base_point(const wchar_t *name) : 
             scenario(name) {
-            
             add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
             add_script(script(L"Constructor base_point<T>(ix, iy)", std::bind(&ts_base_point<T>::constructor, this)));
             add_script(script(L"Type cast cast_conversion", std::bind(&ts_base_point<T>::cast_conversion, this)));
@@ -177,6 +192,10 @@ namespace g80::worm::tdd {
             add_script(script(L"Div Point binary op (*=)", std::bind(&ts_base_point<T>::div_binary_op, this)));
             add_script(script(L"Div Scalar binary op (*=)", std::bind(&ts_base_point<T>::div_scalar_binary_op, this)));
             add_script(script(L"Absolute copy op", std::bind(&ts_base_point<T>::abs_op, this)));
+
+            add_script(script(L"Is Equal op (==)", std::bind(&ts_base_point<T>::is_equal_op, this)));
+            add_script(script(L"Is Not Equal op (!=)", std::bind(&ts_base_point<T>::is_not_equal_op, this)));
+
         }
     };
 }
