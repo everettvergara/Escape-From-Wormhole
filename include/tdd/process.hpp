@@ -38,7 +38,7 @@ namespace g80::tdd {
                     std::wcout  << "[" << (passed ? PASSED_TEXT : FAILED_TEXT) << ":" 
                                 << std::setw(10) << std::setfill(L' ') << std::right 
                                 << elapsed.count()
-                                << std::setw(0) << std::left << "ns] " << name_ << "." << std::endl;
+                                << std::setw(0) << std::left << "ns] " << script.name << "" << std::endl;
                 }
                 ototal += scenarios_.size();
             }

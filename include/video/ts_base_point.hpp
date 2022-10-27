@@ -17,7 +17,7 @@ namespace g80::worm::tdd {
     private:
         static constexpr T N{10};
         static constexpr T M{100};
-        static constexpr T O{std::is_signed_v<T> ? -M/2 : 0};
+        static constexpr T O{std::is_signed_v<T> ? M/2 : 0};
         std::vector<std::tuple<T, T>> xys_;
 
         auto init() -> bool {
@@ -25,7 +25,6 @@ namespace g80::worm::tdd {
             for(size_t i{0}; i < N; ++i) {
                 T x{rand() % M - O}, y{rand() % M - O};
                 xys_.emplace_back(std::tuple<T, T>(x, y));
-                std::cout << "x: " << x << ", " << y << "\n";
             }
             return true;
         }
