@@ -45,13 +45,25 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto cast_conversion_int64() -> bool {
+            auto check{0};
+            
+            for(auto &p : points_) {
+                base_point<int64_t> p64 = static_cast<base_point<int64_t>>(*p);
+                check += p64.x == static_cast<int64_t>(p->x) && p64.y == static_cast<int64_t>(p->y);
+            }
+            return check == N;
+        }
+
+
     public:
 
         ts_base_point(const wchar_t *name) : 
             scenario(name) {
             
             add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
-            add_script(script(L"Constructor base_point<T>(ix, iy) check", std::bind(&ts_base_point<T>::constructor, this)));
+            add_script(script(L"Constructor base_point<T>(ix, iy)", std::bind(&ts_base_point<T>::constructor, this)));
+            add_script(script(L"Type cast cast_conversion_int64", std::bind(&ts_base_point<T>::cast_conversion_int64, this)));
         }
     };
 }
