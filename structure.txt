@@ -1,13 +1,11 @@
 
 
 {Folder}
+    - [bin-win]
     - [include]
         [test]
         [console]
         [video]
 
     - [test]
-        
-
     - [src]
-    - [bin]
