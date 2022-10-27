@@ -87,6 +87,32 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto sub_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                base_point<T> random_point{x, y};
+                copy_point -= random_point;
+                check += copy_point.x == p->x - x && copy_point.y == p->y - y;
+            }
+            return check == N;
+        }
+
+        auto mul_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                base_point<T> random_point{x, y};
+                copy_point *= random_point;
+                check += copy_point.x == p->x * x && copy_point.y == p->y * y;
+            }
+            return check == N;
+        }
+
 
     public:
 
@@ -96,7 +122,9 @@ namespace g80::worm::tdd {
             add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
             add_script(script(L"Constructor base_point<T>(ix, iy)", std::bind(&ts_base_point<T>::constructor, this)));
             add_script(script(L"Type cast cast_conversion", std::bind(&ts_base_point<T>::cast_conversion, this)));
-            add_script(script(L"Add binary op (+=)", std::bind(&ts_base_point<T>::cast_conversion, this)));
+            add_script(script(L"Add Point binary op (+=)", std::bind(&ts_base_point<T>::cast_conversion, this)));
+            add_script(script(L"Sub Point binary op (-=)", std::bind(&ts_base_point<T>::sub_binary_op, this)));
+            add_script(script(L"Mul Point binary op (*=)", std::bind(&ts_base_point<T>::mul_binary_op, this)));
         }
     };
 }
