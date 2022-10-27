@@ -4,6 +4,7 @@
 #include <tuple>
 #include <vector>
 #include <cstdlib>
+#include <memory>
 #include "tdd/scenario.hpp"
 #include "tdd/script.hpp"
 #include "base_point.hpp"
@@ -11,6 +12,7 @@
 namespace g80::worm::tdd {
 
     using namespace g80::tdd;
+    using namespace g80::video;
 
     template<typename T>
     class ts_base_point : public scenario {
@@ -26,9 +28,21 @@ namespace g80::worm::tdd {
                 T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
                 T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
                 xys_.emplace_back(std::tuple<T, T>(x, y));
-
             }
             return true;
+        }
+
+    private:
+
+        std::vector<std::unique_ptr<base_point<T>>> points_;
+
+        auto constructor() -> bool {
+            auto check{0};
+            for(const auto &xy : xys_) {
+                const auto &p = points_.emplace_back(std::make_unique<base_point<T>>(std::get<0>(xy), std::get<1>(xy)));
+                check += p->x == std::get<0>(xy) && p->y == std::get<1>(xy);
+            }
+            return check == N;
         }
 
     public:
@@ -37,6 +51,7 @@ namespace g80::worm::tdd {
             scenario(name) {
             
             add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
+            add_script(script(L"Constructor base_point<T>(ix, iy) check", std::bind(&ts_base_point<T>::constructor, this)));
         }
     };
 }
