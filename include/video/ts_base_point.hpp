@@ -133,7 +133,7 @@ namespace g80::worm::tdd {
                 if(x == 0) x = 1;
                 if(y == 0) y = 1;
                 base_point<T> random_point{x, y};
-                copy_point *= random_point;
+                copy_point /= random_point;
                 check += copy_point.x == p->x / x && copy_point.y == p->y / y;
             }
             return check == N;
