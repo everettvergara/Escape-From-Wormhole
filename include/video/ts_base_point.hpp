@@ -15,15 +15,15 @@ namespace g80::worm::tdd {
     template<typename T>
     class ts_base_point : public scenario {
     private:
-
-        static constexpr T N{100};
-        static constexpr T O{std::is_signed_v<T> ? -N/4 : 0};
+        static constexpr T N{10};
+        static constexpr T M{100};
+        static constexpr T O{std::is_signed_v<T> ? -M/2 : 0};
         std::vector<std::tuple<T, T>> xys_;
 
-        auto init(const size_t t) -> bool {
-            xys_.reserve(t);
-            for(size_t i{0}; i < t; ++i) {
-                T x{N % (N/2) - O}, y{N % (N/2) - O};
+        auto init() -> bool {
+            xys_.reserve(N);
+            for(size_t i{0}; i < N; ++i) {
+                T x{rand() % M - O}, y{rand() % M - O};
                 xys_.emplace_back(std::tuple<T, T>(x, y));
                 std::cout << "x: " << x << ", " << y << "\n";
             }
@@ -34,7 +34,8 @@ namespace g80::worm::tdd {
 
         ts_base_point(const wchar_t *name) : 
             scenario(name) {
-            add_script(script(L"Initialization", std::bind(&ts_base_point::init, this)));
+            
+            add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
         }
     };
 }

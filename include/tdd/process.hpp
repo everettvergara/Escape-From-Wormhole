@@ -24,11 +24,12 @@ namespace g80::tdd {
         auto add_scenario(std::unique_ptr<scenario> &&s) -> void {scenarios_.emplace_back(std::move(s));}
         
         auto run() -> std::tuple<size_t, size_t> {
-            std::wcout << "\nTesting " << name_ << "\n" << std::endl;
+            std::wcout << "\nTesting " << name_ << " - {" << scenarios_.size() << " scenario/s}\n" << std::endl;
 
             size_t ototal{0}, ptotal{0}, no{1};
             for(auto &scenario : scenarios_) {
-                std::wcout << "[" << no++ << "/" << scenarios_.size() << "] " << scenario->get_name() << std::endl;
+
+                std::wcout << "[" << no++ << "/" << scenarios_.size() << "] " << scenario->get_name() << " - {" << scenario->get_scripts().size() << " script/s}" << std::endl;
                 for(auto &script : scenario->get_scripts()) {
                     auto start{std::chrono::high_resolution_clock::now()};
                     auto passed = script.fn();
