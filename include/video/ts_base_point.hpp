@@ -47,8 +47,7 @@ namespace g80::worm::tdd {
 
         auto cast_conversion() -> bool {
             auto check{0};
-            
-            for(auto &p : points_) {
+            for(const auto &p : points_) {
                 base_point<int64_t> p64 = static_cast<base_point<int64_t>>(*p);
                 base_point<int32_t> p32 = static_cast<base_point<int32_t>>(*p);
                 base_point<int16_t> p16 = static_cast<base_point<int16_t>>(*p);
@@ -75,6 +74,19 @@ namespace g80::worm::tdd {
             return check == N * 11;
         }
 
+        auto add_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                base_point<T> random_point{x, y};
+                copy_point += random_point;
+                check += copy_point.x == p->x + x && copy_point.y == p->y + y;
+            }
+            return check == N;
+        }
+
 
     public:
 
@@ -84,6 +96,7 @@ namespace g80::worm::tdd {
             add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
             add_script(script(L"Constructor base_point<T>(ix, iy)", std::bind(&ts_base_point<T>::constructor, this)));
             add_script(script(L"Type cast cast_conversion", std::bind(&ts_base_point<T>::cast_conversion, this)));
+            add_script(script(L"Add binary op (+=)", std::bind(&ts_base_point<T>::cast_conversion, this)));
         }
     };
 }
