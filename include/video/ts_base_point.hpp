@@ -151,6 +151,16 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto abs_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = (*p).abs();
+                copy_point *= -1;
+                auto abs_copy = copy_point.abs();
+                check += abs_copy.x == (p->x < 0 ? -p->x : p->x) && abs_copy.y == (p->y < 0 ? -p->y : p->y);
+            }
+            return check == N;
+        }
 
     public:
 
@@ -166,6 +176,7 @@ namespace g80::worm::tdd {
             add_script(script(L"Mul Scalar binary op (*=)", std::bind(&ts_base_point<T>::mul_scalar_binary_op, this)));
             add_script(script(L"Div Point binary op (*=)", std::bind(&ts_base_point<T>::div_binary_op, this)));
             add_script(script(L"Div Scalar binary op (*=)", std::bind(&ts_base_point<T>::div_scalar_binary_op, this)));
+            add_script(script(L"Absolute copy op", std::bind(&ts_base_point<T>::abs_op, this)));
         }
     };
 }
