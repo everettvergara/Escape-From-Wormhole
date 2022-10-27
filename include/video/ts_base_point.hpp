@@ -155,7 +155,7 @@ namespace g80::worm::tdd {
             auto check{0};
             for(const auto &p : points_) {
                 auto copy_point = (*p).abs();
-                copy_point *= -1;
+                copy_point *= std::is_unsigned_v<T> ? 1 : -1;
                 auto abs_copy = copy_point.abs();
                 check += abs_copy.x == (p->x < 0 ? -p->x : p->x) && abs_copy.y == (p->y < 0 ? -p->y : p->y);
             }
