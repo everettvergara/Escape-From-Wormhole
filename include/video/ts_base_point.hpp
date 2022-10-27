@@ -113,6 +113,44 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto mul_scalar_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T s{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                copy_point *= s;
+                check += copy_point.x == p->x * s && copy_point.y == p->y * s;
+            }
+            return check == N;
+        }
+
+        auto div_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                if(x == 0) x = 1;
+                if(y == 0) y = 1;
+                base_point<T> random_point{x, y};
+                copy_point *= random_point;
+                check += copy_point.x == p->x / x && copy_point.y == p->y / y;
+            }
+            return check == N;
+        }
+
+        auto div_scalar_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T s{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                if(s == 0) s = 1;
+                copy_point /= s;
+                check += copy_point.x == p->x / s && copy_point.y == p->y / s;
+            }
+            return check == N;
+        }
+
 
     public:
 
@@ -125,6 +163,9 @@ namespace g80::worm::tdd {
             add_script(script(L"Add Point binary op (+=)", std::bind(&ts_base_point<T>::cast_conversion, this)));
             add_script(script(L"Sub Point binary op (-=)", std::bind(&ts_base_point<T>::sub_binary_op, this)));
             add_script(script(L"Mul Point binary op (*=)", std::bind(&ts_base_point<T>::mul_binary_op, this)));
+            add_script(script(L"Mul Scalar binary op (*=)", std::bind(&ts_base_point<T>::mul_scalar_binary_op, this)));
+            add_script(script(L"Div Point binary op (*=)", std::bind(&ts_base_point<T>::div_binary_op, this)));
+            add_script(script(L"Div Scalar binary op (*=)", std::bind(&ts_base_point<T>::div_scalar_binary_op, this)));
         }
     };
 }
