@@ -171,8 +171,10 @@ namespace g80::worm::tdd {
 
         auto is_not_equal_op() -> bool {
             auto check{0};
-            // for(const auto &p : points_)
-            //     check += p != base_point<T>(~p.x, ~p.y);
+            for(const auto &p : points_) {
+                const auto copy_point = base_point<T>(p->x + static_cast<T>(1 + rand() % 10), p->y + static_cast<T>(1 + rand() % 10));
+                check += *p != copy_point;
+            }
             return check == N;
         }
 
