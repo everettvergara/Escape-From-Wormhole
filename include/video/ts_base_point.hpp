@@ -178,6 +178,43 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto is_gre_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                const auto copy_point = base_point<T>(p->x + static_cast<T>(rand() % 3), p->y + static_cast<T>(rand() % 3));
+                check += copy_point >= *p;
+            }
+            return check == N;
+        }
+
+        auto is_gr_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                const auto copy_point = base_point<T>(p->x + static_cast<T>(1 + rand() % 10), p->y + static_cast<T>(1 + rand() % 10));
+                check += copy_point > *p;
+            }
+            return check == N;
+        }
+
+
+        auto is_lte_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                const auto copy_point = base_point<T>(p->x + static_cast<T>(rand() % 3), p->y + static_cast<T>(rand() % 3));
+                check += *p <= copy_point;
+            }
+            return check == N;
+        }
+
+        auto is_lt_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                const auto copy_point = base_point<T>(p->x + static_cast<T>(1 + rand() % 10), p->y + static_cast<T>(1 + rand() % 10));
+                check += *p < copy_point;
+            }
+            return check == N;
+        }
+
 
 
     public:
@@ -194,9 +231,14 @@ namespace g80::worm::tdd {
             add_script(script(L"Div Point binary op (*=)", std::bind(&ts_base_point<T>::div_binary_op, this)));
             add_script(script(L"Div Scalar binary op (*=)", std::bind(&ts_base_point<T>::div_scalar_binary_op, this)));
             add_script(script(L"Absolute copy op", std::bind(&ts_base_point<T>::abs_op, this)));
-
             add_script(script(L"Is Equal op (==)", std::bind(&ts_base_point<T>::is_equal_op, this)));
             add_script(script(L"Is Not Equal op (!=)", std::bind(&ts_base_point<T>::is_not_equal_op, this)));
+
+            add_script(script(L"Is Greater than or eq op (>=)", std::bind(&ts_base_point<T>::is_gre_op, this)));
+            add_script(script(L"Is Greater than op (>)", std::bind(&ts_base_point<T>::is_gr_op, this)));
+            add_script(script(L"Is Less than or eq op (<=)", std::bind(&ts_base_point<T>::is_lte_op, this)));
+            add_script(script(L"Is Less than op (<)", std::bind(&ts_base_point<T>::is_lt_op, this)));
+
 
         }
     };
