@@ -74,7 +74,7 @@ namespace g80::worm::tdd {
             return check == N * 11;
         }
 
-        auto add_binary_op() -> bool {
+        auto add_unary_op() -> bool {
             auto check{0};
             for(const auto &p : points_) {
                 auto copy_point = *p;
@@ -87,7 +87,7 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
-        auto sub_binary_op() -> bool {
+        auto sub_unary_op() -> bool {
             auto check{0};
             for(const auto &p : points_) {
                 auto copy_point = *p;
@@ -100,7 +100,7 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
-        auto mul_binary_op() -> bool {
+        auto mul_unary_op() -> bool {
             auto check{0};
             for(const auto &p : points_) {
                 auto copy_point = *p;
@@ -113,7 +113,7 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
-        auto mul_scalar_binary_op() -> bool {
+        auto mul_scalar_unary_op() -> bool {
             auto check{0};
             for(const auto &p : points_) {
                 auto copy_point = *p;
@@ -124,7 +124,7 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
-        auto div_binary_op() -> bool {
+        auto div_unary_op() -> bool {
             auto check{0};
             for(const auto &p : points_) {
                 auto copy_point = *p;
@@ -139,7 +139,7 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
-        auto div_scalar_binary_op() -> bool {
+        auto div_scalar_unary_op() -> bool {
             auto check{0};
             for(const auto &p : points_) {
                 auto copy_point = *p;
@@ -215,6 +215,18 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto add_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                base_point<T> random_point{x, y};
+                auto result = copy_point + random_point;
+                check += result.x == copy_point.x + random_point.x && result.y == copy_point.y + random_point.y;
+            }
+            return check == N;
+        }
 
 
     public:
@@ -224,12 +236,12 @@ namespace g80::worm::tdd {
             add_script(script(L"Initialization", std::bind(&ts_base_point<T>::init, this)));
             add_script(script(L"Constructor base_point<T>(ix, iy)", std::bind(&ts_base_point<T>::constructor, this)));
             add_script(script(L"Type cast cast_conversion", std::bind(&ts_base_point<T>::cast_conversion, this)));
-            add_script(script(L"Add Point binary op (+=)", std::bind(&ts_base_point<T>::cast_conversion, this)));
-            add_script(script(L"Sub Point binary op (-=)", std::bind(&ts_base_point<T>::sub_binary_op, this)));
-            add_script(script(L"Mul Point binary op (*=)", std::bind(&ts_base_point<T>::mul_binary_op, this)));
-            add_script(script(L"Mul Scalar binary op (*=)", std::bind(&ts_base_point<T>::mul_scalar_binary_op, this)));
-            add_script(script(L"Div Point binary op (*=)", std::bind(&ts_base_point<T>::div_binary_op, this)));
-            add_script(script(L"Div Scalar binary op (*=)", std::bind(&ts_base_point<T>::div_scalar_binary_op, this)));
+            add_script(script(L"Add Point unary op (+=)", std::bind(&ts_base_point<T>::cast_conversion, this)));
+            add_script(script(L"Sub Point unary op (-=)", std::bind(&ts_base_point<T>::sub_unary_op, this)));
+            add_script(script(L"Mul Point unary op (*=)", std::bind(&ts_base_point<T>::mul_unary_op, this)));
+            add_script(script(L"Mul Scalar unary op (*=)", std::bind(&ts_base_point<T>::mul_scalar_unary_op, this)));
+            add_script(script(L"Div Point unary op (*=)", std::bind(&ts_base_point<T>::div_unary_op, this)));
+            add_script(script(L"Div Scalar unary op (*=)", std::bind(&ts_base_point<T>::div_scalar_unary_op, this)));
             add_script(script(L"Absolute copy op", std::bind(&ts_base_point<T>::abs_op, this)));
             add_script(script(L"Is Equal op (==)", std::bind(&ts_base_point<T>::is_equal_op, this)));
             add_script(script(L"Is Not Equal op (!=)", std::bind(&ts_base_point<T>::is_not_equal_op, this)));
@@ -239,6 +251,7 @@ namespace g80::worm::tdd {
             add_script(script(L"Is Less than or eq op (<=)", std::bind(&ts_base_point<T>::is_lte_op, this)));
             add_script(script(L"Is Less than op (<)", std::bind(&ts_base_point<T>::is_lt_op, this)));
 
+            add_script(script(L"Add Point binary op (a+b)", std::bind(&ts_base_point<T>::add_binary_op, this)));
 
         }
     };
