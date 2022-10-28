@@ -241,6 +241,30 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto mul_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                base_point<T> random_point{x, y};
+                auto result = copy_point * random_point;
+                check += result.x == copy_point.x * random_point.x && result.y == copy_point.y * random_point.y;
+            }
+            return check == N;
+        }
+
+
+        auto mul_scalar_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T s{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};  
+                auto result = copy_point * s;
+                check += result.x == copy_point.x * s && result.y == copy_point.y * s;
+            }
+            return check == N;
+        }
 
     public:
 
@@ -266,6 +290,8 @@ namespace g80::worm::tdd {
 
             add_script(script(L"Add Point binary op (a+b)", std::bind(&ts_base_point<T>::add_binary_op, this)));
             add_script(script(L"Sub Point binary op (a-b)", std::bind(&ts_base_point<T>::sub_binary_op, this)));
+            add_script(script(L"Mul Scalar binary op (a*s)", std::bind(&ts_base_point<T>::mul_scalar_binary_op, this)));
+            add_script(script(L"Mul Point binary op (a*b)", std::bind(&ts_base_point<T>::mul_binary_op, this)));
 
         }
     };
