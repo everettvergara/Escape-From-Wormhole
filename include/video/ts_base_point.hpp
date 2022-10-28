@@ -228,6 +228,19 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
+        auto sub_binary_op() -> bool {
+            auto check{0};
+            for(const auto &p : points_) {
+                auto copy_point = *p;
+                T x{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                T y{static_cast<T>(1.0f * rand() / RAND_MAX * M - O)};
+                base_point<T> random_point{x, y};
+                auto result = copy_point - random_point;
+                check += result.x == copy_point.x - random_point.x && result.y == copy_point.y - random_point.y;
+            }
+            return check == N;
+        }
+
 
     public:
 
@@ -252,6 +265,7 @@ namespace g80::worm::tdd {
             add_script(script(L"Is Less than op (<)", std::bind(&ts_base_point<T>::is_lt_op, this)));
 
             add_script(script(L"Add Point binary op (a+b)", std::bind(&ts_base_point<T>::add_binary_op, this)));
+            add_script(script(L"Sub Point binary op (a-b)", std::bind(&ts_base_point<T>::sub_binary_op, this)));
 
         }
     };
