@@ -9,15 +9,7 @@ auto main(int argc, char *argv[]) -> int {
 
     video::init();
     
-    config cfg{
-        .title{"Escape From Wormhole"},
-        .x{SDL_WINDOWPOS_CENTERED},
-        .y{SDL_WINDOWPOS_CENTERED},
-        .w{1280},
-        .h{720},
-        .flags{SDL_WINDOW_SHOWN},
-        .FPS{60}};
-
+    config cfg{"Escape From Wormhole Demo"};
     video worm;
 
     video::quit();
