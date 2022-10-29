@@ -21,11 +21,10 @@ namespace g80::video {
         static auto quit() -> void {SDL_VideoQuit();}
 
     // Constructors, Destructors and Assignments
-    private:
-        config config_;
     public:
+        video() {}
         video(const config &c) = delete;
-        video(config &&c) : config_{std::move(c)} {};
+        video(config &&c) = delete;
         auto operator=(const config &) -> config & = delete;
         auto operator=(config &&) -> config & = delete;
         virtual ~video() = default;
