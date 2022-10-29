@@ -296,19 +296,6 @@ namespace g80::worm::tdd {
             return check == N;
         }
 
-        auto ostream_op() -> bool {
-            auto check{0};
-            for(const auto &p : points_) {
-                std::ostream os;
-                // std::stringstream ss1, ss2;
-                // os << operator<<(os, *p);
-                // ss1 = os;
-                // ss2 << "{" << p->x << "," << p->y << "}";
-                // check += ss1.str() == ss2.str();
-            }
-            return check == N;
-        }
-
     public:
 
         ts_base_point(const wchar_t *name) : 
@@ -337,7 +324,6 @@ namespace g80::worm::tdd {
             add_script(script(L"Mul Point binary op (a*b)", std::bind(&ts_base_point<T>::mul_binary_op, this)));
             add_script(script(L"Div Scalar binary op (a/s)", std::bind(&ts_base_point<T>::div_scalar_binary_op, this)));
             add_script(script(L"Div Point binary op (a/b)", std::bind(&ts_base_point<T>::div_binary_op, this)));
-            add_script(script(L"Ostream op (<<)", std::bind(&ts_base_point<T>::ostream_op, this)));
 
         }
     };

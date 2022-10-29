@@ -40,5 +40,7 @@ namespace g80::video {
     template<typename T> auto operator*(base_point<T> l, const base_point<T> &r) -> base_point<T> {l *= r; return l;}
     template<typename T> auto operator/(base_point<T> l, const base_point<T> &r) -> base_point<T> {l /= r; return l;}
     template<typename T> auto operator/(base_point<T> l, const T &s) -> base_point<T> {l /= s; return l;}
+
+    // Debug purposes
     template<typename T> auto operator<<(std::ostream &os, const base_point<T> &r) -> std::ostream & {return os << "{" << r.x << "," << r.y << "}";}
 }
