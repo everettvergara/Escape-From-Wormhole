@@ -1,10 +1,14 @@
 #include <iostream>
-// #include "test/"
-auto main() -> int {
+#include "video/video.hpp"
 
-    g80::video::base_point<float> point(10, 20);
+auto main(int argc, char *argv[]) -> int {
 
-    std::cout << point << std::endl;
+    using namespace g80::video;
+    video efw;
+
+    video::init();
+
+    video::quit();
 
     return 0;
 }
