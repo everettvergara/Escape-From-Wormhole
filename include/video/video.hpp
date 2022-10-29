@@ -11,15 +11,19 @@ namespace g80::video {
 
 
     class video {
-    
-    public:
+
+    // Static Helpers for initialization    
+    private:
         static bool is_init_;
+    public:
         static inline auto is_init() -> bool {return is_init_;}
         static auto init() -> bool {if(!is_init_) is_init_ = SDL_VideoInit(NULL) ? true : false; return is_init_;}
         static auto quit() -> void {SDL_VideoQuit();}
 
-    public:
+    // Constructors, Destructors and Assignments
+    private:
         config config_;
+    public:
         video(const config &c) = delete;
         video(config &&c) : config_{std::move(c)} {};
         auto operator=(const config &) -> config & = delete;
