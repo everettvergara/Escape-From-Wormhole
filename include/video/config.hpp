@@ -13,6 +13,7 @@ namespace g80::video {
         Uint16 FPS;
         Uint16 MSPF;
 
+        // Remove constructors. 
         config(std::string title, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED, int w = 1280, int h = 720, Uint32 flags = SDL_WINDOW_SHOWN, Uint16 FPS = 60) :
             title{std::move(title)}, 
             x{x}, y{y}, w{w}, h{h},
