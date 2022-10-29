@@ -20,7 +20,11 @@ namespace g80::video {
 
     public:
         config config_;
+        video(const config &c) = delete;
         video(config &&c) : config_{std::move(c)} {};
+        auto operator=(const config &) -> config & = delete;
+        auto operator=(config &&) -> config & = delete;
+        virtual ~video() = default;
     };
 
     bool video::is_init_{false};
