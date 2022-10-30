@@ -9,7 +9,7 @@ auto main(int argc, char *argv[]) -> int {
 
     video::init();
     
-    video worm(config{"Escape From Wormhole Demo"});
+    video worm;
 
     video::quit();
 
