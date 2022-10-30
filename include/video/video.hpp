@@ -10,7 +10,14 @@ namespace g80::video {
 
     using point = base_point<g80::sys::int_type>;
 
-    c
+    class window {
+    private:
+        SDL_Window *window_;
+    public:
+        window(const char *title, int x, int y, int w, int h, Uint32 flags) : window_(SDL_CreateWindow(title, x, y, w, h, flags)) {}
+        ~window() {SDL_DestroyWindow(window_);}
+        inline auto get_handle() -> SDL_Window * {return window_;}
+    };
 
     class surface32 {
     private:
