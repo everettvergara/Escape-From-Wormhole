@@ -10,8 +10,13 @@ namespace g80::video {
 
     using point = base_point<g80::sys::int_type>;
 
-    class surface {
-        
+    class surface32 {
+    private:
+        SDL_Surface *surface_;
+    public:
+        surface(const int w, const int h, const Uint32 format) : surface_(SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format)) {}
+        auto get_surface() -> SDL_Surface * {return surface_;}
+        ~surface() {SDL_FreeSurface(surface_);}
     };
 
     class video {
