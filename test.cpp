@@ -13,5 +13,6 @@ auto main(int argc, char *argv[]) -> int {
 
     video::quit();
 
+
     return 0;
 }
