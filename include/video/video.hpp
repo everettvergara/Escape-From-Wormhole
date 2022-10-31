@@ -32,11 +32,11 @@ namespace g80::video {
         std::unique_ptr<window> window_{nullptr};
     public:
         auto create_window(const config &c) -> bool {
-            window_.reset(std::make_unique<window>(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags));
+            window_.reset(new window(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags));
             return window_->is_valid();
         }
-        auto get_window() -> window & {return window_.get();}
-        auto reset_window() -> void {window.reset(nullptr);}
+        auto get_window() -> window & {return *window_.get();}
+        auto reset_window() -> void {window_.reset(nullptr);}
     };
 
     bool video::is_init_{false};
