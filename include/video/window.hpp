@@ -1,27 +1,22 @@
 #pragma once
 
 #include <SDL.h>
-#include "sys/common.hpp"
-#include "base_point.hpp"
-#include "config.hpp"
 
 namespace g80::video {
 
     class window {
-
-    // Constructors, Destructors and Assignments
     private:
         SDL_Window *window_;
-        Uint16 MSPF_;
-
     public:
-        // Add throw if 0
-        window(const config &c) : 
-            window_(SDL_CreateWindow(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags))
-        {
-            
-        }
+        window(const char *title, int x, int y, int w, int h, Uint32 flags) : window_(SDL_CreateWindow(title, x, y, w, h, flags)) {}
+        window(const window &) = delete;
+        window(window &&) = delete;
+        auto operator=(const window &) -> window & = delete;
+        auto operator=(window &&) -> window & = delete;
+        ~window() {SDL_DestroyWindow(window_);}
+        inline auto is_valid() -> bool {return window_ != NULL;}
+        inline auto get_handle() -> SDL_Window * {return window_;}
+        inline auto get_surface() -> SDL_Surface * {return SDL_GetWindowSurface(window_);}
     };
 
-    bool video::is_init_{false};
 }

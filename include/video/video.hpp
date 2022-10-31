@@ -1,43 +1,12 @@
 #pragma once
 
-#include <unordered_map>
-#include <optional>
-#include "sys/common.hpp"
-#include "base_point.hpp"
+#include <memory>
+#include <SDL.h>
+#include "window.hpp"
+#include "surface.hpp"
 #include "config.hpp"
 
 namespace g80::video {
-
-    using point = base_point<g80::sys::int_type>;
-
-    class window {
-    private:
-        SDL_Window *window_;
-    public:
-        window(const char *title, int x, int y, int w, int h, Uint32 flags) : window_(SDL_CreateWindow(title, x, y, w, h, flags)) {}
-        window(const window &) = delete;
-        window(window &&) = delete;
-        auto operator=(const window &) -> window & = delete;
-        auto operator=(window &&) -> window & = delete;
-        ~window() {SDL_DestroyWindow(window_);}
-        inline auto is_valid() -> bool {return window_ != NULL;}
-        inline auto get_handle() -> SDL_Window * {return window_;}
-        inline auto get_surface() -> SDL_Surface * {return SDL_GetWindowSurface(window_);}
-    };
-
-    class surface {
-    private:
-        SDL_Surface *surface_;
-    public:
-        surface(int w, int h, Uint32 format) : surface_(SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format)) {}
-        surface(const surface &) = delete;
-        surface(surface &&) = delete;
-        auto operator=(const surface &) -> surface & = delete;
-        auto operator=(surface &&) -> surface & = delete;
-        ~surface() {SDL_FreeSurface(surface_);}
-        auto is_valid() -> bool {return surface_ != NULL;}
-        auto get_handle() -> SDL_Surface * {return surface_;}
-    };
 
     class video {
 
@@ -56,28 +25,18 @@ namespace g80::video {
         video(config &&c) = delete;
         auto operator=(const config &) -> config & = delete;
         auto operator=(config &&) -> config & = delete;
-        virtual ~video() {destroy_window();};
+        virtual ~video() {};
 
-    // Windows and surfaces
+    // Window
     private:
-        SDL_Window *window_;
-        std::unordered_map<size_t, surface> surfaces_;
+        std::unique_ptr<window> window_{nullptr};
     public:
-        inline auto get_window() -> SDL_Window * {return window_;}
-        auto create_window(const config &c) -> bool {return window_ ? false : ((window_ = SDL_CreateWindow(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags)) ? true : false);}
-        auto destroy_window() -> void {SDL_DestroyWindow(window_); window_ = NULL;}
-        auto get_surface() -> SDL_Surface * {return SDL_GetWindowSurface(window_);}
-        auto create_surface(const size_t id, int w, int h) -> bool {
-            if(!window_) return false;
-            
-            auto surface = get_surface(); 
-            if(!surface) return false;
-
-            surfaces_.try_emplace(id, surface{w, h, surface->format->format});
-            
-            return true;
+        auto create_window(const config &c) -> bool {
+            window_.reset(std::make_unique<window>(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags));
+            return window_->is_valid();
         }
-
+        auto get_window() -> window & {return window_.get();}
+        auto reset_window() -> void {window.reset(nullptr);}
     };
 
     bool video::is_init_{false};
