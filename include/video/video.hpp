@@ -37,6 +37,22 @@ namespace g80::video {
         }
         auto get_window() -> window & {return *window_.get();}
         auto reset_window() -> void {window_.reset(nullptr);}
+
+    // Run and Events
+    private:
+        bool is_running_;
+    public:
+        auto run(const Uint32 MSPF) -> void {
+            is_running_ = true;
+            while(is_running_) {
+                Uint32 start = SDL_GetTicks();
+                capture_events();
+                update_window_surface();
+                Uint32 end = SDL_GetTicks();
+                Uint32 elapsed = end - start;
+                if (elapsed < MSPF) SDL_Delay(MSPF - elapsed);
+            }
+        }
     };
 
     bool video::is_init_{false};
