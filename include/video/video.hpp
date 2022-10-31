@@ -20,19 +20,23 @@ namespace g80::video {
         auto operator=(const window &) -> window & = delete;
         auto operator=(window &&) -> window & = delete;
         ~window() {SDL_DestroyWindow(window_);}
-
         inline auto is_valid() -> bool {return window_ != NULL;}
         inline auto get_handle() -> SDL_Window * {return window_;}
         inline auto get_surface() -> SDL_Surface * {return SDL_GetWindowSurface(window_);}
     };
 
-    class surface32 {
+    class surface {
     private:
         SDL_Surface *surface_;
     public:
-        surface32(int w, int h, Uint32 format) : surface_(SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format)) {}
-        ~surface32() {SDL_FreeSurface(surface_);}
-        auto get_surface() -> SDL_Surface * {return surface_;}
+        surface(int w, int h, Uint32 format) : surface_(SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format)) {}
+        surface(const surface &) = delete;
+        surface(surface &&) = delete;
+        auto operator=(const surface &) -> surface & = delete;
+        auto operator=(surface &&) -> surface & = delete;
+        ~surface() {SDL_FreeSurface(surface_);}
+        auto is_valid() -> bool {return surface_ != NULL;}
+        auto get_handle() -> SDL_Surface * {return surface_;}
     };
 
     class video {
@@ -57,7 +61,7 @@ namespace g80::video {
     // Windows and surfaces
     private:
         SDL_Window *window_;
-        std::unordered_map<size_t, surface32> surfaces_;
+        std::unordered_map<size_t, surface> surfaces_;
     public:
         inline auto get_window() -> SDL_Window * {return window_;}
         auto create_window(const config &c) -> bool {return window_ ? false : ((window_ = SDL_CreateWindow(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags)) ? true : false);}
@@ -69,7 +73,7 @@ namespace g80::video {
             auto surface = get_surface(); 
             if(!surface) return false;
 
-            surfaces_.try_emplace(id, surface32{w, h, surface->format->format});
+            surfaces_.try_emplace(id, surface{w, h, surface->format->format});
             
             return true;
         }
