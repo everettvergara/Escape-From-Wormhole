@@ -38,15 +38,44 @@ namespace g80::game {
 
     public:
 
-        entity() {}
+        // entity() {}
+        virtual ~entity() {}
         virtual auto init() -> void {for(auto &c : components_) c->init();}
         virtual auto update() -> void {for(auto &c : components_) c->update();}
         virtual auto render() -> void {for(auto &c : components_) c->render();}
 
-        // template<typename T, typename ...A> 
-        // auto add_component_type(A &&...a) -> T& {
-        //     auto &p = components_.emplace_back(make_unique<T>(this, std::forward<A>(a)...));
+        // template<typename E, typename C, typename ...A> 
+        // auto add_component_type(A &&...a) -> C& {
+        //     auto &p = components_.emplace_back(make_unique<C>(this, std::forward<A>(a)...));
         //     component_types_.emplace_back();
         // }
     };
+
+    class hp : public component {
+    public:
+        hp(entity *e) : component(e) {}
+    };
+
+    class strength : public component {
+    public:
+        strength(entity *e) : component(e) {}
+    };
+
+    class power : public component {
+    public:
+        power(entity *e) : component(e) {}
+    };
+
+
+    class player : public entity {
+    private:
+    public:
+        player() {}
+    };
+
+    class enemy : public entity {
+    private:
+    public:
+        enemy() {}
+    };    
 }
