@@ -1,0 +1,13 @@
+
+class component {
+
+}
+
+
+
+Entity (Player)
+private:
+    bool active_;
+    std::vector<std::unique_ptr<component>> components_;
+
+
