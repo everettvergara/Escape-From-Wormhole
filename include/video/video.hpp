@@ -42,12 +42,11 @@ namespace g80::video {
     private:
         bool is_running_;
     public:
-        virtual auto init() -> bool {return true;}
         virtual auto update_window_surface() -> void {}
         virtual auto capture_events() -> void {}
         virtual auto update_states() -> void {}
         auto run(const Uint32 MSPF) -> void {
-            is_running_ = init();
+            is_running_ = true;
             [[likely]] while(is_running_) {
                 Uint32 start = SDL_GetTicks();
                 update_window_surface();

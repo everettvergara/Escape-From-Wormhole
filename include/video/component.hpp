@@ -19,7 +19,6 @@ namespace g80::game {
     }
 
     class entity;
-
     class component {
     private:
         entity *entity_;
@@ -31,35 +30,23 @@ namespace g80::game {
         virtual ~component() = 0;
     };
 
+
     class entity {
     private:
         std::vector<std::unique_ptr<component>> components_;
         std::vector<size_t> component_types_;
+
     public:
 
-        auto init() -> void {
-            for(auto &c : components_) c->init();
-        }
+        entity() {}
+        virtual auto init() -> void {for(auto &c : components_) c->init();}
+        virtual auto update() -> void {for(auto &c : components_) c->update();}
+        virtual auto render() -> void {for(auto &c : components_) c->render();}
 
-        auto update() -> void {
-            for(auto &c : components_) c->update();
-        }
-
-        auto render() -> void {
-            for(auto &c : components_) c->render();
-        }
-
-
-        entity() {
-            // reserve components_.
-            // add_component_type
-        }
-
-        template<typename T, typename ...A> 
-        auto add_component_type(A &&...a) -> T& {
-            auto &p = components_.emplace_back(make_unique<T>(this, std::forward<A>(a)...));
-            component_types_.emplace_back();
-        }
+        // template<typename T, typename ...A> 
+        // auto add_component_type(A &&...a) -> T& {
+        //     auto &p = components_.emplace_back(make_unique<T>(this, std::forward<A>(a)...));
+        //     component_types_.emplace_back();
+        // }
     };
-
 }
