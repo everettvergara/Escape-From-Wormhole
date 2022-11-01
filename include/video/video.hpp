@@ -42,19 +42,20 @@ namespace g80::video {
     private:
         bool is_running_;
     public:
+        virtual auto init() -> bool {return true;}
         virtual auto update_window_surface() -> void {}
         virtual auto capture_events() -> void {}
         virtual auto update_states() -> void {}
         auto run(const Uint32 MSPF) -> void {
-            is_running_ = true;
-            while(is_running_) {
+            is_running_ = init();
+            [[likely]] while(is_running_) {
                 Uint32 start = SDL_GetTicks();
-                // update_window_surface();
-                // capture_events();
-                // update_states();
+                update_window_surface();
+                capture_events();
+                update_states();
                 Uint32 end = SDL_GetTicks();
                 Uint32 elapsed = end - start;
-                if (elapsed < MSPF) SDL_Delay(MSPF - elapsed);
+                if (elapsed < MSPF) [[likely]] SDL_Delay(MSPF - elapsed);
             }
         }
     };
