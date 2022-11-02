@@ -22,8 +22,8 @@ auto main(int argc, char *argv[]) -> int {
     std::cout << "player_strength_id: " << get_component_type_id<player, strength>() << "\n";
     std::cout << "player_power_id: " << get_component_type_id<player, power>() << "\n";
     std::cout << "enemy_hp_id: " << get_component_type_id<enemy, hp>() << "\n";
-    std::cout << "enemy_strength_id: " << get_component_type_id<enemy, strength>() << "\n";
     std::cout << "enemy_power_id: " << get_component_type_id<enemy, power>() << "\n";
+    std::cout << "enemy_strength_id: " << get_component_type_id<enemy, strength>() << "\n";
 
     return 0;
 }
