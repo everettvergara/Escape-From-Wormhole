@@ -12,7 +12,10 @@ auto main(int argc, char *argv[]) -> int {
 
     using namespace g80::game::engine;
     video::init();
+    config c{"Hello World"};
     video worm;
+    worm.create_window(c);
+    worm.run(c.MSPF);
     video::quit();
 
 
