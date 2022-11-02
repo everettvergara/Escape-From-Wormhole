@@ -5,6 +5,7 @@
 #include "game/engine/window.hpp"
 #include "game/engine/surface.hpp"
 #include "game/engine/config.hpp"
+#include "game/gfx/pset.hpp"
 
 namespace g80::game::engine {
 
@@ -62,6 +63,8 @@ namespace g80::game::engine {
         virtual auto update_states() -> void {
             auto *surface = SDL_GetWindowSurface(sdl_window_);
             SDL_FillRect(surface, NULL, 0);
+            using namespace g80::game::gfx;
+            pset(surface, 100, 100, SDL_MapRGBA(surface->format, 255, 0, 0, 255));
         }
 
         auto run(const Uint32 MSPF) -> void {
