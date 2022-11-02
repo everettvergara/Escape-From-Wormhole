@@ -4,7 +4,7 @@
 #include <string>
 #include "sys/common.hpp"
 
-namespace g80::video {
+namespace g80::game::engine {
 
     struct config {
         std::string title;

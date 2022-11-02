@@ -2,11 +2,11 @@
 
 #include <memory>
 #include <SDL.h>
-#include "window.hpp"
-#include "surface.hpp"
-#include "config.hpp"
+#include "game/engine/window.hpp"
+#include "game/engine/surface.hpp"
+#include "game/engine/config.hpp"
 
-namespace g80::video {
+namespace g80::game::engine {
 
     class video {
 

@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 
-namespace g80::video {
+namespace g80::game::gfx {
     template<typename T>
     struct base_point {
         static_assert(

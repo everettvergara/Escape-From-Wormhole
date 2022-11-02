@@ -4,7 +4,9 @@
 #include "ecs/entity.hpp"
 #include "ecs/component.hpp"
 
-namespace g80::ecs {
+namespace g80::game::obj {
+
+    using namespace g80::game::ecs;
 
     class hp : public component {
     private:

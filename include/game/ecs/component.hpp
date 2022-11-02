@@ -1,6 +1,6 @@
 #pragma once 
 
-namespace g80::ecs {
+namespace g80::game::ecs {
     
     class entity;
 

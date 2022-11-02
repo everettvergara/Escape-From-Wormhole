@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-namespace g80::gfx {
+namespace g80::game::gfx {
 
     
 

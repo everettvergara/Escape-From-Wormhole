@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-namespace g80::video {
+namespace g80::game::engine {
 
     class window {
     private:

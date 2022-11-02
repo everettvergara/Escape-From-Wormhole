@@ -3,10 +3,9 @@
 
 #include <memory>
 #include <vector>
-#include "helper.hpp"
-#include "component.hpp"
+#include "game/ecs/component.hpp"
 
-namespace g80::ecs {
+namespace g80::game::ecs {
 
     class entity {
 
@@ -53,12 +52,7 @@ namespace g80::ecs {
         virtual auto init() -> void {for(auto &c : components_) c->init();}
         virtual auto update() -> void {for(auto &c : components_) c->update();}
         virtual auto render() -> void {for(auto &c : components_) c->render();}
-
-        inline auto get_components() -> std::vector<std::unique_ptr<component>> & {
-            return components_;
-        }
-
-
+        inline auto get_components() -> std::vector<std::unique_ptr<component>> & {return components_;}
     };
 
 
