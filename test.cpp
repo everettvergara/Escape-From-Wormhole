@@ -4,6 +4,7 @@
 #include "video/video.hpp"
 
 
+#include <vector>
 #include <memory>
 #include "ecs/sample.hpp"
 
@@ -15,7 +16,11 @@ auto main(int argc, char *argv[]) -> int {
     // video::quit();
 
     using namespace g80::ecs;
+    std::vector<std::unique_ptr<entity>> game_objs;
 
-    std::unique_ptr<entity> game_obj {std::make_unique<player>()};
+    game_objs.reserve(100);
+    auto &p = game_objs.emplace_back(std::make_unique<player>());
+
+    // std::unique_ptr<entity> game_obj {std::make_unique<player>()};
     return 0;
 }
