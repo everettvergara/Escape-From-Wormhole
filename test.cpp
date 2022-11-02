@@ -27,7 +27,7 @@ auto main(int argc, char *argv[]) -> int {
 
     // add_component_type<entity, hp>(*p);
 
-    game_obj->add_component_type<player, hp>(dynamic_cast<player *>(&*game_obj));
+    // game_obj->add_component_type<player, hp>(dynamic_cast<player *>(&*game_obj));
 
     return 0;
 }

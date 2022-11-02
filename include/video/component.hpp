@@ -36,6 +36,15 @@ namespace g80::game {
         std::vector<std::unique_ptr<component>> components_;
         std::vector<size_t> component_types_;
 
+    protected:
+        template<typename E, typename C, typename ...A> 
+        auto add_component_type(E *e, A &&...a) -> C * {
+            auto cid = get_component_type_id<E, C>();
+            if(cid != components_.size()) return nullptr;
+            auto &c = components_.emplace_back(std::make_unique<C>(e, std::forward<A>(a)...));
+            return dynamic_cast<C *>(c.get());
+        }
+
     public:
 
         // entity() {}
@@ -48,14 +57,11 @@ namespace g80::game {
             return components_;
         }
 
-        template<typename E, typename C, typename ...A> 
-        auto add_component_type(E *e, A &&...a) -> void {
-
-            
-
-            auto &p = components_.emplace_back(std::make_unique<C>(e, std::forward<A>(a)...));
-            // return p;
+        template<typename E, typename C>
+        inline auto get_component_type() -> C * {
+            return dynamic_cast<C *>(components_[get_component_type_id<E, C>()]);
         }
+
     };
 
     class hp : public component {
@@ -69,18 +75,28 @@ namespace g80::game {
     class strength : public component {
     public:
         strength(entity *e) : component(e) {}
+        auto init() -> void override {}
+        auto update() -> void override {}
+        auto render() -> void override {}        
     };
 
     class power : public component {
     public:
         power(entity *e) : component(e) {}
+        auto init() -> void override {}
+        auto update() -> void override {}
+        auto render() -> void override {}
     };
 
 
     class player : public entity {
     private:
     public:
-        player() {}
+        player() {
+            add_component_type<player, hp>(this);
+            add_component_type<player, strength>(this);
+            add_component_type<player, power>(this);
+        }
     };
 
     class enemy : public entity {
@@ -88,12 +104,5 @@ namespace g80::game {
     public:
         enemy() {}
     };    
-
-    // template<typename E, typename C, typename ...A>
-    // auto add_component_type(E &e, A &&...args) -> C & {
-
-    //     auto &c = e->get_components().emplace_back(std::make_unique<C>(&e, std::forward<A>(args)...));
-    //     // return c;
-    // }
 
 }
