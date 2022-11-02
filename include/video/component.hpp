@@ -27,7 +27,7 @@ namespace g80::game {
         virtual void init() = 0;
         virtual void update() = 0;
         virtual void render() = 0;
-        virtual ~component() = 0;
+        virtual ~component() = default;
     };
 
 
@@ -44,16 +44,26 @@ namespace g80::game {
         virtual auto update() -> void {for(auto &c : components_) c->update();}
         virtual auto render() -> void {for(auto &c : components_) c->render();}
 
-        // template<typename E, typename C, typename ...A> 
-        // auto add_component_type(A &&...a) -> C& {
-        //     auto &p = components_.emplace_back(make_unique<C>(this, std::forward<A>(a)...));
-        //     component_types_.emplace_back();
-        // }
+        inline auto get_components() -> std::vector<std::unique_ptr<component>> &{
+            return components_;
+        }
+
+        template<typename E, typename C, typename ...A> 
+        auto add_component_type(E *e, A &&...a) -> void {
+
+            
+
+            auto &p = components_.emplace_back(std::make_unique<C>(e, std::forward<A>(a)...));
+            // return p;
+        }
     };
 
     class hp : public component {
     public:
         hp(entity *e) : component(e) {}
+        auto init() -> void override {}
+        auto update() -> void override {}
+        auto render() -> void override {}
     };
 
     class strength : public component {
@@ -78,4 +88,12 @@ namespace g80::game {
     public:
         enemy() {}
     };    
+
+    // template<typename E, typename C, typename ...A>
+    // auto add_component_type(E &e, A &&...args) -> C & {
+
+    //     auto &c = e->get_components().emplace_back(std::make_unique<C>(&e, std::forward<A>(args)...));
+    //     // return c;
+    // }
+
 }
