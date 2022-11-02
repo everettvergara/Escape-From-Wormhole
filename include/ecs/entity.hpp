@@ -36,6 +36,11 @@ namespace g80::ecs {
             return dynamic_cast<C *>(c.get());
         }    
 
+        template<typename E, typename C>
+        inline auto get_component_type(E *e) -> C * {
+            return dynamic_cast<C *>(&(*e->get_components().at(get_component_type_id<E, C>())));
+        }
+
     private:
         std::vector<std::unique_ptr<component>> components_;
     public:
@@ -53,10 +58,6 @@ namespace g80::ecs {
             return components_;
         }
 
-        template<typename E, typename C>
-        inline auto get_component_type() -> C * {
-            return dynamic_cast<C *>(components_[get_component_type_id<E, C>()]);
-        }
 
     };
 

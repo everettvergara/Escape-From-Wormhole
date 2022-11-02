@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "ecs/entity.hpp"
 #include "ecs/component.hpp"
 
@@ -14,6 +15,8 @@ namespace g80::ecs {
         auto init() -> void override {}
         auto update() -> void override {}
         auto render() -> void override {}
+        inline auto get_hp() -> size_t {return current_;}
+        inline auto get_max() -> size_t {return max_;}
     };
 
     class strength : public component {
@@ -37,9 +40,11 @@ namespace g80::ecs {
     private:
     public:
         player() {
-            entity::add_component_type<player, hp>(this, 100UL);
+            entity::add_component_type<player, hp>(this, 179UL);
             entity::add_component_type<player, strength>(this);
             entity::add_component_type<player, power>(this);
+
+            std::cout << "hp: " << get_component_type<player, hp>(this)->get_hp() << "\n";
         }
     };
 
