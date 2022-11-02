@@ -14,7 +14,7 @@ auto main(int argc, char *argv[]) -> int {
     // video worm;
     // video::quit();
 
-    using namespace g80::game;
+    using namespace g80::ecs;
 
     std::unique_ptr<entity> game_obj {std::make_unique<player>()};
 

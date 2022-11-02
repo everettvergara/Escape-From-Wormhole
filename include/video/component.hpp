@@ -3,8 +3,9 @@
 
 #include <memory>
 #include <vector>
+#include "ecs/helper.hpp"
 
-namespace g80::game {
+namespace g80::ecs {
 
     class entity;
     class component {
