@@ -14,4 +14,11 @@ namespace g80::game::gfx {
         if(x < 0 || y < 0 || x >= w || y >= h) return false;
         return true;
     }
+
+    #define GFX_SAFE_MODE 
+    #ifdef GFX_SAFE_MODE
+        #define RETURN_IF_NOT_WITHIN_BOUNDS(x, y, w, h) if(!within_bounds(x, y, w, h)) return
+    #else
+        #define RETURN_IF_NOT_WITHIN_BOUNDS(x, y, w, h)
+    #endif
 }
