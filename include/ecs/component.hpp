@@ -9,10 +9,15 @@ namespace g80::ecs {
         entity *entity_;
     public:
         component(entity *e) : entity_(e) {}
-        virtual void init() = default;
-        virtual void render() = default;
-        virtual void update() = default;
+        component(const component &) = delete;
+        component(component &&) = delete;
+        auto operator=(const component &) -> entity & = delete;
+        auto operator=(component &&) -> entity & = delete;
         virtual ~component() = default;
+
+        virtual void init() {};
+        virtual void render() {};
+        virtual void update() {};
     };
 
 }
