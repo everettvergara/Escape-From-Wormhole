@@ -1,16 +1,16 @@
 #include <iostream>
 #include <SDL.h>
-#include "video/config.hpp"
-#include "video/video.hpp"
+#include "game/engine/config.hpp"
+#include "game/engine/video.hpp"
 
 
-#include <vector>
-#include <memory>
-#include "ecs/sample.hpp"
+// #include <vector>
+// #include <memory>
+// #include "ecs/sample.hpp"
 
 auto main(int argc, char *argv[]) -> int {
 
-    using namespace g80::video;
+    using namespace g80::game::engine;
     video::init();
     video worm;
     video::quit();
