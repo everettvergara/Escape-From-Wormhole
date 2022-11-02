@@ -21,11 +21,6 @@ namespace g80::game::engine {
             MSPF{static_cast<Uint16>(static_cast<Uint16>(1000) / FPS)} {
         }
 
-        // config(config &&r) :
-        //     title{std::move(r.title)}, 
-        //     x{r.x}, y{r.y}, w{r.w}, h{r.h},
-        //     flags{r.flags}, FPS{r.FPS}, MSPF{r.MSPF} {
-        // }
     };
 
 

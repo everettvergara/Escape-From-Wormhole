@@ -60,7 +60,8 @@ namespace g80::game::engine {
         }
 
         virtual auto update_states() -> void {
-        
+            auto *surface = SDL_GetWindowSurface(sdl_window_);
+            SDL_FillRect(surface, NULL, 0);
         }
 
         auto run(const Uint32 MSPF) -> void {
