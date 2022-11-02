@@ -34,14 +34,13 @@ namespace g80::game {
     class entity {
     private:
         std::vector<std::unique_ptr<component>> components_;
-        std::vector<size_t> component_types_;
 
-    protected:
+    public:
         template<typename E, typename C, typename ...A> 
-        auto add_component_type(E *e, A &&...a) -> C * {
+        static auto add_component_type(E *e, A &&...a) -> C * {
             auto cid = get_component_type_id<E, C>();
-            if(cid != components_.size()) return nullptr;
-            auto &c = components_.emplace_back(std::make_unique<C>(e, std::forward<A>(a)...));
+            if(cid != e->get_components().size()) return nullptr;
+            auto &c = e->get_components().emplace_back(std::make_unique<C>(e, std::forward<A>(a)...));
             return dynamic_cast<C *>(c.get());
         }
 
@@ -93,9 +92,9 @@ namespace g80::game {
     private:
     public:
         player() {
-            add_component_type<player, hp>(this);
-            add_component_type<player, strength>(this);
-            add_component_type<player, power>(this);
+            entity::add_component_type<player, hp>(this);
+            entity::add_component_type<player, strength>(this);
+            entity::add_component_type<player, power>(this);
         }
     };
 
