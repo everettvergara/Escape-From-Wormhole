@@ -30,21 +30,39 @@ namespace g80::game::engine {
     // Window
     private:
         std::unique_ptr<window> window_{nullptr};
+        SDL_Window *sdl_window_;
     public:
         auto create_window(const config &c) -> bool {
             window_.reset(new window(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags));
+            sdl_window_ = window_->get_handle();
             return window_->is_valid();
         }
         auto get_window() -> window & {return *window_.get();}
+        inline auto get_sdl_window() -> SDL_Window * {return sdl_window_;}
         auto reset_window() -> void {window_.reset(nullptr);}
 
     // Run and Events
     private:
         bool is_running_;
     public:
-        virtual auto update_window_surface() -> void {}
-        virtual auto capture_events() -> void {}
-        virtual auto update_states() -> void {}
+        virtual auto update_window_surface() -> void {
+            SDL_UpdateWindowSurface(sdl_window_);
+        }
+
+        virtual auto capture_events() -> void {
+            SDL_Event e;
+            while(SDL_PollEvent(&e)) {
+                if(e.type == SDL_QUIT) {
+                    is_running_ = false;
+                    break;
+                }
+            }
+        }
+
+        virtual auto update_states() -> void {
+        
+        }
+
         auto run(const Uint32 MSPF) -> void {
             is_running_ = true;
             [[likely]] while(is_running_) {
