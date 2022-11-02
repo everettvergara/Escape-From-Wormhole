@@ -6,18 +6,6 @@
 
 namespace g80::game {
 
-    template<typename E>
-    auto get_next_component_type_id() -> size_t {
-        static size_t next_component_type_id{0};
-        return next_component_type_id++;
-    }
-
-    template<typename E, typename C> 
-    auto get_component_type_id() -> size_t {
-        static size_t component_type_id{get_next_component_type_id<E>()};
-        return component_type_id;
-    }
-
     class entity;
     class component {
     private:
@@ -35,7 +23,7 @@ namespace g80::game {
     private:
         std::vector<std::unique_ptr<component>> components_;
 
-    public:
+    protected:
         template<typename E, typename C, typename ...A> 
         static auto add_component_type(E *e, A &&...a) -> C * {
             auto cid = get_component_type_id<E, C>();
@@ -46,7 +34,6 @@ namespace g80::game {
 
     public:
 
-        // entity() {}
         virtual ~entity() {}
         virtual auto init() -> void {for(auto &c : components_) c->init();}
         virtual auto update() -> void {for(auto &c : components_) c->update();}
