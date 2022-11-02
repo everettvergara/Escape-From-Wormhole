@@ -3,8 +3,6 @@
 #include <SDL.h>
 #include "game/gfx/common.hpp"
 
-
-
 namespace g80::game::gfx {
 
     using namespace g80::sys;
