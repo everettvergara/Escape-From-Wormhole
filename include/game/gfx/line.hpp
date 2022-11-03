@@ -27,6 +27,12 @@ namespace g80::game::gfx {
         }
     }
 
+    auto get_point_on_xintercept(int_type x, int_type y, int_type w, fp_type m) -> std::tuple<int_type, int_type> {
+        if(w == 0) return {x, y};
+        fp_type b = y - m * x;
+        return {(y - b) / m, y};
+    }
+
     auto line_recalc_points(SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> void {
     
         int_type h = y2 - y1;
