@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 #include <SDL.h>
 #include "game/gfx/common.hpp"
 
@@ -26,5 +27,16 @@ namespace g80::game::gfx {
         }
     }
 
+    auto line_recalc_points(SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> void {
+    
+        int_type h = y2 - y1;
+        int_type w = x2 - x1;
+        fp_type m = static_cast<fp_type>(1.0) * h / w;
+
+    }
+
+    auto line(SDL_Surface *s, const int_type x1, const int_type y1, const int_type x2, const int_type y2, const Uint32 rgba) -> void {
+    
+    }
 
 }
