@@ -44,8 +44,10 @@ namespace g80::game::engine {
             sdl_window_ = window_->get_handle();
 
 
-            auto surface = SDL_GetWindowSurface(sdl_window_);
-            pset_.set_surface(surface);
+            if(auto surface = SDL_GetWindowSurface(sdl_window_); surface) {
+                pset_.set_surface(surface);
+                
+            } else return false;
 
             return window_->is_valid();
         }

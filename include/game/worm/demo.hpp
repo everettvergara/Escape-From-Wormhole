@@ -8,7 +8,7 @@ namespace g80::game::worm {
     using namespace g80::game::engine;
     using namespace g80::game::gfx;
     
-    class demo : public video, public pset {
+    class demo : public video {
 
     // Run and Events
     private:
@@ -19,8 +19,9 @@ namespace g80::game::worm {
         auto update_states() -> void override {
             auto *surface = SDL_GetWindowSurface(sdl_window_);
             SDL_FillRect(surface, NULL, 0);
+            //pset_.draw(100, 100, SDL_MapRGBA(pset_.get_surface()->format, 255, 0, 0, 255));
             for(size_t i{0}; i< 1000; ++i) {
-                pset_.draw(rand() % get_surface()->w, rand() % get_surface()->h, SDL_MapRGBA(get_surface()->format, 255, 0, 0, 255));
+                pset_.draw(rand() % pset_.get_surface()->w, rand() % pset_.get_surface()->h, SDL_MapRGBA(pset_.get_surface()->format, 255, 0, 0, 255));
             }
             // using namespace g80::game::gfx;
             // pset(surface, 100, 100, SDL_MapRGBA(surface->format, 255, 0, 0, 255));
