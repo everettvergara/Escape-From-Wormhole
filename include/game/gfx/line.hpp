@@ -44,7 +44,7 @@ namespace g80::game::gfx {
         };
         auto sp1 = get_screen_plane(x1, y1);
         auto sp2 = get_screen_plane(x2, y2);
-        if((sp1 & sp2 & ON_SCREEN) == ON_SCREEN) [[likely]] return true;
+        if(sp1 == ON_SCREEN && sp2 == ON_SCREEN) [[likely]] return true;
         else if(cannot_be_plotted.find(plane_hash(sp1, sp2)) != cannot_be_plotted.end()) return false;
 
         // If recalculation is required
@@ -56,8 +56,8 @@ namespace g80::game::gfx {
         auto get_x_at_y_equals = [&](const int_type x, const int_type y, const int_type y_equals) -> int_type {
             if(w == 0) return x;
             fp_type m = h / w;
-            fp_type b = y - m * x;
-            return static_cast<int_type>((y - b) / m);
+            fp_type b = y - (m * x);
+            return static_cast<int_type>((y_equals - b) / m);
         };
 
         // Call only if it's beyond ON_SCREEN
@@ -65,7 +65,7 @@ namespace g80::game::gfx {
         auto get_y_at_x_equals = [&](const int_type x, const int_type y, const int_type x_equals) -> int_type {
             if(h == 0) return y;
             fp_type m = h / w;
-            fp_type b = y - m * x;
+            fp_type b = y - (m * x);
             return static_cast<int_type>(m * x_equals + b);
         };
 
@@ -81,6 +81,7 @@ namespace g80::game::gfx {
             auto get_y_at_right = [&]() -> void {y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;};
 
             switch(screen_plane) {
+
                 case TOP_LEFT:
                     if(is_x_at_top()) return;
                     get_y_at_left(); 
@@ -130,7 +131,6 @@ namespace g80::game::gfx {
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
         RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2);
-        
         int_type dx = x2 - x1;
         int_type dy = y2 - y1;
         int_type adx = dx < 0 ? -dx : dx;
