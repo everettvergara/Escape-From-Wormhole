@@ -56,10 +56,12 @@ namespace g80::game::gfx {
         // Call only if one of the points is out of bounds
         // ∴ the condition screen_plane == ON_SCREEN is not applicable 
         auto recalc_point_at_bound = [&](int_type &x, int_type &y, SCREEN_PLANE screen_plane) -> void {
-            auto is_x_at_top = [&]() -> bool {auto tx = get_x_at_y_equals(x, y, 0); 
-                                                if(is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0; return true;} return false;};
-            auto is_x_at_bottom = [&]() -> bool {auto tx = get_x_at_y_equals(x, y, s->h - 1); 
-                                                if(is_point_within_bounds(tx, s->h - 1, s->w, s->h)) {x = tx; y = s->h - 1; return true;} return false;};
+            auto is_x_at_top = [&]() -> bool {if(auto tx = get_x_at_y_equals(x, y, 0); 
+                                                    is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0; return true;} 
+                                                return false;};
+            auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(x, y, s->h - 1); 
+                                                    is_point_within_bounds(tx, s->h - 1, s->w, s->h)) {x = tx; y = s->h - 1; return true;} 
+                                                return false;};
             auto get_x_at_top = [&]() -> void {x = get_x_at_y_equals(x, y, 0); y = 0;};
             auto get_x_at_bottom = [&]() -> void {x = get_x_at_y_equals(x, y, s->h - 1); y = s->h - 1;};
             auto get_y_at_left = [&]() -> void {y = get_y_at_x_equals(x, y, 0); x = 0;};
@@ -96,13 +98,10 @@ namespace g80::game::gfx {
     }
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
-        auto start = std::chrono::high_resolution_clock::now();
         auto sp1 = get_screen_plane(s, x1, y1);
         auto sp2 = get_screen_plane(s, x2, y2);
         if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
              if(!recalc_line_points(s, x1, y1, x2, y2, sp1, sp2)) return;
-        auto elapsed = std::chrono::high_resolution_clock::now() - start;
-        std::cout << "elapsed: " << elapsed << "\n";
 
         int_type dx = x2 - x1;
         int_type dy = y2 - y1;
