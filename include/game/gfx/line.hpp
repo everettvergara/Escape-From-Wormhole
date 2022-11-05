@@ -28,30 +28,30 @@ namespace g80::game::gfx {
         }
     }
 
+
+    // Return true if can be plotted
+    // Return false if cannot be plotted
     auto line_recalc_points(const SDL_Surface *s, const int_type wb, const int_type hb, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> bool {
-    
         constexpr auto plane_hash = [&](SCREEN_PLANE l, SCREEN_PLANE r) -> uint8_t { return (l << 4) + r;};
-        static std::unordered_set<uint8_t> do_not_recalc {
-            plane_hash(TOP_LEFT, TOP), plane_hash(TOP_LEFT, TOP_RIGHT), plane_hash(TOP_LEFT, LEFT), plane_hash(TOP_LEFT, BOTTOM_LEFT),
-            plane_hash(TOP, TOP_LEFT), plane_hash(TOP, TOP_RIGHT), 
-            plane_hash(TOP_RIGHT, TOP), plane_hash(TOP_RIGHT, TOP_LEFT), plane_hash(TOP_RIGHT, RIGHT), plane_hash(TOP_RIGHT, BOTTOM_RIGHT),
-            plane_hash(LEFT, TOP_LEFT), plane_hash(LEFT, BOTTOM_LEFT),
-            plane_hash(RIGHT, TOP_RIGHT), plane_hash(RIGHT, BOTTOM_RIGHT),
-            plane_hash(BOTTOM_LEFT, TOP), plane_hash(BOTTOM_LEFT, LEFT), plane_hash(BOTTOM_LEFT, BOTTOM), plane_hash(BOTTOM_LEFT, BOTTOM_RIGHT),
-            plane_hash(BOTTOM, BOTTOM_LEFT), plane_hash(BOTTOM, BOTTOM_RIGHT),
-            plane_hash(BOTTOM_RIGHT, BOTTOM_LEFT), plane_hash(BOTTOM_RIGHT, BOTTOM), plane_hash(BOTTOM_RIGHT, TOP_RIGHT), plane_hash(BOTTOM_RIGHT, RIGHT),
+        static std::unordered_set<uint8_t> cannot_be_plotted {
+            plane_hash(TOP_LEFT, TOP_LEFT), plane_hash(TOP_LEFT, TOP), plane_hash(TOP_LEFT, TOP_RIGHT), plane_hash(TOP_LEFT, LEFT), plane_hash(TOP_LEFT, BOTTOM_LEFT),
+            plane_hash(TOP, TOP), plane_hash(TOP, TOP_LEFT), plane_hash(TOP, TOP_RIGHT), 
+            plane_hash(TOP_RIGHT, TOP_RIGHT), plane_hash(TOP_RIGHT, TOP), plane_hash(TOP_RIGHT, TOP_LEFT), plane_hash(TOP_RIGHT, RIGHT), plane_hash(TOP_RIGHT, BOTTOM_RIGHT),
+            plane_hash(LEFT, LEFT), plane_hash(LEFT, TOP_LEFT), plane_hash(LEFT, BOTTOM_LEFT),
+            plane_hash(RIGHT, RIGHT), plane_hash(RIGHT, TOP_RIGHT), plane_hash(RIGHT, BOTTOM_RIGHT),
+            plane_hash(BOTTOM_LEFT, BOTTOM_LEFT), plane_hash(BOTTOM_LEFT, TOP), plane_hash(BOTTOM_LEFT, LEFT), plane_hash(BOTTOM_LEFT, BOTTOM), plane_hash(BOTTOM_LEFT, BOTTOM_RIGHT),
+            plane_hash(BOTTOM, BOTTOM), plane_hash(BOTTOM, BOTTOM_LEFT), plane_hash(BOTTOM, BOTTOM_RIGHT),
+            plane_hash(BOTTOM_RIGHT, BOTTOM_RIGHT), plane_hash(BOTTOM_RIGHT, BOTTOM_LEFT), plane_hash(BOTTOM_RIGHT, BOTTOM), plane_hash(BOTTOM_RIGHT, TOP_RIGHT), plane_hash(BOTTOM_RIGHT, RIGHT),
         };
 
         auto sp1 = get_screen_plane(s, x1, y1);
         auto sp2 = get_screen_plane(s, x2, y2);
-        if((sp1 & sp2 & ON_SCREEN) == ON_SCREEN) [[likely]] return false;
-        else if(do_not_recalc.find(plane_hash(sp1, sp2)) != do_not_recalc.end()) return false;
+        if((sp1 & sp2 & ON_SCREEN) == ON_SCREEN) [[likely]] return true;
+        else if(cannot_be_plotted.find(plane_hash(sp1, sp2)) != cannot_be_plotted.end()) return false;
 
         // If recalculation is required
-
         fp_type h = y2 - y1;
         fp_type w = x2 - x1;
-
 
 
         // Call only if it's beyond ON_SCREEN
@@ -115,8 +115,15 @@ namespace g80::game::gfx {
 
         };
 
-        if(sp1 != ON_SCREEN) recalc_point_at_bound(x1, y1, sp1);
-        if(sp2 != ON_SCREEN) recalc_point_at_bound(x2, y2, sp2);
+        if(sp1 != ON_SCREEN) {
+            recalc_point_at_bound(x1, y1, sp1);
+            if(get_screen_plane(s, x1, y1) != ON_SCREEN) return false;
+        }
+
+        if(sp2 != ON_SCREEN) {
+            recalc_point_at_bound(x2, y2, sp2);
+            if(get_screen_plane(s, x2, y2) != ON_SCREEN) return false;
+        }
 
         return true;
     }
