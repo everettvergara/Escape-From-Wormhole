@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <unordered_set>
 #include <SDL.h>
+#include <chrono>
 #include "game/gfx/common.hpp"
 
 namespace g80::game::gfx {
@@ -12,18 +13,6 @@ namespace g80::game::gfx {
     // Return true if can be plotted
     // Return false if cannot be plotted
     auto line_recalc_points(const SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> bool {
-        constexpr auto plane_hash = [&](SCREEN_PLANE l, SCREEN_PLANE r) -> uint8_t { return (l << 4) + r;};
-        static std::unordered_set<uint8_t> cannot_be_plotted {
-            plane_hash(TOP_LEFT, TOP_LEFT), plane_hash(TOP_LEFT, TOP), plane_hash(TOP_LEFT, TOP_RIGHT), plane_hash(TOP_LEFT, LEFT), plane_hash(TOP_LEFT, BOTTOM_LEFT),
-            plane_hash(TOP, TOP), plane_hash(TOP, TOP_LEFT), plane_hash(TOP, TOP_RIGHT), 
-            plane_hash(TOP_RIGHT, TOP_RIGHT), plane_hash(TOP_RIGHT, TOP), plane_hash(TOP_RIGHT, TOP_LEFT), plane_hash(TOP_RIGHT, RIGHT), plane_hash(TOP_RIGHT, BOTTOM_RIGHT),
-            plane_hash(LEFT, LEFT), plane_hash(LEFT, TOP_LEFT), plane_hash(LEFT, BOTTOM_LEFT),
-            plane_hash(RIGHT, RIGHT), plane_hash(RIGHT, TOP_RIGHT), plane_hash(RIGHT, BOTTOM_RIGHT),
-            plane_hash(BOTTOM_LEFT, BOTTOM_LEFT), plane_hash(BOTTOM_LEFT, TOP), plane_hash(BOTTOM_LEFT, LEFT), plane_hash(BOTTOM_LEFT, BOTTOM), plane_hash(BOTTOM_LEFT, BOTTOM_RIGHT),
-            plane_hash(BOTTOM, BOTTOM), plane_hash(BOTTOM, BOTTOM_LEFT), plane_hash(BOTTOM, BOTTOM_RIGHT),
-            plane_hash(BOTTOM_RIGHT, BOTTOM_RIGHT), plane_hash(BOTTOM_RIGHT, BOTTOM_LEFT), plane_hash(BOTTOM_RIGHT, BOTTOM), plane_hash(BOTTOM_RIGHT, TOP_RIGHT), plane_hash(BOTTOM_RIGHT, RIGHT),
-        };
-
         auto get_screen_plane = [&](const int_type x, const int_type y) -> SCREEN_PLANE {
             if(x >= 0) [[likely]] {
                 if(x < s->w) [[likely]] {
@@ -45,7 +34,6 @@ namespace g80::game::gfx {
         auto sp1 = get_screen_plane(x1, y1);
         auto sp2 = get_screen_plane(x2, y2);
         if(sp1 == ON_SCREEN && sp2 == ON_SCREEN) [[likely]] return true;
-        else if(cannot_be_plotted.find(plane_hash(sp1, sp2)) != cannot_be_plotted.end()) return false;
 
         // If recalculation is required
         fp_type h = y2 - y1;
@@ -123,14 +111,18 @@ namespace g80::game::gfx {
     }
 
     #ifdef GFX_SAFE_MODE
-        #define RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2) if(!line_recalc_points(s, x1, y1, x2, y2)) return
+        #define RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2) line_recalc_points(s, x1, y1, x2, y2) 
+        // if(!line_recalc_points(s, x1, y1, x2, y2)) return
     #else
         #define RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2)
     #endif
 
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
+        auto start = std::chrono::high_resolution_clock::now();
         RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2);
+        auto elapsed = std::chrono::high_resolution_clock::now() - start;
+        std::cout << elapsed << "\n";
         int_type dx = x2 - x1;
         int_type dy = y2 - y1;
         int_type adx = dx < 0 ? -dx : dx;
