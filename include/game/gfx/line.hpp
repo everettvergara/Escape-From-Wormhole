@@ -27,7 +27,7 @@ namespace g80::game::gfx {
         }
     }
 
-    auto line_recalc_points(SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> void {
+    auto line_recalc_points(const SDL_Surface *s, const int_type wb, const int_type hb, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> void {
     
         fp_type h = y2 - y1;
         fp_type w = x2 - x1;
@@ -54,41 +54,50 @@ namespace g80::game::gfx {
         // ∴ the condition screen_plane == ON_SCREEN is not applicable 
         // If the two points are out of bounds do not call.
         auto recalc_point_at_bound = [&](int_type &x, int_type &y, SCREEN_PLANE screen_plane) -> void {
+
+            auto get_y_at_left = [&]() -> void {y = get_y_at_x_equals(x, y, 0); x = 0;};
+            auto get_y_at_right = [&]() -> void {y = get_y_at_x_equals(x, y, wb); x = wb;};
+
             switch(screen_plane) {
                 [[likely]] case ON_SCREEN:
                     break;
                 case TOP_LEFT:
                     if(auto tx = get_x_at_y_equals(x, y, 0); is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0;}
-                    else {y = get_y_at_x_equals(x, y, 0); x = 0;}
+                    else get_y_at_left();
                     break;
                 case TOP:
                     x = get_x_at_y_equals(x, y, 0); y = 0;
                     break;
                 case TOP_RIGHT:
                     if(auto tx = get_x_at_y_equals(x, y, 0); is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0;}
-                    else {y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;}
+                    else get_y_at_right();
                     break;
                 case BOTTOM_LEFT:
-                    if(auto tx = get_x_at_y_equals(x, y, s->h - 1); is_point_within_bounds(tx, s->h - 1, s->w, s->h)) {x = tx; y = s->h - 1;}
-                    else {y = get_y_at_x_equals(x, y, 0); x = 0;}
+                    if(auto tx = get_x_at_y_equals(x, y, hb); is_point_within_bounds(tx, hb, s->w, s->h)) {x = tx; y = hb;}
+                    else get_y_at_left();
                     break;
                 case BOTTOM_RIGHT:
-                    if(auto tx = get_x_at_y_equals(x, y, s->h - 1); is_point_within_bounds(tx, s->h - 1, s->w, s->h)) {x = tx; y = 0;}
-                    else {y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;}
+                    if(auto tx = get_x_at_y_equals(x, y, hb); is_point_within_bounds(tx, hb, s->w, s->h)) {x = tx; y = hb;}
+                    else get_y_at_right();
                     break;
                 case BOTTOM:
-                    x = get_x_at_y_equals(x, y, s->h - 1); y = s->h - 1;
+                    x = get_x_at_y_equals(x, y, hb); y = hb;
                     break;
                 case LEFT:
-                    y = get_y_at_x_equals(x, y, 0); x = 0;
+                    get_y_at_left();
                     break;
                 case RIGHT:
-                    y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;
+                    get_y_at_right();
                     break;
             }
 
         };
 
+        auto sp1 = get_screen_plane(s, x1, y1);
+        auto sp2 = get_screen_plane(s, x2, y2);
+
+        if(sp1 != ON_SCREEN) recalc_point_at_bound(x1, y1, sp1, wb, hb);
+        if(sp2 != ON_SCREEN) recalc_point_at_bound(x2, y2, sp2, wb, hb);
     }
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
