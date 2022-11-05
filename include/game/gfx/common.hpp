@@ -15,7 +15,6 @@ namespace g80::game::gfx {
         return true;
     }
 
-    #define GFX_SAFE_MODE 
     #ifdef GFX_SAFE_MODE
         #define RETURN_IF_NOT_WITHIN_BOUNDS(x, y, w, h) if(!is_point_within_bounds(x, y, w, h)) return
     #else

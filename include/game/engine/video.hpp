@@ -6,6 +6,7 @@
 #include "game/engine/surface.hpp"
 #include "game/engine/config.hpp"
 #include "game/gfx/pset.hpp"
+#include "game/gfx/line.hpp"
 
 namespace g80::game::engine {
 

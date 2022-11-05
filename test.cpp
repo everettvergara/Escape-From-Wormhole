@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL.h>
+#define GFX_SAFE_MODE
 #include "game/engine/config.hpp"
 #include "game/engine/video.hpp"
 
