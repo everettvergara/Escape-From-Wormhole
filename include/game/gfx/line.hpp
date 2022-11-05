@@ -31,7 +31,6 @@ namespace g80::game::gfx {
     
         fp_type h = y2 - y1;
         fp_type w = x2 - x1;
-        // fp_type m = h / w;
 
         // Call only if it's beyond ON_SCREEN
         // ∴ the condition if(y == y_equals) return x is not applicable;
@@ -49,6 +48,45 @@ namespace g80::game::gfx {
             fp_type m = h / w;
             fp_type b = y - m * x;
             return static_cast<int_type>(m * x_equals + b);
+        };
+
+        // Call only if one of the points is out of bounds
+        // ∴ the condition screen_plane == ON_SCREEN is not applicable 
+        // If the two points are out of bounds do not call.
+        auto recalc_point_at_bound = [&](int_type &x, int_type &y, SCREEN_PLANE screen_plane) -> void {
+            switch(screen_plane) {
+                [[likely]] case ON_SCREEN:
+                    break;
+                case TOP_LEFT:
+                    if(auto tx = get_x_at_y_equals(x, y, 0); is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0;}
+                    else {y = get_y_at_x_equals(x, y, 0); x = 0;}
+                    break;
+                case TOP:
+                    x = get_x_at_y_equals(x, y, 0); y = 0;
+                    break;
+                case TOP_RIGHT:
+                    if(auto tx = get_x_at_y_equals(x, y, 0); is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0;}
+                    else {y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;}
+                    break;
+                case BOTTOM_LEFT:
+                    if(auto tx = get_x_at_y_equals(x, y, s->h - 1); is_point_within_bounds(tx, s->h - 1, s->w, s->h)) {x = tx; y = s->h - 1;}
+                    else {y = get_y_at_x_equals(x, y, 0); x = 0;}
+                    break;
+                case BOTTOM_RIGHT:
+                    if(auto tx = get_x_at_y_equals(x, y, s->h - 1); is_point_within_bounds(tx, s->h - 1, s->w, s->h)) {x = tx; y = 0;}
+                    else {y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;}
+                    break;
+                case BOTTOM:
+                    x = get_x_at_y_equals(x, y, s->h - 1); y = s->h - 1;
+                    break;
+                case LEFT:
+                    y = get_y_at_x_equals(x, y, 0); x = 0;
+                    break;
+                case RIGHT:
+                    y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;
+                    break;
+            }
+
         };
 
     }
