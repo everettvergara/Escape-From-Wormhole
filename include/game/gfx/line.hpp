@@ -33,6 +33,8 @@ namespace g80::game::gfx {
         fp_type w = x2 - x1;
         // fp_type m = h / w;
 
+        // Call only if it's beyond ON_SCREEN
+        // ∴ the condition if(y == y_equals) return x is not applicable;
         auto get_x_at_y_equals = [&](const int_type x, const int_type y, const int_type y_equals) -> int_type {
             if(w == 0) return x;
             fp_type m = h / w;
@@ -40,8 +42,13 @@ namespace g80::game::gfx {
             return static_cast<int_type>((y - b) / m);
         };
 
+        // Call only if it's beyond ON_SCREEN
+        // ∴ the condition if(w == 0) is not applicable;
         auto get_y_at_x_equals = [&](const int_type x, const int_type y, const int_type x_equals) -> int_type {
-        
+            if(h == 0) return y;
+            fp_type m = h / w;
+            fp_type b = y - m * x;
+            return static_cast<int_type>(m * x_equals + b);
         };
 
     }
