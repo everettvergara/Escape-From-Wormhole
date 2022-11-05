@@ -12,27 +12,30 @@ namespace g80::game::gfx {
 
     // Return true if can be plotted
     // Return false if cannot be plotted
-    auto line_recalc_points(const SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> bool {
-        auto get_screen_plane = [&](const int_type x, const int_type y) -> SCREEN_PLANE {
-            if(x >= 0) [[likely]] {
-                if(x < s->w) [[likely]] {
-                    if(y >= 0) [[likely]] {
-                        if(y < s->h) [[likely]] return ON_SCREEN;
-                        else return BOTTOM;
-                    } else return TOP;
-                } else {
-                    if(y < 0) return TOP_RIGHT;
-                    else if(y >= s->h) return BOTTOM_RIGHT;
-                    else return RIGHT;
-                }
+
+
+    auto get_screen_plane(const SDL_Surface *s, const int_type x, const int_type y) -> SCREEN_PLANE {
+        if(x >= 0) [[likely]] {
+            if(x < s->w) [[likely]] {
+                if(y >= 0) [[likely]] {
+                    if(y < s->h) [[likely]] return ON_SCREEN;
+                    else return BOTTOM;
+                } else return TOP;
             } else {
-                if(y < 0) return TOP_LEFT;
-                else if(y >= s->h) return BOTTOM_LEFT;
-                else return LEFT;
+                if(y < 0) return TOP_RIGHT;
+                else if(y >= s->h) return BOTTOM_RIGHT;
+                else return RIGHT;
             }
-        };
-        auto sp1 = get_screen_plane(x1, y1);
-        auto sp2 = get_screen_plane(x2, y2);
+        } else {
+            if(y < 0) return TOP_LEFT;
+            else if(y >= s->h) return BOTTOM_LEFT;
+            else return LEFT;
+        }    
+    }
+
+    auto line_recalc_points(const SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> bool {
+        auto sp1 = get_screen_plane(s, x1, y1);
+        auto sp2 = get_screen_plane(s, x2, y2);
         if(sp1 == ON_SCREEN && sp2 == ON_SCREEN) [[likely]] return true;
 
         // If recalculation is required
@@ -69,7 +72,6 @@ namespace g80::game::gfx {
             auto get_y_at_right = [&]() -> void {y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;};
 
             switch(screen_plane) {
-
                 case TOP_LEFT:
                     if(is_x_at_top()) return;
                     get_y_at_left(); 
@@ -94,17 +96,19 @@ namespace g80::game::gfx {
                     get_y_at_left(); return;
                 case RIGHT:
                     get_y_at_right(); return;
+                default:
+                    return;
             }
         };
 
         if(sp1 != ON_SCREEN) {
             recalc_point_at_bound(x1, y1, sp1);
-            if(get_screen_plane(x1, y1) != ON_SCREEN) return false;
+            if(get_screen_plane(s, x1, y1) != ON_SCREEN) return false;
         }
 
         if(sp2 != ON_SCREEN) {
             recalc_point_at_bound(x2, y2, sp2);
-            if(get_screen_plane(x2, y2) != ON_SCREEN) return false;
+            if(get_screen_plane(s, x2, y2) != ON_SCREEN) return false;
         }
 
         return true;
