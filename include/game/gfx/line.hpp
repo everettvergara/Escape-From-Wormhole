@@ -33,10 +33,10 @@ namespace g80::game::gfx {
         }    
     }
 
-    auto line_recalc_points(const SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> bool {
-        auto sp1 = get_screen_plane(s, x1, y1);
-        auto sp2 = get_screen_plane(s, x2, y2);
-        if(sp1 == ON_SCREEN && sp2 == ON_SCREEN) [[likely]] return true;
+    auto recalc_line_points(const SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2, const SCREEN_PLANE sp1, const SCREEN_PLANE sp2) -> bool {
+        // auto sp1 = get_screen_plane(s, x1, y1);
+        // auto sp2 = get_screen_plane(s, x2, y2);
+        // if(sp1 == ON_SCREEN && sp2 == ON_SCREEN) [[likely]] return true;
 
         // If recalculation is required
         fp_type h = y2 - y1;
@@ -115,8 +115,7 @@ namespace g80::game::gfx {
     }
 
     #ifdef GFX_SAFE_MODE
-        #define RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2) line_recalc_points(s, x1, y1, x2, y2) 
-        // if(!line_recalc_points(s, x1, y1, x2, y2)) return
+        #define RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2) if(!recalc_line_points(s, x1, y1, x2, y2)) return
     #else
         #define RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2)
     #endif
@@ -124,7 +123,10 @@ namespace g80::game::gfx {
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
         auto start = std::chrono::high_resolution_clock::now();
-        RECALC_LINE_IF_NOT_WITHIN_BOUNDS(s, x1, y1, x2, y2);
+        auto sp1 = get_screen_plane(s, x1, y1);
+        auto sp2 = get_screen_plane(s, x2, y2);
+        if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[likely]] recalc_line_points(s, x1, y1, x2, y2);
+
         auto elapsed = std::chrono::high_resolution_clock::now() - start;
         std::cout << elapsed << "\n";
         int_type dx = x2 - x1;
