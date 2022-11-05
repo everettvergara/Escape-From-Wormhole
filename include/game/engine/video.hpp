@@ -31,7 +31,7 @@ namespace g80::game::engine {
         virtual ~video() {};
 
     // Window
-    private:
+    protected:
         std::unique_ptr<window> window_{nullptr};
         SDL_Window *sdl_window_;
     public:
@@ -47,7 +47,6 @@ namespace g80::game::engine {
     // Run and Events
     private:
         bool is_running_;
-        g80::sys::fp_type rads_ {0.0};
     public:
         virtual auto update_window_surface() -> void {
             SDL_UpdateWindowSurface(sdl_window_);
@@ -66,11 +65,6 @@ namespace g80::game::engine {
         virtual auto update_states() -> void {
             auto *surface = SDL_GetWindowSurface(sdl_window_);
             SDL_FillRect(surface, NULL, 0);
-            using namespace g80::game::gfx;
-            pset(surface, 100, 100, SDL_MapRGBA(surface->format, 255, 0, 0, 255));
-            rads_ += 0.01;
-            line(surface, surface->w / 2, surface->h / 2, surface->w / 2 + static_cast<int_type>(200 * SDL_cosf(rads_)), surface->h / 2 + static_cast<int_type>(200 * SDL_sinf(rads_)), SDL_MapRGBA(surface->format, 255, 0, 0, 255));
-            // line(surface, surface->w / 2, surface->h / 2, surface->w / 2 + static_cast<int_type>(surface->w * SDL_cosf(rads_)), surface->h / 2 + static_cast<int_type>(surface->w * SDL_sinf(rads_)), SDL_MapRGBA(surface->format, 255, 0, 0, 255));
         }
 
         auto run(const Uint32 MSPF) -> void {

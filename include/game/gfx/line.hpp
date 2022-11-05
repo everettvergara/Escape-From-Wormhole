@@ -96,10 +96,13 @@ namespace g80::game::gfx {
     }
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
+        auto start = std::chrono::high_resolution_clock::now();
         auto sp1 = get_screen_plane(s, x1, y1);
         auto sp2 = get_screen_plane(s, x2, y2);
         if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
              if(!recalc_line_points(s, x1, y1, x2, y2, sp1, sp2)) return;
+        auto elapsed = std::chrono::high_resolution_clock::now() - start;
+        std::cout << "elapsed: " << elapsed << "\n";
 
         int_type dx = x2 - x1;
         int_type dy = y2 - y1;

@@ -2,7 +2,7 @@
 #include <SDL.h>
 #define GFX_SAFE_MODE
 #include "game/engine/config.hpp"
-#include "game/engine/video.hpp"
+#include "game/worm/demo.hpp"
 
 
 // #include <vector>
@@ -11,10 +11,10 @@
 
 auto main(int argc, char *argv[]) -> int {
 
-    using namespace g80::game::engine;
+    using namespace g80::game::worm;
     video::init();
     config c{"Hello World"};
-    video worm;
+    demo worm;
     worm.create_window(c);
     worm.run(c.MSPF);
     video::quit();
