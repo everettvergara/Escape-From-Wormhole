@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tuple>
+#include <unordered_map>
 #include <SDL.h>
 #include "game/gfx/common.hpp"
 
@@ -8,7 +8,7 @@ namespace g80::game::gfx {
 
     enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
 
-    auto get_screen_plane(SDL_Surface *s, const int_type x, const int_type y) -> SCREEN_PLANE {
+    auto get_screen_plane(const SDL_Surface *s, const int_type x, const int_type y) -> SCREEN_PLANE {
         if(x >= 0) [[likely]] {
             if(x < s->w) [[likely]] {
                 if(y >= 0) [[likely]] {
@@ -27,10 +27,28 @@ namespace g80::game::gfx {
         }
     }
 
-    auto line_recalc_points(const SDL_Surface *s, const int_type wb, const int_type hb, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> void {
+    auto line_recalc_points(const SDL_Surface *s, const int_type wb, const int_type hb, int_type &x1, int_type &y1, int_type &x2, int_type &y2) -> bool {
     
+        static std::unordered_map<SCREEN_PLANE, SCREEN_PLANE> invalid_planes {
+            {TOP_LEFT, TOP}, {TOP_LEFT, TOP_RIGHT}, {TOP_LEFT, LEFT}, {TOP_LEFT, BOTTOM_LEFT},
+            {TOP, TOP_LEFT}, {TOP, TOP_RIGHT}, 
+            {TOP_RIGHT, TOP}, {TOP_RIGHT, TOP_LEFT}, {TOP_RIGHT, RIGHT}, {TOP_RIGHT, BOTTOM_RIGHT},
+            {LEFT, TOP_LEFT}, {LEFT, BOTTOM_LEFT},
+            {RIGHT, TOP_RIGHT}, {RIGHT, BOTTOM_RIGHT},
+            {BOTTOM_LEFT, TOP}, {BOTTOM_LEFT, LEFT}, {BOTTOM_LEFT, BOTTOM}, {BOTTOM_LEFT, BOTTOM_RIGHT},
+            {BOTTOM, BOTTOM_LEFT}, {BOTTOM, BOTTOM_RIGHT},
+            {BOTTOM_RIGHT, BOTTOM_LEFT}, {BOTTOM_RIGHT, BOTTOM}, {BOTTOM_RIGHT, TOP_RIGHT}, {BOTTOM_RIGHT, RIGHT},
+        };
+
         fp_type h = y2 - y1;
         fp_type w = x2 - x1;
+
+        auto sp1 = get_screen_plane(s, x1, y1);
+        auto sp2 = get_screen_plane(s, x2, y2);
+
+        
+        if(sp1 == ON_SCREEN && sp2 == ON_SCREEN) return true;
+
 
         // Call only if it's beyond ON_SCREEN
         // ∴ the condition if(y == y_equals) return x is not applicable;
@@ -93,16 +111,13 @@ namespace g80::game::gfx {
 
         };
 
-        auto sp1 = get_screen_plane(s, x1, y1);
-        auto sp2 = get_screen_plane(s, x2, y2);
-
-        if(sp1 != ON_SCREEN) recalc_point_at_bound(x1, y1, sp1, wb, hb);
-        if(sp2 != ON_SCREEN) recalc_point_at_bound(x2, y2, sp2, wb, hb);
+        if(sp1 != ON_SCREEN) recalc_point_at_bound(x1, y1, sp1);
+        if(sp2 != ON_SCREEN) recalc_point_at_bound(x2, y2, sp2);
     }
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
-        bool is_p1_within_bounds = is_point_within_bounds(x1, y1, s->w, s->h);
-        bool is_p2_within_bounds = is_point_within_bounds(x2, y2, s->w, s->h);
+        // bool is_p1_within_bounds = is_point_within_bounds(x1, y1, s->w, s->h);
+        // bool is_p2_within_bounds = is_point_within_bounds(x2, y2, s->w, s->h);
 
 
 
