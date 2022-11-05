@@ -10,10 +10,6 @@ namespace g80::game::gfx {
 
     enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
 
-    // Return true if can be plotted
-    // Return false if cannot be plotted
-
-
     auto get_screen_plane(const SDL_Surface *s, const int_type x, const int_type y) -> SCREEN_PLANE {
         if(x >= 0) [[likely]] {
             if(x < s->w) [[likely]] {
@@ -33,12 +29,9 @@ namespace g80::game::gfx {
         }    
     }
 
+    // It is assumed that recalculation is required if this function is called
+    // Either point1(x1, y1) or point2 (x2, y2) is/are not ON_SCREEN
     auto recalc_line_points(const SDL_Surface *s, int_type &x1, int_type &y1, int_type &x2, int_type &y2, const SCREEN_PLANE sp1, const SCREEN_PLANE sp2) -> bool {
-        // auto sp1 = get_screen_plane(s, x1, y1);
-        // auto sp2 = get_screen_plane(s, x2, y2);
-        // if(sp1 == ON_SCREEN && sp2 == ON_SCREEN) [[likely]] return true;
-
-        // If recalculation is required
         fp_type h = y2 - y1;
         fp_type w = x2 - x1;
 
@@ -122,13 +115,11 @@ namespace g80::game::gfx {
 
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
-        auto start = std::chrono::high_resolution_clock::now();
         auto sp1 = get_screen_plane(s, x1, y1);
         auto sp2 = get_screen_plane(s, x2, y2);
-        if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[likely]] recalc_line_points(s, x1, y1, x2, y2);
+        if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+             if(!recalc_line_points(s, x1, y1, x2, y2, sp1, sp2)) return;
 
-        auto elapsed = std::chrono::high_resolution_clock::now() - start;
-        std::cout << elapsed << "\n";
         int_type dx = x2 - x1;
         int_type dy = y2 - y1;
         int_type adx = dx < 0 ? -dx : dx;
