@@ -9,10 +9,9 @@ namespace g80::game::gfx {
 
     class gfx {
     private:
-        SDL_Surface *s_;
+        SDL_Surface *s_{nullptr};
         int_type wb_, hb_;
     public:
-        gfx(SDL_Surface *s) : s_(s), wb_(s_->w - 1), hb_(s_->h - 1) {}
         inline auto set_surface(SDL_Surface *s) -> void {s_ = s; wb_ = s_->w - 1; hb_ = s_->h - 1;}
         inline auto get_surface() const -> SDL_Surface * {return s_;}
         inline auto get_wb() const -> int_type {return wb_;}
