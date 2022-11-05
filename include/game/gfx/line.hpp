@@ -53,7 +53,6 @@ namespace g80::game::gfx {
         fp_type h = y2 - y1;
         fp_type w = x2 - x1;
 
-
         // Call only if it's beyond ON_SCREEN
         // ∴ the condition if(y == y_equals) return x is not applicable;
         auto get_x_at_y_equals = [&](const int_type x, const int_type y, const int_type y_equals) -> int_type {
@@ -76,43 +75,35 @@ namespace g80::game::gfx {
         // ∴ the condition screen_plane == ON_SCREEN is not applicable 
         // If the two points are out of bounds do not call.
         auto recalc_point_at_bound = [&](int_type &x, int_type &y, SCREEN_PLANE screen_plane) -> void {
-
+            auto is_x_at_top = [&]() -> bool {auto tx = get_x_at_y_equals(x, y, 0); if(is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0; return true;} return false;};
+            auto is_x_at_bottom = [&]() -> bool {auto tx = get_x_at_y_equals(x, y, hb); if(is_point_within_bounds(tx, hb, s->w, s->h)) {x = tx; y = hb; return true;} return false;};
+            auto get_x_at_top = [&]() -> void {x = get_x_at_y_equals(x, y, 0); y = 0;};
+            auto get_x_at_bottom = [&]() -> void {x = get_x_at_y_equals(x, y, hb); y = hb;};
             auto get_y_at_left = [&]() -> void {y = get_y_at_x_equals(x, y, 0); x = 0;};
             auto get_y_at_right = [&]() -> void {y = get_y_at_x_equals(x, y, wb); x = wb;};
 
             switch(screen_plane) {
-                [[likely]] case ON_SCREEN:
-                    break;
                 case TOP_LEFT:
-                    if(auto tx = get_x_at_y_equals(x, y, 0); is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0;}
-                    else get_y_at_left();
-                    break;
+                    if(is_x_at_top()) return;
+                    get_y_at_left(); return;
                 case TOP:
-                    x = get_x_at_y_equals(x, y, 0); y = 0;
-                    break;
+                    get_x_at_top(); return;
                 case TOP_RIGHT:
-                    if(auto tx = get_x_at_y_equals(x, y, 0); is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0;}
-                    else get_y_at_right();
-                    break;
+                    if(is_x_at_top()) return;
+                    else get_y_at_right(); return;
                 case BOTTOM_LEFT:
-                    if(auto tx = get_x_at_y_equals(x, y, hb); is_point_within_bounds(tx, hb, s->w, s->h)) {x = tx; y = hb;}
-                    else get_y_at_left();
-                    break;
+                    if(is_x_at_bottom()) return;
+                    else get_y_at_left(); return;
                 case BOTTOM_RIGHT:
-                    if(auto tx = get_x_at_y_equals(x, y, hb); is_point_within_bounds(tx, hb, s->w, s->h)) {x = tx; y = hb;}
-                    else get_y_at_right();
-                    break;
+                    if(is_x_at_bottom()) return;
+                    else get_y_at_right(); return;
                 case BOTTOM:
-                    x = get_x_at_y_equals(x, y, hb); y = hb;
-                    break;
+                    get_x_at_bottom(); return;
                 case LEFT:
-                    get_y_at_left();
-                    break;
+                    get_y_at_left(); return;
                 case RIGHT:
-                    get_y_at_right();
-                    break;
+                    get_y_at_right(); return;
             }
-
         };
 
         if(sp1 != ON_SCREEN) {
@@ -129,12 +120,6 @@ namespace g80::game::gfx {
     }
 
     auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
-        // bool is_p1_within_bounds = is_point_within_bounds(x1, y1, s->w, s->h);
-        // bool is_p2_within_bounds = is_point_within_bounds(x2, y2, s->w, s->h);
-
-
-
-
 
     }
 
