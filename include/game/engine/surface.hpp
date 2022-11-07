@@ -1,25 +1,43 @@
 #pragma once
 
 #include <SDL.h>
+#include "game/gfx/base_point.hpp"
+#include "game/gfx/common.hpp"
 #include "game/gfx/pset.hpp"
 
 namespace g80::game::engine {
 
+    using namespace g80::game::gfx;
+
     class surface {
     private:
-        SDL_Surface *surface_;
-        bool is_surface_from_window_;
+        SDL_Surface *s_;
+        int_type wb_, hb_;
+        bool is_surface_window_;
         
     public:
 
         // Window Surface
         surface(SDL_Window *window) : 
-            surface_(SDL_GetWindowSurface(window)), is_surface_from_window_(true) {
+            s_(SDL_GetWindowSurface(window)), 
+            wb_(s_->w - 1), hb_(s_->h - 1), 
+            is_surface_window_(true) {
         }
         
         // Custom Surface
         surface(int w, int h, Uint32 format) : 
-            surface_(SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format)), is_surface_from_window_(false) {
+            s_(SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format)), 
+            wb_(s_->w - 1), hb_(s_->h - 1), 
+            is_surface_window_(false) {
+        }
+
+        auto set_surface_from_window(SDL_Window *window) -> SDL_Surface * {
+            if(!is_surface_window_) return NULL;
+            s_ = SDL_GetWindowSurface(window); 
+            if(!s_) return NULL;
+            wb_ = s_->w - 1;
+            hb_ = s_->h - 1;
+            return s_;
         }
 
         // Deleted constructors and assignments 
@@ -30,11 +48,20 @@ namespace g80::game::engine {
 
         // Destructor
         ~surface() {
-            if(!is_surface_from_window_)SDL_FreeSurface(surface_);
+            if(!is_surface_window_)SDL_FreeSurface(s_);
         }
 
         // Getters
-        auto get_handle() -> SDL_Surface * {return surface_;}
-        auto is_valid() -> bool {return surface_ != NULL;}
+        inline auto get_handle() -> SDL_Surface * {return s_;}
+        inline auto is_valid() const -> bool {return s_ != NULL;}
+        inline auto get_wb() const -> int_type {return wb_;}
+        inline auto get_hb() const -> int_type {return hb_;}
+
+
+        // Validators
+        inline auto is_point_within_bounds(const point &p) const -> bool {
+            if(p.x < 0 || p.y < 0 || p.x >= s_->w || p.y >= s_->h) return false; 
+            return true;
+        }
     };
 }
