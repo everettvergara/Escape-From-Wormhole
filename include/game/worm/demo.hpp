@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdlib>
+#include <SDL.h>
 #include "game/engine/video.hpp"
-#include "game/gfx/pset.hpp"
+#include "game/engine/surface.hpp"
 
 namespace g80::game::worm {
 
@@ -17,11 +18,13 @@ namespace g80::game::worm {
         demo() {}
 
         auto update_states() -> void override {
-            auto *surface = SDL_GetWindowSurface(sdl_window_);
-            SDL_FillRect(surface, NULL, 0);
-            //pset_.draw(100, 100, SDL_MapRGBA(pset_.get_surface()->format, 255, 0, 0, 255));
+            
+            surface s(sdl_window_);
+            SDL_FillRect(s.get_handle(), NULL, 0); 
             for(size_t i{0}; i< 1000; ++i) {
-                pset_.draw(rand() % pset_.get_surface()->w, rand() % pset_.get_surface()->h, SDL_MapRGBA(pset_.get_surface()->format, 255, 0, 0, 255));
+                s.pixel(rand() % s.get_handle()->w,
+                        rand() % s.get_handle()->h,
+                        SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             }
             // using namespace g80::game::gfx;
             // pset(surface, 100, 100, SDL_MapRGBA(surface->format, 255, 0, 0, 255));

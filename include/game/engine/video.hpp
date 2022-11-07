@@ -5,9 +5,7 @@
 #include <SDL.h>
 #include "sys/common.hpp"
 #include "game/engine/window.hpp"
-#include "game/engine/surface.hpp"
-#include "game/engine/config.hpp" 
-#include "game/gfx/pset.hpp"
+#include "game/engine/config.hpp"  
 
 namespace g80::game::engine {
 
@@ -36,19 +34,10 @@ namespace g80::game::engine {
         std::unique_ptr<window> window_{nullptr};
         SDL_Window *sdl_window_;
         
-        g80::game::gfx::pset pset_;
-
     public:
         auto create_window(const config &c) -> bool {
             window_.reset(new window(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags));
             sdl_window_ = window_->get_handle();
-
-
-            if(auto surface = SDL_GetWindowSurface(sdl_window_); surface) {
-                pset_.set_surface(surface);
-                
-            } else return false;
-
             return window_->is_valid();
         }
         auto get_window() -> window & {return *window_.get();}

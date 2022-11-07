@@ -57,7 +57,7 @@ namespace g80::game::engine {
         inline auto get_hb() const -> int_type {return hb_;}
 
 
-    // Validators
+    // Pixel validators
     public:
     inline auto is_point_within_bounds(const int_type x, const int_type y) const -> bool {
         if(x < 0 || y < 0 || x >= s_->w || y >= s_->h) return false; 
@@ -71,9 +71,13 @@ namespace g80::game::engine {
     // Pixel
     // --
     public:
-        auto pixel(const point &p, const uint_type rgba) -> void {
+        auto pixel(const int_type x, const int_type y, const Uint32 rgba) -> void {
+            if(!is_point_within_bounds(x, y)) [[unlikely]] return;
+            *((static_cast<Uint32 *>(s_->pixels) + x) + (y * s_->w)) = rgba;
+        }    
+        auto pixel(const point &p, const Uint32 rgba) -> void {
             if(!is_point_within_bounds(p)) [[unlikely]] return;
-            *((static_cast<uint_type *>(s_->pixels) + p.x) + (p.y * s_->w)) = rgba;
+            *((static_cast<Uint32 *>(s_->pixels) + p.x) + (p.y * s_->w)) = rgba;
         }
 
     // Line
@@ -127,11 +131,11 @@ namespace g80::game::engine {
             // ∴ the condition screen_plane == ON_SCREEN is not applicable 
             auto recalc_point_at_bound = [&](point &p, SCREEN_PLANE screen_plane) -> void {
                 auto is_x_at_top = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, 0); is_point_within_bounds(tx, 0)) {p.x = tx; p.y = 0; return true;} return false;};
-                auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(x, y, hb_); is_point_within_bounds(tx, hb_)) {x = tx; y = hb_; return true;} return false;};
-                auto get_x_at_top = [&]() -> void {x = get_x_at_y_equals(x, y, 0); y = 0;};
-                auto get_x_at_bottom = [&]() -> void {x = get_x_at_y_equals(x, y, hb_); y = hb_;};
-                auto get_y_at_left = [&]() -> void {y = get_y_at_x_equals(x, y, 0); x = 0;};
-                auto get_y_at_right = [&]() -> void {y = get_y_at_x_equals(x, y, wb_); x = wb_;};
+                auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, hb_); is_point_within_bounds(tx, hb_)) {p.x = tx; p.y = hb_; return true;} return false;};
+                auto get_x_at_top = [&]() -> void {p.x = get_x_at_y_equals(p, 0); p.y = 0;};
+                auto get_x_at_bottom = [&]() -> void {p.x = get_x_at_y_equals(p, hb_); p.y = hb_;};
+                auto get_y_at_left = [&]() -> void {p.y = get_y_at_x_equals(p, 0); p.x = 0;};
+                auto get_y_at_right = [&]() -> void {p.y = get_y_at_x_equals(p, wb_); p.x = wb_;};
                 auto check_top_left = [&]() -> void {if(is_x_at_top()) return; get_y_at_left(); return;};
                 auto check_top_right = [&]() -> void {if(is_x_at_top()) return; get_y_at_right(); return;};
                 auto check_bottom_left = [&]() -> void {if(is_x_at_bottom()) return; get_y_at_left(); return;};
