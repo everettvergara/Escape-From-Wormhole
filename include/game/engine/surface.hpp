@@ -63,5 +63,12 @@ namespace g80::game::engine {
             if(p.x < 0 || p.y < 0 || p.x >= s_->w || p.y >= s_->h) return false; 
             return true;
         }
+
+        // Pixel
+        auto pixel(const point &p, const uint_type rgba) -> void {
+            if(!is_point_within_bounds(p)) [[unlikely]] return;
+            *((static_cast<uint_type *>(s_->pixels) + p.x) + (p.y * s_->w)) = rgba;
+        }
+
     };
 }
