@@ -58,11 +58,16 @@ namespace g80::game::engine {
         inline auto get_hb() const -> int_type {return hb_;}
 
 
-        // Validators
-        inline auto is_point_within_bounds(const point &p) const -> bool {
-            if(p.x < 0 || p.y < 0 || p.x >= s_->w || p.y >= s_->h) return false; 
-            return true;
-        }
+    // Validators
+    public:
+    inline auto is_point_within_bounds(const int_type x, const int_type y) const -> bool {
+        if(x < 0 || y < 0 || x >= s_->w || y >= s_->h) return false; 
+        return true;
+    }
+    inline auto is_point_within_bounds(const point &p) const -> bool {
+        if(p.x < 0 || p.y < 0 || p.x >= s_->w || p.y >= s_->h) return false; 
+        return true;
+    }
 
     // Pixel
     // --
@@ -122,16 +127,12 @@ namespace g80::game::engine {
             // Call only if one of the points is out of bounds
             // ∴ the condition screen_plane == ON_SCREEN is not applicable 
             auto recalc_point_at_bound = [&](point &p, SCREEN_PLANE screen_plane) -> void {
-                auto is_x_at_top = [&]() -> bool {if(auto tx = get_x_at_y_equals(x, y, 0); 
-                                                        is_point_within_bounds(tx, 0, s->w, s->h)) {x = tx; y = 0; return true;} 
-                                                    return false;};
-                auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(x, y, s->h - 1); 
-                                                        is_point_within_bounds(tx, s->h - 1, s->w, s->h)) {x = tx; y = s->h - 1; return true;} 
-                                                    return false;};
+                auto is_x_at_top = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, 0); is_point_within_bounds(tx, 0)) {p.x = tx; p.y = 0; return true;} return false;};
+                auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(x, y, hb_); is_point_within_bounds(tx, hb_)) {x = tx; y = hb_; return true;} return false;};
                 auto get_x_at_top = [&]() -> void {x = get_x_at_y_equals(x, y, 0); y = 0;};
-                auto get_x_at_bottom = [&]() -> void {x = get_x_at_y_equals(x, y, s->h - 1); y = s->h - 1;};
+                auto get_x_at_bottom = [&]() -> void {x = get_x_at_y_equals(x, y, hb_); y = hb_;};
                 auto get_y_at_left = [&]() -> void {y = get_y_at_x_equals(x, y, 0); x = 0;};
-                auto get_y_at_right = [&]() -> void {y = get_y_at_x_equals(x, y, s->w - 1); x = s->w - 1;};
+                auto get_y_at_right = [&]() -> void {y = get_y_at_x_equals(x, y, wb_); x = wb_;};
                 auto check_top_left = [&]() -> void {if(is_x_at_top()) return; get_y_at_left(); return;};
                 auto check_top_right = [&]() -> void {if(is_x_at_top()) return; get_y_at_right(); return;};
                 auto check_bottom_left = [&]() -> void {if(is_x_at_bottom()) return; get_y_at_left(); return;};
@@ -151,18 +152,47 @@ namespace g80::game::engine {
             };
 
             if(sp1 != ON_SCREEN) {
-                recalc_point_at_bound(x1, y1, sp1);
-                if(get_screen_plane(s, x1, y1) != ON_SCREEN) return false;
+                recalc_point_at_bound(p1, sp1);
+                if(get_screen_plane(s, p1) != ON_SCREEN) return false;
             }
 
             if(sp2 != ON_SCREEN) {
-                recalc_point_at_bound(x2, y2, sp2);
-                if(get_screen_plane(s, x2, y2) != ON_SCREEN) return false;
+                recalc_point_at_bound(p2, sp2);
+                if(get_screen_plane(s, p2) != ON_SCREEN) return false;
             }
 
             return true;
         }
 
+    public:
 
+        auto line(SDL_Surface *s, int_type x1, int_type y1, int_type x2, int_type y2, const Uint32 rgba) -> void {
+            auto sp1 = get_screen_plane(s, x1, y1);
+            auto sp2 = get_screen_plane(s, x2, y2);
+            if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+                if(!recalc_line_points(s, x1, y1, x2, y2, sp1, sp2)) return;
+
+            int_type dx = x2 - x1;
+            int_type dy = y2 - y1;
+            int_type adx = dx < 0 ? -dx : dx;
+            int_type ady = dy < 0 ? -dy : dy;
+            int_type sdx = dx < 0 ? -1 : 1;
+            int_type sdy = dy < 0 ? -s->w : s->w;
+
+            Uint32 *pixel_buffer = static_cast<Uint32 *>(s->pixels) + y1 * s->w + x1;
+            auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
+                for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
+                    *pixel_buffer = rgba;
+                    if (t >= abs_g) {
+                        pixel_buffer += sig_l;
+                        t -= abs_g;
+                    }
+                    pixel_buffer += sig_g;
+                }
+            };
+
+            if (adx >= ady) draw_line(adx, ady, sdx, sdy);
+            else draw_line(ady, adx, sdy, sdx);
+        }    
     };
 }
