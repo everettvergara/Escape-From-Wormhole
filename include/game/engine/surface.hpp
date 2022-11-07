@@ -53,6 +53,12 @@ namespace g80::game::engine {
         // Getters
         inline auto get_handle() -> SDL_Surface * {return s_;}
         inline auto is_valid() const -> bool {return s_ != NULL;}
+        inline auto get_w() const -> int_type {return s_->w;}
+        inline auto get_h() const -> int_type {return s_->h;}
+        inline auto get_cw() const -> int_type {return s_->w / 2;}
+        inline auto get_ch() const -> int_type {return s_->h / 2;}
+        inline auto get_format() const -> SDL_PixelFormat * {return s_->format;}
+        inline auto get_pixels() const -> void * {return s_->pixels;}
         inline auto get_wb() const -> int_type {return wb_;}
         inline auto get_hb() const -> int_type {return hb_;}
 
@@ -71,41 +77,47 @@ namespace g80::game::engine {
     // Pixel
     // --
     public:
-        auto pixel(const int_type x, const int_type y, const Uint32 rgba) -> void {
-            if(!is_point_within_bounds(x, y)) [[unlikely]] return;
+        inline auto pixel(const int_type x, const int_type y, const Uint32 rgba) -> void {
             *((static_cast<Uint32 *>(s_->pixels) + x) + (y * s_->w)) = rgba;
         }    
-        auto pixel(const point &p, const Uint32 rgba) -> void {
-            if(!is_point_within_bounds(p)) [[unlikely]] return;
+        inline auto pixel(const point &p, const Uint32 rgba) -> void {
             *((static_cast<Uint32 *>(s_->pixels) + p.x) + (p.y * s_->w)) = rgba;
+        }
+        auto pixel_s(const int_type x, const int_type y, const Uint32 rgba) -> void {
+            if(!is_point_within_bounds(x, y)) [[unlikely]] return;
+            pixel(x, y, rgba);
+        }    
+        auto pixel_s(const point &p, const Uint32 rgba) -> void {
+            if(!is_point_within_bounds(p)) [[unlikely]] return;
+            pixel(p, rgba);
         }
 
     // Line
     // --
     private:
         enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
-        auto get_screen_plane(const SDL_Surface *s, const point &p) const -> SCREEN_PLANE {
+        auto get_screen_plane(const point &p) const -> SCREEN_PLANE {
             if(p.x >= 0) [[likely]] {
-                if(p.x < s->w) [[likely]] {
+                if(p.x < s_->w) [[likely]] {
                     if(p.y >= 0) [[likely]] {
-                        if(p.y < s->h) [[likely]] return ON_SCREEN;
+                        if(p.y < s_->h) [[likely]] return ON_SCREEN;
                         else return BOTTOM;
                     } else return TOP;
                 } else {
                     if(p.y < 0) return TOP_RIGHT;
-                    else if(p.y >= s->h) return BOTTOM_RIGHT;
+                    else if(p.y >= s_->h) return BOTTOM_RIGHT;
                     else return RIGHT;
                 }
             } else {
                 if(p.y < 0) return TOP_LEFT;
-                else if(p.y >= s->h) return BOTTOM_LEFT;
+                else if(p.y >= s_->h) return BOTTOM_LEFT;
                 else return LEFT;
             }
         }
 
         // It is assumed that recalculation is required if this function is called
         // Either point1(x1, y1) or point2 (x2, y2) is/are not ON_SCREEN
-        auto recalc_line_points(const SDL_Surface *s, point &p1, point &p2, const SCREEN_PLANE sp1, const SCREEN_PLANE sp2) -> bool {
+        auto recalc_line_points(point &p1, point &p2, const SCREEN_PLANE sp1, const SCREEN_PLANE sp2) -> bool {
             fp_type h = p2.y - p1.y;
             fp_type w = p2.x - p1.x;
 
@@ -156,30 +168,25 @@ namespace g80::game::engine {
 
             if(sp1 != ON_SCREEN) {
                 recalc_point_at_bound(p1, sp1);
-                if(get_screen_plane(s, p1) != ON_SCREEN) return false;
+                if(get_screen_plane(p1) != ON_SCREEN) return false;
             }
 
             if(sp2 != ON_SCREEN) {
                 recalc_point_at_bound(p2, sp2);
-                if(get_screen_plane(s, p2) != ON_SCREEN) return false;
+                if(get_screen_plane(p2) != ON_SCREEN) return false;
             }
 
             return true;
         }
 
     public:
-        auto line(SDL_Surface *s, point &p1, point &p2, const Uint32 rgba) -> void {
-            auto sp1 = get_screen_plane(s, p1);
-            auto sp2 = get_screen_plane(s, p2);
-            if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
-                if(!recalc_line_points(s, p1, p2, sp1, sp2)) return;
-
+        auto line(const point &p1, const point &p2, const Uint32 rgba) -> void {
             auto d = p2 - p1;
             auto ad = d.abs();
             int_type sdx = d.x < 0 ? -1 : 1;
-            int_type sdy = d.y < 0 ? -s->w : s->w;
+            int_type sdy = d.y < 0 ? -s_->w : s_->w;
 
-            Uint32 *pixel_buffer = static_cast<Uint32 *>(s->pixels) + p1.y * s->w + p1.x;
+            Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->pixels) + p1.y * s_->w + p1.x;
             auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
                 for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
                     *pixel_buffer = rgba;
@@ -193,6 +200,14 @@ namespace g80::game::engine {
 
             if (ad.x >= ad.y) draw_line(ad.x, ad.y, sdx, sdy);
             else draw_line(ad.y, ad.x, sdy, sdx);
-        }    
+         }
+
+        auto line_s(point p1, point p2, const Uint32 rgba) -> void {
+            auto sp1 = get_screen_plane(p1);
+            auto sp2 = get_screen_plane(p2);
+            if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+                if(!recalc_line_points(p1, p2, sp1, sp2)) return;
+            line(p1, p2, rgba);
+       }    
     };
 }

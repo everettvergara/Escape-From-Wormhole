@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdlib>
 #include <SDL.h>
+#include "game/gfx/common.hpp"
 #include "game/engine/video.hpp"
 #include "game/engine/surface.hpp"
 
@@ -26,10 +27,11 @@ namespace g80::game::worm {
                         rand() % s.get_handle()->h,
                         SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             }
-            // using namespace g80::game::gfx;
-            // pset(surface, 100, 100, SDL_MapRGBA(surface->format, 255, 0, 0, 255));
+
             // rads_ += 0.01;
-            // line(surface, surface->w / 2, surface->h / 2, surface->w / 2 + static_cast<int_type>(200 * SDL_cosf(rads_)), surface->h / 2 + static_cast<int_type>(200 * SDL_sinf(rads_)), SDL_MapRGBA(surface->format, 255, 0, 0, 255));
+            // s.line( point{s.get_cw(), s.get_ch()}, 
+            //         point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
+            //         SDL_MapRGBA(s.get_format(), 255, 0, 0, 255));
             // line(surface, surface->w / 2, surface->h / 2, surface->w / 2 + static_cast<int_type>(surface->w * SDL_cosf(rads_)), surface->h / 2 + static_cast<int_type>(surface->w * SDL_sinf(rads_)), SDL_MapRGBA(surface->format, 255, 0, 0, 255));
         }
     };
