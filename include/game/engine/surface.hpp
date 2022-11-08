@@ -42,6 +42,7 @@ namespace g80::game::engine {
         }
 
         inline auto get_s() -> SDL_Surface * {return s_;}
+        inline auto get_s() const -> const SDL_Surface * {return s_;}
         inline auto is_valid() const -> bool {return s_ != NULL;}
         inline auto get_w() const -> int_type {return s_->w;}
         inline auto get_h() const -> int_type {return s_->h;}

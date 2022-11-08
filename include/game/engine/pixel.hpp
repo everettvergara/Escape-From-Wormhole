@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SDL.h>
 #include "game/engine/surface.hpp" 
 
 namespace g80::game::engine {

@@ -1,14 +1,11 @@
 #pragma once
 #include <cstdlib>
 #include <SDL.h>
-#include "game/gfx/common.hpp"
 #include "game/engine/video.hpp"
-#include "game/engine/surface.hpp"
 
 namespace g80::game::worm {
 
     using namespace g80::game::engine;
-    using namespace g80::game::gfx;
     
     class demo : public video {
 
