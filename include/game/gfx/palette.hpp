@@ -23,16 +23,15 @@ namespace g80::game::gfx {
         palette(surface *s) : s_(s) {
         }
 
-        auto get_gradient(std::initializer_list<std::tuple<Uint32, Uint32>> rgba_colors) -> std::optional<std::vector<Uint32>> {
-            if(rgba_colors.size() < 4) return {};
-            if(rgba_colors.size() & 1) return {};
+        auto get_palette_gradient(std::initializer_list<std::tuple<Uint32, Uint32>> rgba_colors) -> std::optional<std::vector<Uint32>> {
+            if(rgba_colors.size() < 2) return {};
             
             std::vector<Uint32> gradients;
 
             auto last = rgba_colors.end() - 1;
-            auto N = std::get<0>(*last);
+            auto N = std::get<0>(*last) - 1;
 
-            gradients.reserve(N);
+            gradients.reserve(N + 1);
 
             auto t = rgba_colors.begin();
             auto i_from = std::get<0>(*t);
