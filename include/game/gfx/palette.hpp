@@ -34,19 +34,38 @@ namespace g80::game::gfx {
 
             gradients.reserve(N);
 
+            auto t = rgba_colors.begin();
+            auto i_from = std::get<0>(*t);
+            auto rgba_color_from = std::get<1>(*t);
             Uint8 r1, g1, b1, a1;
-            Uint8 r2, g2, b2, a2;
+            Uint8 r2, g2, b2, a2;            
+            SDL_GetRGBA(rgba_color_from, s_->get_format(), &r1, &g1, &b1, &a1);
 
-            // fp_type percent = static_cast<fp_type>(rgba_colors[0]);
-            // Uint32 rgba_from = static_cast<Uint32>(rgba_colors[1]);
-            // SDL_GetRGBA(rgba_from, s_->get_format(), &r1, &g1, &b1, &a1);
+            while(++t != rgba_colors.end()) {
+                auto i_to = std::get<0>(*t);
+                auto rgba_color_to = std::get<1>(*t);
+                SDL_GetRGBA(rgba_color_to, s_->get_format(), &r2, &g2, &b2, &a2);
 
-            // for(size_t i{2}; i < n; i += 2) {
+                fp_type inc = 1.0f / (i_to - i_from);
+                fp_type perc = 0.0f;
+                for (Uint32 i = i_from; i != i_to; ++i) {
+                    gradients.emplace_back(SDL_MapRGBA(
+                        s_->get_format(), 
+                        r1 + (r2 - r1) * perc,
+                        g1 + (g2 - g1) * perc,
+                        b1 + (b2 - b1) * perc,
+                        a1 + (a2 - a1) * perc));
+                    perc += inc;
+                }
 
-            // }
+                i_from = i_to;
+                r1 = r2; g1 = g2; b1 = b2; a1 = a2;
+            }
 
+            gradients.emplace_back(SDL_MapRGBA(s_->get_format(), r1, g1, b1, a1));
             return gradients;
         }
+
         
     };
 }
