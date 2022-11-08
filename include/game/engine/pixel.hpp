@@ -4,21 +4,33 @@
 
 namespace g80::game::engine {
 
-    class pixel : public surface {
+    class pixel {
+
+    private:
+
+        surface *s_;
+
     public:
-        inline auto draw_pixel(const int_type x, const int_type y, const Uint32 rgba) -> void {
-            *((static_cast<Uint32 *>(get_s()->pixels) + x) + (y * get_s()->w)) = rgba;
-        }    
-        inline auto draw_pixel(const point &p, const Uint32 rgba) -> void {
-            *((static_cast<Uint32 *>(get_s()->pixels) + p.x) + (p.y * get_s()->w)) = rgba;
+
+        pixel(surface *s) : s_(s) {
         }
-        auto draw_pixel_s(const int_type x, const int_type y, const Uint32 rgba) -> void {
-            if(!is_point_within_bounds(x, y)) [[unlikely]] return;
-            draw_pixel(x, y, rgba);
+
+        inline auto draw(const int_type x, const int_type y, const Uint32 rgba) -> void {
+            *((static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w)) = rgba;
         }    
-        auto draw_pixel_s(const point &p, const Uint32 rgba) -> void {
-            if(!is_point_within_bounds(p)) [[unlikely]] return;
-            draw_pixel(p, rgba);
+
+        inline auto draw(const point &p, const Uint32 rgba) -> void {
+            *((static_cast<Uint32 *>(s_->get_handle()->pixels) + p.x) + (p.y * s_->get_handle()->w)) = rgba;
+        }
+
+        auto draw_s(const int_type x, const int_type y, const Uint32 rgba) -> void {
+            if(!s_->is_point_within_bounds(x, y)) [[unlikely]] return;
+            draw(x, y, rgba);
+        }    
+
+        auto draw_s(const point &p, const Uint32 rgba) -> void {
+            if(!s_->is_point_within_bounds(p)) [[unlikely]] return;
+            draw(p, rgba);
         }
     };
 }
