@@ -44,8 +44,10 @@ namespace g80::game::gfx {
 
             auto tmask = mask;
             for(int i{0}; i < w; ++i) {
-                *pixel_top++ = tmask & 1 ? rgba : *pixel_top;
-                *pixel_bottom++ = tmask & 1 ? rgba : *pixel_bottom;
+                *pixel_top = tmask & 1 ? rgba : *pixel_top;
+                *pixel_bottom = tmask & 1 ? rgba : *pixel_bottom;
+                ++pixel_top;
+                ++pixel_bottom;
                 tmask >>= 1;
                 tmask = !tmask ? mask : tmask;
             }
