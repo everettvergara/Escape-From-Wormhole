@@ -132,6 +132,29 @@ namespace g80::game::gfx {
             else draw_line(ad.y, ad.x, sdy, sdx);
         }
 
+        auto draw_dashed(const point &p1, const point &p2, const Uint32 rgba, const int type) -> void {
+            auto d = p2 - p1;
+            auto ad = d.abs();
+            int_type sdx = d.x < 0 ? -1 : 1;
+            int_type sdy = d.y < 0 ? -s_->get_handle()->w : s_->get_handle()->w;
+            Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->get_handle()->pixels) + p1.y * s_->get_handle()->w + p1.x;
+            auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
+                for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
+                    *pixel_buffer = i & type ? rgba : *pixel_buffer;
+                    if (t >= abs_g) {
+                        pixel_buffer += sig_l;
+                        t -= abs_g;
+                    }
+                    pixel_buffer += sig_g;
+                }
+            };
+
+            if (ad.x >= ad.y) draw_line(ad.x, ad.y, sdx, sdy);
+            else draw_line(ad.y, ad.x, sdy, sdx);
+
+        }
+
+
         auto draw_s(point p1, point p2, const Uint32 rgba) -> void {
             auto sp1 = get_screen_plane(p1);
             auto sp2 = get_screen_plane(p2);
