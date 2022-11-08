@@ -4,26 +4,32 @@
 
 namespace g80::game::engine {
 
-    class line : public surface {
+    class line {
+    
     private:
+
+        surface *s_;
+
+    private:
+        
         enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, 
                             RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
 
         auto get_screen_plane(const point &p) const -> SCREEN_PLANE {
             if(p.x >= 0) [[likely]] {
-                if(p.x < get_s()->w) [[likely]] {
+                if(p.x < s_->get_handle()->w) [[likely]] {
                     if(p.y >= 0) [[likely]] {
-                        if(p.y < get_s()->h) [[likely]] return ON_SCREEN;
+                        if(p.y < s_->get_handle()->h) [[likely]] return ON_SCREEN;
                         else return BOTTOM;
                     } else return TOP;
                 } else {
                     if(p.y < 0) return TOP_RIGHT;
-                    else if(p.y >= get_s()->h) return BOTTOM_RIGHT;
+                    else if(p.y >= s_->get_handle()->h) return BOTTOM_RIGHT;
                     else return RIGHT;
                 }
             } else {
                 if(p.y < 0) return TOP_LEFT;
-                else if(p.y >= get_s()->h) return BOTTOM_LEFT;
+                else if(p.y >= s_->get_handle()->h) return BOTTOM_LEFT;
                 else return LEFT;
             }
         }
@@ -57,15 +63,15 @@ namespace g80::game::engine {
             auto recalc_point_at_bound = [&](point &p, SCREEN_PLANE screen_plane) -> void {
 
                 auto is_x_at_top = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, 0); 
-                                                    is_point_within_bounds(tx, 0)) {p.x = tx; p.y = 0; return true;} 
+                                                    s_->is_point_within_bounds(tx, 0)) {p.x = tx; p.y = 0; return true;} 
                                                     return false;};
-                auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, get_hb()); 
-                                                        is_point_within_bounds(tx, get_hb())) {p.x = tx; p.y = get_hb(); return true;} 
+                auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, s_->get_hb()); 
+                                                        s_->is_point_within_bounds(tx, s_->get_hb())) {p.x = tx; p.y = s_->get_hb(); return true;} 
                                                         return false;};
                 auto get_x_at_top = [&]() -> void {p.x = get_x_at_y_equals(p, 0); p.y = 0;};
-                auto get_x_at_bottom = [&]() -> void {p.x = get_x_at_y_equals(p, get_hb()); p.y = get_hb();};
+                auto get_x_at_bottom = [&]() -> void {p.x = get_x_at_y_equals(p, s_->get_hb()); p.y = s_->get_hb();};
                 auto get_y_at_left = [&]() -> void {p.y = get_y_at_x_equals(p, 0); p.x = 0;};
-                auto get_y_at_right = [&]() -> void {p.y = get_y_at_x_equals(p, get_wb()); p.x = get_wb();};
+                auto get_y_at_right = [&]() -> void {p.y = get_y_at_x_equals(p, s_->get_wb()); p.x = s_->get_wb();};
                 auto check_top_left = [&]() -> void {if(is_x_at_top()) return; get_y_at_left(); return;};
                 auto check_top_right = [&]() -> void {if(is_x_at_top()) return; get_y_at_right(); return;};
                 auto check_bottom_left = [&]() -> void {if(is_x_at_bottom()) return; get_y_at_left(); return;};
@@ -98,12 +104,12 @@ namespace g80::game::engine {
         }
 
     public:
-        auto draw_line(const point &p1, const point &p2, const Uint32 rgba) -> void {
+        auto draw(const point &p1, const point &p2, const Uint32 rgba) -> void {
             auto d = p2 - p1;
             auto ad = d.abs();
             int_type sdx = d.x < 0 ? -1 : 1;
-            int_type sdy = d.y < 0 ? -get_s()->w : get_s()->w;
-            Uint32 *pixel_buffer = static_cast<Uint32 *>(get_s()->pixels) + p1.y * get_s()->w + p1.x;
+            int_type sdy = d.y < 0 ? -s_->get_handle()->w : s_->get_handle()->w;
+            Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->get_handle()->pixels) + p1.y * s_->get_handle()->w + p1.x;
             auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
                 for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
                     *pixel_buffer = rgba;
@@ -119,12 +125,13 @@ namespace g80::game::engine {
             else draw_line(ad.y, ad.x, sdy, sdx);
         }
 
-        auto draw_line_s(point p1, point p2, const Uint32 rgba) -> void {
+        auto draw_s(point p1, point p2, const Uint32 rgba) -> void {
             auto sp1 = get_screen_plane(p1);
             auto sp2 = get_screen_plane(p2);
             if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
                 if(!recalc_line_points(p1, p2, sp1, sp2)) return;
-            draw_line(p1, p2, rgba);
+            draw(p1, p2, rgba);
        }    
     };
 }
+
