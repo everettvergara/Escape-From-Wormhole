@@ -4,7 +4,7 @@
 
 namespace g80::game::engine {
 
-    class pixel {
+    class gfx_pixel {
 
     private:
 
@@ -12,7 +12,7 @@ namespace g80::game::engine {
 
     public:
 
-        pixel(surface *s) : s_(s) {
+        gfx_pixel(surface *s) : s_(s) {
         }
 
         inline auto draw(const int_type x, const int_type y, const Uint32 rgba) -> void {

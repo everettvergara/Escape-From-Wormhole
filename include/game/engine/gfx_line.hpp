@@ -4,7 +4,7 @@
 
 namespace g80::game::engine {
 
-    class line {
+    class gfx_line {
     
     private:
 
@@ -103,7 +103,12 @@ namespace g80::game::engine {
             return true;
         }
 
+
     public:
+
+        gfx_line(surface *s) : s_(s) {
+        }
+
         auto draw(const point &p1, const point &p2, const Uint32 rgba) -> void {
             auto d = p2 - p1;
             auto ad = d.abs();
