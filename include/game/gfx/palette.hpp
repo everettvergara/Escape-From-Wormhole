@@ -19,7 +19,6 @@ namespace g80::game::gfx {
 
         surface *s_;
         
-
     public:
 
         palette(surface *s) : s_(s) {

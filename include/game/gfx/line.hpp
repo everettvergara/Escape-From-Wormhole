@@ -140,7 +140,7 @@ namespace g80::game::gfx {
             int_type sdy = d.y < 0 ? -s_->get_handle()->w : s_->get_handle()->w;
             Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->get_handle()->pixels) + p1.y * s_->get_handle()->w + p1.x;
             auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l, fp_type ix_inc) -> void {
-                float ix = ix_from;
+                fp_type ix = ix_from;
                 for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
                     *pixel_buffer = pal[ix];
                     if (t >= abs_g) {
