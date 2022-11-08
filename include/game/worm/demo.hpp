@@ -5,6 +5,7 @@
 #include "game/engine/surface.hpp"
 #include "game/gfx/pixel.hpp"
 #include "game/gfx/line.hpp"
+#include "game/gfx/palette.hpp"
 
 namespace g80::game::worm {
 
@@ -23,6 +24,9 @@ namespace g80::game::worm {
             surface s(sdl_window_);
             g80::game::gfx::pixel pixel(&s);
             g80::game::gfx::line line(&s);
+            g80::game::gfx::palette pal(&s);
+
+            auto red = pal.get_gradient({{0, 0}, {100, 255}});
 
             SDL_FillRect(s.get_handle(), NULL, 0); 
             for(size_t i{0}; i< 1000; ++i) {
