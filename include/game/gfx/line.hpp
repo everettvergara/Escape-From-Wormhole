@@ -142,7 +142,7 @@ namespace g80::game::gfx {
             auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l, fp_type ix_inc) -> void {
                 float ix = ix_from;
                 for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
-                    *pixel_buffer = pal[i];
+                    *pixel_buffer = pal[ix];
                     if (t >= abs_g) {
                         pixel_buffer += sig_l;
                         t -= abs_g;
@@ -160,7 +160,6 @@ namespace g80::game::gfx {
                 draw_line(ad.y, ad.x, sdy, sdx, ix_inc);
             }
         }
-
 
         auto draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask) -> void {
             auto d = p2 - p1;
@@ -192,16 +191,23 @@ namespace g80::game::gfx {
             if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
                 if(!recalc_line_points(p1, p2, sp1, sp2)) return;
             draw(p1, p2, rgba);
-       }    
+        }    
 
-        auto draw_s(point p1, point p2, const Uint32 rgba, Uint32 mask) -> void {
+        auto draw_s(point p1, point p2, const Uint32 rgba, const Uint32 mask) -> void {
             auto sp1 = get_screen_plane(p1);
             auto sp2 = get_screen_plane(p2);
             if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
                 if(!recalc_line_points(p1, p2, sp1, sp2)) return;
             draw(p1, p2, rgba, mask);
-       }    
+        }    
 
+        auto draw_s(point p1, point p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void {
+            auto sp1 = get_screen_plane(p1);
+            auto sp2 = get_screen_plane(p2);
+            if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+                if(!recalc_line_points(p1, p2, sp1, sp2)) return;
+            draw(p1, p2, pal, ix_from, ix_to);
+        }    
     };
 }
 
