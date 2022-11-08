@@ -132,20 +132,23 @@ namespace g80::game::gfx {
             else draw_line(ad.y, ad.x, sdy, sdx);
         }
 
-        auto draw_dashed(const point &p1, const point &p2, const Uint32 rgba, const int type) -> void {
+        auto draw_masked(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask) -> void {
             auto d = p2 - p1;
             auto ad = d.abs();
             int_type sdx = d.x < 0 ? -1 : 1;
             int_type sdy = d.y < 0 ? -s_->get_handle()->w : s_->get_handle()->w;
             Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->get_handle()->pixels) + p1.y * s_->get_handle()->w + p1.x;
             auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
+                auto tmask = mask;
                 for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
-                    *pixel_buffer = i & type ? rgba : *pixel_buffer;
+                    *pixel_buffer = tmask & 1 ? rgba : *pixel_buffer;
                     if (t >= abs_g) {
                         pixel_buffer += sig_l;
                         t -= abs_g;
                     }
                     pixel_buffer += sig_g;
+                    tmask >>= 1;
+                    tmask = !tmask ? mask : tmask;
                 }
             };
 

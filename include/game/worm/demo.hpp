@@ -33,9 +33,9 @@ namespace g80::game::worm {
             }
 
             rads_ += 0.01;
-            line.draw_dashed( point{s.get_cw(), s.get_ch()}, 
+            line.draw_masked( point{s.get_cw(), s.get_ch()}, 
                         point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
-                    SDL_MapRGBA(s.get_format(), 255, 0, 0, 255), 4);
+                    SDL_MapRGBA(s.get_format(), 255, 0, 0, 255), 0xff00ff00);
             // s.line_s( point{s.get_cw(), s.get_ch()}, 
             //             point{s.get_cw() + static_cast<int_type>(s.get_w() * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(s.get_w() * SDL_sinf(rads_))}, 
             //         SDL_MapRGBA(s.get_format(), 255, 0, 0, 255));
