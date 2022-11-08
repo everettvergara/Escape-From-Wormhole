@@ -5,8 +5,10 @@
 namespace g80::game::engine {
 
     class window {
+
     private:
         SDL_Window *window_;
+
     public:
         window(const char *title, int x, int y, int w, int h, Uint32 flags) : window_(SDL_CreateWindow(title, x, y, w, h, flags)) {}
         window(const window &) = delete;

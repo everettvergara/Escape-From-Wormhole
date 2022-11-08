@@ -35,10 +35,10 @@ namespace g80::game::engine {
         SDL_Window *sdl_window_;
         
     public:
-        auto create_window(const config &c) -> bool {
-            window_.reset(new window(c.title.c_str(), c.x, c.y, c.w, c.h, c.flags));
+        auto create_window(const config &c) -> window & {
+            window_.reset(new window(c.get_title().c_str(), c.get_x(), c.get_y(), c.get_w(), c.get_h(), c.get_flags()));
             sdl_window_ = window_->get_handle();
-            return window_->is_valid();
+            return *window_;
         }
         auto get_window() -> window & {return *window_.get();}
         inline auto get_sdl_window() -> SDL_Window * {return sdl_window_;}
