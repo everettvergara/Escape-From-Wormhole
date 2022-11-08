@@ -11,6 +11,8 @@ namespace g80::game::gfx {
 
     using namespace g80::game::engine;
 
+    using palette_gradient = std::vector<Uint32>;
+
     class palette {
 
     private:
@@ -23,7 +25,7 @@ namespace g80::game::gfx {
         palette(surface *s) : s_(s) {
         }
 
-        auto get_palette_gradient(std::initializer_list<std::tuple<Uint32, Uint32>> rgba_colors) -> std::optional<std::vector<Uint32>> {
+        auto get_palette_gradient(std::initializer_list<std::tuple<Uint32, Uint32>> rgba_colors) -> std::optional<palette_gradient> {
             if(rgba_colors.size() < 2) return {};
             
             std::vector<Uint32> gradients;
@@ -64,7 +66,8 @@ namespace g80::game::gfx {
             gradients.emplace_back(SDL_MapRGBA(s_->get_format(), r1, g1, b1, a1));
             return gradients;
         }
-
         
     };
+
+
 }

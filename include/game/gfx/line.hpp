@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/engine/surface.hpp" 
+#include "game/gfx/palette.hpp"
 
 namespace g80::game::gfx {
 
@@ -132,7 +133,36 @@ namespace g80::game::gfx {
             else draw_line(ad.y, ad.x, sdy, sdx);
         }
 
-        auto draw_masked(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask) -> void {
+        auto draw(const point &p1, const point &p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void {
+            auto d = p2 - p1;
+            auto ad = d.abs();
+            int_type sdx = d.x < 0 ? -1 : 1;
+            int_type sdy = d.y < 0 ? -s_->get_handle()->w : s_->get_handle()->w;
+            Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->get_handle()->pixels) + p1.y * s_->get_handle()->w + p1.x;
+            auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l, fp_type ix_inc) -> void {
+                float ix = ix_from;
+                for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
+                    *pixel_buffer = pal[i];
+                    if (t >= abs_g) {
+                        pixel_buffer += sig_l;
+                        t -= abs_g;
+                    }
+                    pixel_buffer += sig_g;
+                    ix += ix_inc;
+                }
+            };
+
+            if (ad.x >= ad.y) {
+                fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (ad.x == 0 ? 1 : ad.x));
+                draw_line(ad.x, ad.y, sdx, sdy, ix_inc);
+            } else {
+                fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (ad.y == 0 ? 1 : ad.y));
+                draw_line(ad.y, ad.x, sdy, sdx, ix_inc);
+            }
+        }
+
+
+        auto draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask) -> void {
             auto d = p2 - p1;
             auto ad = d.abs();
             int_type sdx = d.x < 0 ? -1 : 1;
@@ -164,12 +194,12 @@ namespace g80::game::gfx {
             draw(p1, p2, rgba);
        }    
 
-        auto draw_masked_s(point p1, point p2, const Uint32 rgba, Uint32 mask) -> void {
+        auto draw_s(point p1, point p2, const Uint32 rgba, Uint32 mask) -> void {
             auto sp1 = get_screen_plane(p1);
             auto sp2 = get_screen_plane(p2);
             if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
                 if(!recalc_line_points(p1, p2, sp1, sp2)) return;
-            draw_masked(p1, p2, rgba, mask);
+            draw(p1, p2, rgba, mask);
        }    
 
     };
