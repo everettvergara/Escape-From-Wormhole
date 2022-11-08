@@ -2,9 +2,11 @@
 
 #include "game/engine/surface.hpp" 
 
-namespace g80::game::engine {
+namespace g80::game::gfx {
 
-    class gfx_pixel {
+    using namespace g80::game::engine;
+
+    class pixel {
 
     private:
 
@@ -12,7 +14,7 @@ namespace g80::game::engine {
 
     public:
 
-        gfx_pixel(surface *s) : s_(s) {
+        pixel(surface *s) : s_(s) {
         }
 
         inline auto draw(const int_type x, const int_type y, const Uint32 rgba) -> void {

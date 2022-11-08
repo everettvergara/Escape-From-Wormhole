@@ -3,8 +3,8 @@
 #include <SDL.h>
 #include "game/engine/video.hpp"
 #include "game/engine/surface.hpp"
-#include "game/engine/gfx_pixel.hpp"
-#include "game/engine/gfx_line.hpp"
+#include "game/gfx/pixel.hpp"
+#include "game/gfx/line.hpp"
 
 namespace g80::game::worm {
 
@@ -21,8 +21,8 @@ namespace g80::game::worm {
         auto update_states() -> void override {
             
             surface s(sdl_window_);
-            gfx_pixel pixel(&s);
-            gfx_line line(&s);
+            g80::game::gfx::pixel pixel(&s);
+            g80::game::gfx::line line(&s);
 
             SDL_FillRect(s.get_handle(), NULL, 0); 
             for(size_t i{0}; i< 1000; ++i) {

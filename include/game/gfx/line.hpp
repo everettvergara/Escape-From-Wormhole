@@ -2,9 +2,11 @@
 
 #include "game/engine/surface.hpp" 
 
-namespace g80::game::engine {
+namespace g80::game::gfx {
 
-    class gfx_line {
+    using namespace g80::game::engine;
+    
+    class line {
     
     private:
 
@@ -106,7 +108,7 @@ namespace g80::game::engine {
 
     public:
 
-        gfx_line(surface *s) : s_(s) {
+        line(surface *s) : s_(s) {
         }
 
         auto draw(const point &p1, const point &p2, const Uint32 rgba) -> void {
