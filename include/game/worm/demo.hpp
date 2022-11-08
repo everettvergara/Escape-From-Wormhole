@@ -5,7 +5,9 @@
 #include "game/engine/surface.hpp"
 #include "game/gfx/pixel.hpp"
 #include "game/gfx/line.hpp"
+#include "game/gfx/rect.hpp"
 #include "game/gfx/palette.hpp"
+
 
 namespace g80::game::worm {
 
@@ -25,10 +27,14 @@ namespace g80::game::worm {
             g80::game::gfx::pixel pixel(&s);
             g80::game::gfx::line line(&s);
             g80::game::gfx::palette pal(&s);
+            g80::game::gfx::rect rect(&s);
 
             auto one_shade = pal.get_palette_gradient({{0, 0}, {100, 255}, {199, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255)}});
 
             SDL_FillRect(s.get_handle(), NULL, 0); 
+
+            rect.draw(10, 10, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255));
+
             for(size_t i{0}; i< 1000; ++i) {
                 pixel.draw(rand() % s.get_handle()->w,
                         rand() % s.get_handle()->h,
