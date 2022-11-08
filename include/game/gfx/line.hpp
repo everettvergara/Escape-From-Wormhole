@@ -154,9 +154,7 @@ namespace g80::game::gfx {
 
             if (ad.x >= ad.y) draw_line(ad.x, ad.y, sdx, sdy);
             else draw_line(ad.y, ad.x, sdy, sdx);
-
         }
-
 
         auto draw_s(point p1, point p2, const Uint32 rgba) -> void {
             auto sp1 = get_screen_plane(p1);
@@ -165,6 +163,15 @@ namespace g80::game::gfx {
                 if(!recalc_line_points(p1, p2, sp1, sp2)) return;
             draw(p1, p2, rgba);
        }    
+
+        auto draw_masked_s(point p1, point p2, const Uint32 rgba, Uint32 mask) -> void {
+            auto sp1 = get_screen_plane(p1);
+            auto sp2 = get_screen_plane(p2);
+            if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+                if(!recalc_line_points(p1, p2, sp1, sp2)) return;
+            draw_masked(p1, p2, rgba, mask);
+       }    
+
     };
 }
 
