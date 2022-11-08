@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 #include <string>
-#include "sys/common.hpp"
+#include "game/engine/common.hpp"
 
 namespace g80::game::engine {
 

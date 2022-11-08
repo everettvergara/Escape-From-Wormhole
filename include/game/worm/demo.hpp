@@ -14,7 +14,7 @@ namespace g80::game::worm {
 
     // Run and Events
     private:
-        g80::sys::fp_type rads_ {0.0};
+        fp_type rads_ {0.0};
     public:
         demo() {}
 

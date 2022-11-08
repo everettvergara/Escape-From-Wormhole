@@ -1,6 +1,5 @@
 #include <iostream>
-#include <SDL.h>
-#define GFX_SAFE_MODE
+
 #include "game/engine/config.hpp"
 #include "game/worm/demo.hpp"
 
@@ -20,7 +19,7 @@ auto main(int argc, char *argv[]) -> int {
     video::quit();
 
 
-    // ECS Test\
+    // ECS Test
     // ---+
     // using namespace g80::ecs;
     // std::vector<std::unique_ptr<entity>> game_objs;
