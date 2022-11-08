@@ -18,7 +18,22 @@ namespace g80::game::gfx {
         }
 
         inline auto draw(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba) -> void {
-            // *((static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w)) = rgba;
+            auto *pixel_top = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
+            auto *pixel_bottom = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + ((y + h - 1) * s_->get_handle()->w);
+            auto *pixel_left = pixel_top + s_->get_handle()->w;
+            auto *pixel_right = pixel_top + s_->get_handle()->w + w - 1;
+
+            for(int i{0}; i < w; ++i) {
+                *pixel_top++ = rgba;
+                *pixel_bottom++ = rgba;
+            }
+
+            for(int i{0}; i < h - 2; ++i) {
+                *pixel_left = rgba;
+                *pixel_right = rgba;
+                pixel_left += s_->get_handle()->w;
+                pixel_right += s_->get_handle()->w;
+            }
         }    
     };
 }
