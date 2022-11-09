@@ -18,21 +18,28 @@ namespace g80::game::gfx {
         }
 
         inline auto draw(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba) -> void {
+            if(!w || !h) return;
             auto *pixel_top = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
             auto *pixel_bottom = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + ((y + h - 1) * s_->get_handle()->w);
-            auto *pixel_left = pixel_top + s_->get_handle()->w;
-            auto *pixel_right = pixel_top + s_->get_handle()->w + w - 1;
 
-            for(int i{0}; i < w; ++i) {
-                *pixel_top++ = rgba;
-                *pixel_bottom++ = rgba;
+            auto aw = w < 0 ? -w : w;
+            auto iw = w < 0 ? -1 : 1;
+            for(int i{0}; i < aw; ++i) {
+                *pixel_top = rgba;
+                *pixel_bottom = rgba;
+                pixel_top += iw;
+                pixel_bottom += iw;
             }
 
-            for(int i{0}; i < h - 2; ++i) {
+            auto *pixel_left = h < 0 ? pixel_top - s_->get_handle()->w : pixel_top + s_->get_handle()->w;
+            auto *pixel_right = h < 0 ? pixel_top - s_->get_handle()->w + w + 1 : pixel_top + s_->get_handle()->w + w - 1;
+            auto ah = h < 0 ? -h : h;
+            auto ih = h < 0 ? -s_->get_handle()->w : s_->get_handle()->w;
+            for(int i{0}; i < ah - 2; ++i) {
                 *pixel_left = rgba;
                 *pixel_right = rgba;
-                pixel_left += s_->get_handle()->w;
-                pixel_right += s_->get_handle()->w;
+                pixel_left += ih;
+                pixel_right += ih;
             }
         }    
 

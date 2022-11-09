@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include "game/engine/config.hpp"
 #include "game/worm/demo.hpp"
@@ -6,6 +7,7 @@ auto main(int argc, char *argv[]) -> int {
 
     using namespace g80::game::engine;
     using namespace g80::game::worm;
+
 
     // Retrieve configuration from file 
     std::string title{"Escape from the Wormhole"};
