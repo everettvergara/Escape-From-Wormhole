@@ -129,7 +129,8 @@ namespace g80::game::gfx {
             // Draw Left
             if (x == sx) {
                 auto *pixel_left = upper_left + s_->get_handle()->w;
-                for (int i{0}; i < mh - 2; ++i) {
+                auto d = y + h - 1 < s_->get_handle()->h ? 2 : 1;
+                for (int i{0}; i < mh - d; ++i) {
                     *pixel_left = rgba;
                     pixel_left += s_->get_handle()->w;
                 }
@@ -138,7 +139,8 @@ namespace g80::game::gfx {
             // Draw Right
             if (x + w - 1 < s_->get_handle()->h) {
                 auto *pixel_right = upper_left + s_->get_handle()->w + mw - 1;
-                for (int i{0}; i < mh - 2; ++i) {
+                auto d = y + h - 1 < s_->get_handle()->h ? 2 : 1;
+                for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = rgba;
                     pixel_right += s_->get_handle()->w;
                 }                
