@@ -85,21 +85,38 @@ namespace g80::game::gfx {
             if (0 > x && 0 <= x + w - 1) {  // Remember that we're comparing x2, so we need to deduct -1
                 sx = 0;
                 mw = w + x;
+                
+            } else if (x + w - 1 < 0) {
+                return;
+
+            } else {
+                sx = x;
+                mw = w;
             }
 
-            if (0 > y && 0 <= y + h - 1) {
+            if (0 > y && 0 <= y + h - 1) {  // Remember that we're comparing x2, so we need to deduct -1
                 sy = 0;
                 mh = h + y;
+
+            } else if (y + h - 1 < 0) {
+                return;
+                
+            } else {
+                sy = y;
+                mh = h;
             }
 
-            // if(x + w - 1 < 0) return;
-            // if(y + h - 1 < 0) return;
 
-            // // x = -10
-            // // w = 100
-            // // x2 = x + w - 1
-            
-            // auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
+            if (sx + mw >= s_->get_handle()->w) {  // Remember that we're comparing x2, so we need to deduct -1
+                mw = sx + mw - s_->get_handle()->w;
+            }
+
+            if (sy + mh >= s_->get_handle()->h) {
+                mh = sy + mh - s_->get_handle()->h;
+            }
+
+
+            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
             // auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
             //                             pixel_top + ((h + 1) * s_->get_handle()->w);
             // auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
