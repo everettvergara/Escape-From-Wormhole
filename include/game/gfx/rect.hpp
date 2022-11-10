@@ -121,7 +121,7 @@ namespace g80::game::gfx {
             }
             
             // Draw Bottom
-            if (sy + mh - 1 < s_->get_handle()->h) {
+            if (y + h - 1 < s_->get_handle()->h) {
                 auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
                 for (int i{0}; i < mw; ++i) *pixel_bottom++ = rgba;
             }
@@ -136,7 +136,7 @@ namespace g80::game::gfx {
             }
 
             // Draw Right
-            if (sx + mw - 1 < s_->get_handle()->h) {
+            if (x + w - 1 < s_->get_handle()->h) {
                 auto *pixel_right = upper_left + s_->get_handle()->w + mw - 1;
                 for (int i{0}; i < mh - 2; ++i) {
                     *pixel_right = rgba;
