@@ -105,25 +105,24 @@ namespace g80::game::gfx {
                 mh = h;
             }
 
-            if (sx + mw >= s_->get_handle()->w) { 
-                mw = sx + mw - s_->get_handle()->w;
-            }
+            // Modified Width
+            if (sx + mw >= s_->get_handle()->w) mw = sx + mw - s_->get_handle()->w;
 
-            if (sy + mh >= s_->get_handle()->h) {
-                mh = sy + mh - s_->get_handle()->h;
-            }
+            // Modified Height
+            if (sy + mh >= s_->get_handle()->h) mh = sy + mh - s_->get_handle()->h;
 
 
-            // // Draw Top
-            // auto *ul_corner = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
-            // auto *pixel_top = ul_corner;
-            // for (int i{0}; i < mw; ++i) *pixel_top++ = rgba;
+            auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
             
-            // // Draw Bottom
-            // if (sy + mh < s_->get_handle()->h) {
-            //     auto *pixel_bottom = ul_corner + ((mh - 1) * s_->get_handle()->w);
-            //     for (int i{0}; i < mw; ++i) *pixel_bottom++ = rgba;
-            // }
+            // Draw Top
+            auto *pixel_top = upper_left;
+            for (int i{0}; i < mw; ++i) *pixel_top++ = rgba;
+            
+            // Draw Bottom
+            if (sy + mh - 1 < s_->get_handle()->h) {
+                auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
+                for (int i{0}; i < mw; ++i) *pixel_bottom++ = rgba;
+            }
             
             
             // auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
