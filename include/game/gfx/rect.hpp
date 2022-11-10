@@ -106,7 +106,11 @@ namespace g80::game::gfx {
             }
 
             // Modified Width
-            if (sx + mw >= s_->get_handle()->w) mw = sx + mw - s_->get_handle()->w;
+            if (sx + mw >= s_->get_handle()->w) {
+                // std::cout << sx << " " << mw << "\n";
+                mw -= sx + mw - s_->get_handle()->w;
+                std::cout << sx << " " << mw << "\n";
+            }
 
             // Modified Height
             if (sy + mh >= s_->get_handle()->h) mh = sy + mh - s_->get_handle()->h;
