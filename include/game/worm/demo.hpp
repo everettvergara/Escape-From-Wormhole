@@ -33,7 +33,7 @@ namespace g80::game::worm {
 
             SDL_FillRect(s.get_handle(), NULL, 0); 
 
-            // rect.draw(10, 10, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0xff00ff00);
+            rect.draw(300, 300, 100, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0xff00ff00);
             
             rect.draw_s(500, 500, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             rect.draw_s(-50, -50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
@@ -41,11 +41,10 @@ namespace g80::game::worm {
             rect.draw_s(s.get_w() - 50, -50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             rect.draw_s(s.get_w() - 50, s.get_h() - 50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             rect.draw_s(-50, -50, 3000, 1000, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            
             rect.draw_s(-50, 300, 3000, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
 
             // bug
-            // rect.draw_s(800, -50, 200, 1000, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
+            rect.draw_s(700, -50, 200, 1000, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
 
 
 //            line.draw(point{50, s.get_h() - 1}, point{300, s.get_h() - 1}, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));

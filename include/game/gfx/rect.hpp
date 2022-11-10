@@ -106,14 +106,10 @@ namespace g80::game::gfx {
             }
 
             // Modified Width
-            if (sx + mw >= s_->get_handle()->w) {
-                // std::cout << sx << " " << mw << "\n";
-                mw -= sx + mw - s_->get_handle()->w;
-                std::cout << sx << " " << mw << "\n";
-            }
+            if (sx + mw >= s_->get_handle()->w) mw -= sx + mw - s_->get_handle()->w;
 
             // Modified Height
-            if (sy + mh >= s_->get_handle()->h) mh = sy + mh - s_->get_handle()->h;
+            if (sy + mh >= s_->get_handle()->h) mh -= sy + mh - s_->get_handle()->h;
 
 
             auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
@@ -141,7 +137,7 @@ namespace g80::game::gfx {
             }
 
             // Draw Right
-            if (x + w - 1 < s_->get_handle()->h) {
+            if (x + w - 1 < s_->get_handle()->w) {
                 auto *pixel_right = upper_left + (y == sy ? s_->get_handle()->w : 0) + mw - 1;
                 auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
