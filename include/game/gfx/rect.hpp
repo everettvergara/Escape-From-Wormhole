@@ -137,15 +137,12 @@ namespace g80::game::gfx {
 
             // Draw Right
             if (sx + mw - 1 < s_->get_handle()->h) {
-                auto *pixel_right = upper_left + s_->get_handle()->w + mw;
+                auto *pixel_right = upper_left + s_->get_handle()->w + mw - 1;
                 for (int i{0}; i < mh - 2; ++i) {
                     *pixel_right = rgba;
                     pixel_right += s_->get_handle()->w;
                 }                
             }            
-            
         }    
-
-
     };
 }
