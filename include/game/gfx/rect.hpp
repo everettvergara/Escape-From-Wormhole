@@ -115,8 +115,10 @@ namespace g80::game::gfx {
             auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
             
             // Draw Top
-            auto *pixel_top = upper_left;
-            for (int i{0}; i < mw; ++i) *pixel_top++ = rgba;
+            if(y == sy) {
+                auto *pixel_top = upper_left;
+                for (int i{0}; i < mw; ++i) *pixel_top++ = rgba;
+            }
             
             // Draw Bottom
             if (sy + mh - 1 < s_->get_handle()->h) {
@@ -124,29 +126,24 @@ namespace g80::game::gfx {
                 for (int i{0}; i < mw; ++i) *pixel_bottom++ = rgba;
             }
             
+            // Draw Left
+            if (x == sx) {
+                auto *pixel_left = upper_left + s_->get_handle()->w;
+                for (int i{0}; i < mh - 2; ++i) {
+                    *pixel_left = rgba;
+                    pixel_left += s_->get_handle()->w;
+                }
+            }
+
+            // Draw Right
+            if (sx + mw - 1 < s_->get_handle()->h) {
+                auto *pixel_right = upper_left + s_->get_handle()->w + mw;
+                for (int i{0}; i < mh - 2; ++i) {
+                    *pixel_right = rgba;
+                    pixel_right += s_->get_handle()->w;
+                }                
+            }            
             
-            // auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
-            //                             pixel_top + ((h + 1) * s_->get_handle()->w);
-            // auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
-            // auto *pixel_right   = w > 0 ? pixel_top + s_->get_handle()->w + w - 1 : (pixel_top - s_->get_handle()->w) + (w + 1);
-
-            // auto aw = w > 0 ? w : -w;
-            // auto iw = w > 0 ? 1 : -1;
-            // for(int i{0}; i < aw; ++i) {
-            //     *pixel_top = rgba;
-            //     *pixel_bottom = rgba;
-            //     pixel_top += iw;
-            //     pixel_bottom += iw;
-            // }
-
-            // auto ah = h > 0 ? h : -h;
-            // auto ih = h > 0 ? s_->get_handle()->w : -s_->get_handle()->w;
-            // for(int i{0}; i < ah - 2; ++i) {
-            //     *pixel_left = rgba;
-            //     *pixel_right = rgba;
-            //     pixel_left += ih;
-            //     pixel_right += ih;
-            // }
         }    
 
 
