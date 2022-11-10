@@ -78,15 +78,13 @@ namespace g80::game::gfx {
         inline auto draw_s(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba) -> void {
 
             int_type sx, sy, mw, mh;
-            
-            // |------ 0 -------------|
-            // 10      0              20, w:31
 
+            // Starting X
             if (0 > x && 0 <= x + w - 1) {  // Remember that we're comparing x2, so we need to deduct -1
                 sx = 0;
                 mw = w + x;
-                
-            } else if (x + w - 1 < 0) {
+
+            } else if (x + w - 1 < 0 || x >= s_->get_handle()->w) {
                 return;
 
             } else {
@@ -94,11 +92,12 @@ namespace g80::game::gfx {
                 mw = w;
             }
 
-            if (0 > y && 0 <= y + h - 1) {  // Remember that we're comparing x2, so we need to deduct -1
+            // Starting Y
+            if (0 > y && 0 <= y + h - 1) {
                 sy = 0;
                 mh = h + y;
 
-            } else if (y + h - 1 < 0) {
+            } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
                 return;
                 
             } else {
@@ -106,8 +105,7 @@ namespace g80::game::gfx {
                 mh = h;
             }
 
-
-            if (sx + mw >= s_->get_handle()->w) {  // Remember that we're comparing x2, so we need to deduct -1
+            if (sx + mw >= s_->get_handle()->w) { 
                 mw = sx + mw - s_->get_handle()->w;
             }
 
@@ -116,7 +114,18 @@ namespace g80::game::gfx {
             }
 
 
-            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
+            // // Draw Top
+            // auto *ul_corner = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
+            // auto *pixel_top = ul_corner;
+            // for (int i{0}; i < mw; ++i) *pixel_top++ = rgba;
+            
+            // // Draw Bottom
+            // if (sy + mh < s_->get_handle()->h) {
+            //     auto *pixel_bottom = ul_corner + ((mh - 1) * s_->get_handle()->w);
+            //     for (int i{0}; i < mw; ++i) *pixel_bottom++ = rgba;
+            // }
+            
+            
             // auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
             //                             pixel_top + ((h + 1) * s_->get_handle()->w);
             // auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
