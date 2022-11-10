@@ -75,38 +75,53 @@ namespace g80::game::gfx {
             }
         }    
 
-        inline auto draw_s(int_type x, int_type y, int_type w, int_type h, const Uint32 rgba) -> void {
-            
-            if(x + w - 1 < 0) return;
-            if(y + h - 1 < 0) return;
+        inline auto draw_s(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba) -> void {
 
-            // x = -10
-            // w = 100
-            // x2 = x + w - 1
+            int_type sx, sy, mw, mh;
             
-            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
-            auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
-                                        pixel_top + ((h + 1) * s_->get_handle()->w);
-            auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
-            auto *pixel_right   = w > 0 ? pixel_top + s_->get_handle()->w + w - 1 : (pixel_top - s_->get_handle()->w) + (w + 1);
+            // |------ 0 -------------|
+            // 10      0              20, w:31
 
-            auto aw = w > 0 ? w : -w;
-            auto iw = w > 0 ? 1 : -1;
-            for(int i{0}; i < aw; ++i) {
-                *pixel_top = rgba;
-                *pixel_bottom = rgba;
-                pixel_top += iw;
-                pixel_bottom += iw;
+            if (0 > x && 0 <= x + w - 1) {  // Remember that we're comparing x2, so we need to deduct -1
+                sx = 0;
+                mw = w + x;
             }
 
-            auto ah = h > 0 ? h : -h;
-            auto ih = h > 0 ? s_->get_handle()->w : -s_->get_handle()->w;
-            for(int i{0}; i < ah - 2; ++i) {
-                *pixel_left = rgba;
-                *pixel_right = rgba;
-                pixel_left += ih;
-                pixel_right += ih;
+            if (0 > y && 0 <= y + h - 1) {
+                sy = 0;
+                mh = h + y;
             }
+
+            // if(x + w - 1 < 0) return;
+            // if(y + h - 1 < 0) return;
+
+            // // x = -10
+            // // w = 100
+            // // x2 = x + w - 1
+            
+            // auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
+            // auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
+            //                             pixel_top + ((h + 1) * s_->get_handle()->w);
+            // auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
+            // auto *pixel_right   = w > 0 ? pixel_top + s_->get_handle()->w + w - 1 : (pixel_top - s_->get_handle()->w) + (w + 1);
+
+            // auto aw = w > 0 ? w : -w;
+            // auto iw = w > 0 ? 1 : -1;
+            // for(int i{0}; i < aw; ++i) {
+            //     *pixel_top = rgba;
+            //     *pixel_bottom = rgba;
+            //     pixel_top += iw;
+            //     pixel_bottom += iw;
+            // }
+
+            // auto ah = h > 0 ? h : -h;
+            // auto ih = h > 0 ? s_->get_handle()->w : -s_->get_handle()->w;
+            // for(int i{0}; i < ah - 2; ++i) {
+            //     *pixel_left = rgba;
+            //     *pixel_right = rgba;
+            //     pixel_left += ih;
+            //     pixel_right += ih;
+            // }
         }    
 
 
