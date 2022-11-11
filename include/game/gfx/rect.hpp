@@ -101,6 +101,7 @@ namespace g80::game::gfx {
             // Starting Y
             if (0 > y && 0 <= y + h - 1) {
                 sy = 0;
+                
                 mh = h + y;
 
             } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
