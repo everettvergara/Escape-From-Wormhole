@@ -96,6 +96,13 @@ namespace g80::game::gfx {
                 if (x >= s_->get_handle()->w && x + w + 1 < s_->get_handle()->w) { 
                     sx = s_->get_wb();
                     mw = x - s_->get_wb() + w;
+
+                } else if (x < 0 || x + w + 1 >= s_->get_w()) {
+                    return;
+
+                } else {
+                    sx = x;
+                    mw = w;
                 }
             }
 
