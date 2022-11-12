@@ -38,11 +38,11 @@ namespace g80::game::worm {
 
             // rect.draw_s(600, 600, 1, 0, SDL_MapRGBA(s.get_handle()->format, 255, 255, 0, 255));
 
-            rect.draw_s(500, 500, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            // rect.draw_s(-50, -50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            // rect.draw_s(-50, s.get_h() - 50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            // rect.draw_s(s.get_w() - 50, -50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            // rect.draw_s(s.get_w() - 50, s.get_h() - 50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
+            // rect.draw_s(500, 500, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
+            rect.draw_s(-50, -50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
+            rect.draw_s(-50, s.get_h() - 50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
+            rect.draw_s(s.get_w() - 50, -50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
+            rect.draw_s(s.get_w() - 50, s.get_h() - 50, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             // rect.draw_s(-50, -50, 3000, 1000, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             // rect.draw_s(-50, 300, 3000, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
 
