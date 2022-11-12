@@ -107,17 +107,31 @@ namespace g80::game::gfx {
             }
 
             // Starting Y
-            if (0 > y && 0 <= y + h - 1) {
-                sy = 0;
-                
-                mh = h + y;
+            if (h >= 0) {
+                if (0 > y && 0 <= y + h - 1) {
+                    sy = 0;
+                    
+                    mh = h + y;
 
-            } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
-                return;
-                
+                } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
+                    return;
+                    
+                } else {
+                    sy = y;
+                    mh = h;
+                }
             } else {
-                sy = y;
-                mh = h;
+                if (y >= s_->get_handle()->h && y + h + 1 < s_->get_handle()->h) { 
+                    sy = s_->get_hb();
+                    mh = y - s_->get_hb() + h;
+
+                } else if (y < 0 || y + h + 1 >= s_->get_h()) {
+                    return;
+
+                } else {
+                    sy = y;
+                    mh = h;
+                }
             }
 
             // Modified Width
