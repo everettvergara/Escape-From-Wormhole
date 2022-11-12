@@ -75,63 +75,45 @@ namespace g80::game::gfx {
             }
         }    
 
-        inline auto draw_s(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba) -> void {
+        inline auto draw_s(int_type x, int_type y, int_type w, int_type h, const Uint32 rgba) -> void {
+
+            {
+                int_type x1 = x;
+                int_type y1 = y;
+                int_type x2 = x + w + (w >= 0 ? -1 : 1);
+                int_type y2 = y + h + (w >= 0 ? -1 : 1);
+                x = std::min(x1, x2);
+                y = std::min(x1, x2);
+                w = std::max(x1, x2) - x + 1;
+                h = std::max(y1, y2) - y + 1;
+            }
+
             int_type sx, sy, mw, mh;
 
             // Starting X
-            if (w >= 0) {
-                if (0 > x && 0 <= x + w - 1) {  // Remember that we're comparing x2, so we need to deduct -1
-                    sx = 0;
-                    mw = w + x;
+            if (0 > x && 0 <= x + w - 1) {  // Remember that we're comparing x2, so we need to deduct -1
+                sx = 0;
+                mw = w + x;
 
-                } else if (x + w - 1 < 0 || x >= s_->get_handle()->w) {
-                    return;
-
-                } else {
-                    sx = x;
-                    mw = w;
-                }
+            } else if (x + w - 1 < 0 || x >= s_->get_handle()->w) {
+                return;
 
             } else {
-                if (x >= s_->get_handle()->w && x + w + 1 < s_->get_handle()->w) { 
-                    sx = s_->get_wb();
-                    mw = x - s_->get_wb() + w;
-
-                } else if (x < 0 || x + w + 1 >= s_->get_w()) {
-                    return;
-
-                } else {
-                    sx = x;
-                    mw = w;
-                }
+                sx = x;
+                mw = w;
             }
 
-            // Starting Y
-            if (h >= 0) {
-                if (0 > y && 0 <= y + h - 1) {
-                    sy = 0;
-                    
-                    mh = h + y;
+            if (0 > y && 0 <= y + h - 1) {
+                sy = 0;
+                
+                mh = h + y;
 
-                } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
-                    return;
-                    
-                } else {
-                    sy = y;
-                    mh = h;
-                }
+            } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
+                return;
+                
             } else {
-                if (y >= s_->get_handle()->h && y + h + 1 < s_->get_handle()->h) { 
-                    sy = s_->get_hb();
-                    mh = y - s_->get_hb() + h;
-
-                } else if (y < 0 || y + h + 1 >= s_->get_h()) {
-                    return;
-
-                } else {
-                    sy = y;
-                    mh = h;
-                }
+                sy = y;
+                mh = h;
             }
 
             // Modified Width
@@ -139,7 +121,6 @@ namespace g80::game::gfx {
 
             // Modified Height
             if (sy + mh >= s_->get_handle()->h) mh -= sy + mh - s_->get_handle()->h;
-
 
             auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
             
