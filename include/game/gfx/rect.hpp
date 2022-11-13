@@ -210,14 +210,24 @@ namespace g80::game::gfx {
             if(y == sy) {
                 auto tmask = mask;
                 auto *pixel_top = upper_left;
-                for (int i{0}; i < mw; ++i) {*pixel_top = tmask & 1 ? rgba : *pixel_top; ++pixel_top;}
+                for (int i{0}; i < mw; ++i) {
+                    *pixel_top = tmask & 1 ? rgba : 
+                    *pixel_top; ++pixel_top;
+                    tmask >>= 1;
+                    tmask = !tmask ? mask : tmask;
+                }
             }
             
             // Draw Bottom
             if (y + h - 1 < s_->get_handle()->h) {
                 auto tmask = mask;
                 auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
-                for (int i{0}; i < mw; ++i) {*pixel_bottom = tmask & 1 ? rgba : *pixel_bottom; ++pixel_bottom;}
+                for (int i{0}; i < mw; ++i) {
+                    *pixel_bottom = tmask & 1 ? rgba : *pixel_bottom; 
+                    ++pixel_bottom;
+                    tmask >>= 1;
+                    tmask = !tmask ? mask : tmask;
+                }
             }
             
             // Draw Left
@@ -228,6 +238,8 @@ namespace g80::game::gfx {
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_left = tmask & 1 ? rgba : *pixel_left;
                     pixel_left += s_->get_handle()->w;
+                    tmask >>= 1;
+                    tmask = !tmask ? mask : tmask;
                 }
             }
 
@@ -239,6 +251,8 @@ namespace g80::game::gfx {
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = tmask & 1 ? rgba : *pixel_right;
                     pixel_right += s_->get_handle()->w;
+                    tmask >>= 1;
+                    tmask = !tmask ? mask : tmask;
                 }                
             }            
         }            

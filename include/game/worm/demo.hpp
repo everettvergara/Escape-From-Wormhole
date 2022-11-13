@@ -46,7 +46,7 @@ namespace g80::game::worm {
             rect.draw_s(-50, -50, 3000, 1000, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             rect.draw_s(-50, 300, 3000, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
 
-            rect.draw_s(700, 850, -200, -1000, SDL_MapRGBA(s.get_handle()->format, 255, 255, 0, 255));
+            rect.draw_s(700, 850, -200, -1000, SDL_MapRGBA(s.get_handle()->format, 255, 255, 0, 255), 0x00ff00ff);
 
 
 //            line.draw(point{50, s.get_h() - 1}, point{300, s.get_h() - 1}, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
