@@ -17,8 +17,8 @@ namespace g80::game::gfx {
         rect(surface *s) : s_(s) {
         }
 
-        inline auto draw(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba) -> void {
-            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
+        inline auto draw(const point &p, const int_type w, const int_type h, const Uint32 rgba) -> void {
+            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + p.x) + (p.y * s_->get_handle()->w);
             auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
                                         pixel_top + ((h + 1) * s_->get_handle()->w);
             auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
@@ -43,34 +43,8 @@ namespace g80::game::gfx {
             }
         }    
 
-        inline auto draw(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba) -> void {
-            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
-            auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
-                                        pixel_top + ((h + 1) * s_->get_handle()->w);
-            auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
-            auto *pixel_right   = w > 0 ? pixel_top + s_->get_handle()->w + w - 1 : (pixel_top - s_->get_handle()->w) + (w + 1);
-
-            auto aw = w > 0 ? w : -w;
-            auto iw = w > 0 ? 1 : -1;
-            for(int i{0}; i < aw; ++i) {
-                *pixel_top = rgba;
-                *pixel_bottom = rgba;
-                pixel_top += iw;
-                pixel_bottom += iw;
-            }
-
-            auto ah = h > 0 ? h : -h;
-            auto ih = h > 0 ? s_->get_handle()->w : -s_->get_handle()->w;
-            for(int i{0}; i < ah - 2; ++i) {
-                *pixel_left = rgba;
-                *pixel_right = rgba;
-                pixel_left += ih;
-                pixel_right += ih;
-            }
-        }    
-
-        inline auto draw(const int_type x, const int_type y, const int_type w, const int_type h, const Uint32 rgba, const Uint32 mask) -> void {
-            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + x) + (y * s_->get_handle()->w);
+        inline auto draw(const point &p, const int_type w, const int_type h, const Uint32 rgba, const Uint32 mask) -> void {
+            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + p.x) + (p.y * s_->get_handle()->w);
             auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
                                         pixel_top + ((h + 1) * s_->get_handle()->w);
             auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
@@ -101,43 +75,44 @@ namespace g80::game::gfx {
             }
         }    
 
-        inline auto draw_s(int_type x, int_type y, int_type w, int_type h, const Uint32 rgba) -> void {
+        inline auto draw_s(point p, int_type w, int_type h, const Uint32 rgba) -> void {
+            
             {
-                int_type x1 = x;
-                int_type y1 = y;
-                int_type x2 = x + w + (w >= 0 ? -1 : 1);
-                int_type y2 = y + h + (w >= 0 ? -1 : 1);
-                x = std::min(x1, x2);
-                y = std::min(y1, y2);
-                w = std::max(x1, x2) - x + 1;
-                h = std::max(y1, y2) - y + 1;
+                int_type x1 = p.x;
+                int_type y1 = p.y;
+                int_type x2 = p.x + w + (w >= 0 ? -1 : 1);
+                int_type y2 = p.y + h + (w >= 0 ? -1 : 1);
+                p.x = std::min(x1, x2);
+                p.y = std::min(y1, y2);
+                w = std::max(x1, x2) - p.x + 1;
+                h = std::max(y1, y2) - p.y + 1;
             }
 
             int_type sx, sy, mw, mh;
 
             // Starting X
-            if (0 > x && 0 <= x + w - 1) {
+            if (0 > p.x && 0 <= p.x + w - 1) {
                 sx = 0;
-                mw = w + x;
+                mw = w + p.x;
 
-            } else if (x + w - 1 < 0 || x >= s_->get_handle()->w) {
+            } else if (p.x + w - 1 < 0 || p.x >= s_->get_handle()->w) {
                 return;
 
             } else {
-                sx = x;
+                sx = p.x;
                 mw = w;
             }
 
             // Starting Y
-            if (0 > y && 0 <= y + h - 1) {
+            if (0 > p.y && 0 <= p.y + h - 1) {
                 sy = 0;
-                mh = h + y;
+                mh = h + p.y;
 
-            } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
+            } else if (p.y + h - 1 < 0 || p.y >= s_->get_handle()->h) {
                 return;
                 
             } else {
-                sy = y;
+                sy = p.y;
                 mh = h;
             }
 
@@ -151,21 +126,21 @@ namespace g80::game::gfx {
             auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
             
             // Draw Top
-            if(y == sy) {
+            if(p.y == sy) {
                 auto *pixel_top = upper_left;
                 for (int i{0}; i < mw; ++i) *pixel_top++ = rgba;
             }
             
             // Draw Bottom
-            if (y + h - 1 < s_->get_handle()->h) {
+            if (p.y + h - 1 < s_->get_handle()->h) {
                 auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
                 for (int i{0}; i < mw; ++i) *pixel_bottom++ = rgba;
             }
             
             // Draw Left
-            if (x == sx) {
-                auto *pixel_left = upper_left + (y == sy ? s_->get_handle()->w : 0);
-                auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
+            if (p.x == sx) {
+                auto *pixel_left = upper_left + (p.y == sy ? s_->get_handle()->w : 0);
+                auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_left = rgba;
                     pixel_left += s_->get_handle()->w;
@@ -173,9 +148,9 @@ namespace g80::game::gfx {
             }
 
             // Draw Right
-            if (x + w - 1 < s_->get_handle()->w) {
-                auto *pixel_right = upper_left + (y == sy ? s_->get_handle()->w : 0) + mw - 1;
-                auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
+            if (p.x + w - 1 < s_->get_handle()->w) {
+                auto *pixel_right = upper_left + (p.y == sy ? s_->get_handle()->w : 0) + mw - 1;
+                auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = rgba;
                     pixel_right += s_->get_handle()->w;
@@ -183,43 +158,43 @@ namespace g80::game::gfx {
             }            
         }            
 
-        inline auto draw_s(int_type x, int_type y, int_type w, int_type h, const Uint32 rgba, const Uint32 mask) -> void {
+        inline auto draw_s(point p, int_type w, int_type h, const Uint32 rgba, const Uint32 mask) -> void {
             {
-                int_type x1 = x;
-                int_type y1 = y;
-                int_type x2 = x + w + (w >= 0 ? -1 : 1);
-                int_type y2 = y + h + (w >= 0 ? -1 : 1);
-                x = std::min(x1, x2);
-                y = std::min(y1, y2);
-                w = std::max(x1, x2) - x + 1;
-                h = std::max(y1, y2) - y + 1;
+                int_type x1 = p.x;
+                int_type y1 = p.y;
+                int_type x2 = p.x + w + (w >= 0 ? -1 : 1);
+                int_type y2 = p.y + h + (w >= 0 ? -1 : 1);
+                p.x = std::min(x1, x2);
+                p.y = std::min(y1, y2);
+                w = std::max(x1, x2) - p.x + 1;
+                h = std::max(y1, y2) - p.y + 1;
             }
 
             int_type sx, sy, mw, mh;
 
             // Starting X
-            if (0 > x && 0 <= x + w - 1) {
+            if (0 > p.x && 0 <= p.x + w - 1) {
                 sx = 0;
-                mw = w + x;
+                mw = w + p.x;
 
-            } else if (x + w - 1 < 0 || x >= s_->get_handle()->w) {
+            } else if (p.x + w - 1 < 0 || p.x >= s_->get_handle()->w) {
                 return;
 
             } else {
-                sx = x;
+                sx = p.x;
                 mw = w;
             }
 
             // Starting Y
-            if (0 > y && 0 <= y + h - 1) {
+            if (0 > p.y && 0 <= p.y + h - 1) {
                 sy = 0;
-                mh = h + y;
+                mh = h + p.y;
 
-            } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
+            } else if (p.y + h - 1 < 0 || p.y >= s_->get_handle()->h) {
                 return;
                 
             } else {
-                sy = y;
+                sy = p.y;
                 mh = h;
             }
 
@@ -233,7 +208,7 @@ namespace g80::game::gfx {
             auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
             
             // Draw Top
-            if(y == sy) {
+            if(p.y == sy) {
                 auto tmask = mask;
                 auto *pixel_top = upper_left;
                 for (int i{0}; i < mw; ++i) {
@@ -245,7 +220,7 @@ namespace g80::game::gfx {
             }
             
             // Draw Bottom
-            if (y + h - 1 < s_->get_handle()->h) {
+            if (p.y + h - 1 < s_->get_handle()->h) {
                 auto tmask = mask;
                 auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
                 for (int i{0}; i < mw; ++i) {
@@ -257,10 +232,10 @@ namespace g80::game::gfx {
             }
             
             // Draw Left
-            if (x == sx) {
+            if (p.x == sx) {
                 auto tmask = mask;
-                auto *pixel_left = upper_left + (y == sy ? s_->get_handle()->w : 0);
-                auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
+                auto *pixel_left = upper_left + (p.y == sy ? s_->get_handle()->w : 0);
+                auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_left = tmask & 1 ? rgba : *pixel_left;
                     pixel_left += s_->get_handle()->w;
@@ -270,10 +245,10 @@ namespace g80::game::gfx {
             }
 
             // Draw Right
-            if (x + w - 1 < s_->get_handle()->w) {
+            if (p.x + w - 1 < s_->get_handle()->w) {
                 auto tmask = mask;
-                auto *pixel_right = upper_left + (y == sy ? s_->get_handle()->w : 0) + mw - 1;
-                auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
+                auto *pixel_right = upper_left + (p.y == sy ? s_->get_handle()->w : 0) + mw - 1;
+                auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = tmask & 1 ? rgba : *pixel_right;
                     pixel_right += s_->get_handle()->w;

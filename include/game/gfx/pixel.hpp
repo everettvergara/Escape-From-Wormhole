@@ -22,7 +22,7 @@ namespace g80::game::gfx {
         }
 
         auto draw_s(const point &p, const Uint32 rgba) -> void {
-            if(!s_->is_point_within_bounds(p)) [[unlikely]] return;
+            if(!s_->is_point_within_bounds(p)) return;
             draw(p, rgba);
         }
     };
