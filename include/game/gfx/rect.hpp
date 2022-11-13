@@ -76,7 +76,6 @@ namespace g80::game::gfx {
         }    
 
         inline auto draw_s(int_type x, int_type y, int_type w, int_type h, const Uint32 rgba) -> void {
-
             {
                 int_type x1 = x;
                 int_type y1 = y;
@@ -153,6 +152,92 @@ namespace g80::game::gfx {
                 auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = rgba;
+                    pixel_right += s_->get_handle()->w;
+                }                
+            }            
+        }            
+
+        inline auto draw_s(int_type x, int_type y, int_type w, int_type h, const Uint32 rgba, const Uint32 mask) -> void {
+            {
+                int_type x1 = x;
+                int_type y1 = y;
+                int_type x2 = x + w + (w >= 0 ? -1 : 1);
+                int_type y2 = y + h + (w >= 0 ? -1 : 1);
+                x = std::min(x1, x2);
+                y = std::min(y1, y2);
+                w = std::max(x1, x2) - x + 1;
+                h = std::max(y1, y2) - y + 1;
+            }
+
+            int_type sx, sy, mw, mh;
+
+            // Starting X
+            if (0 > x && 0 <= x + w - 1) {
+                sx = 0;
+                mw = w + x;
+
+            } else if (x + w - 1 < 0 || x >= s_->get_handle()->w) {
+                return;
+
+            } else {
+                sx = x;
+                mw = w;
+            }
+
+            // Starting Y
+            if (0 > y && 0 <= y + h - 1) {
+                sy = 0;
+                mh = h + y;
+
+            } else if (y + h - 1 < 0 || y >= s_->get_handle()->h) {
+                return;
+                
+            } else {
+                sy = y;
+                mh = h;
+            }
+
+            // Modified Width
+            if (sx + mw >= s_->get_handle()->w) mw -= sx + mw - s_->get_handle()->w;
+
+            // Modified Height
+            if (sy + mh >= s_->get_handle()->h) mh -= sy + mh - s_->get_handle()->h;
+
+
+            auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
+            
+            // Draw Top
+            if(y == sy) {
+                auto tmask = mask;
+                auto *pixel_top = upper_left;
+                for (int i{0}; i < mw; ++i) {*pixel_top = tmask & 1 ? rgba : *pixel_top; ++pixel_top;}
+            }
+            
+            // Draw Bottom
+            if (y + h - 1 < s_->get_handle()->h) {
+                auto tmask = mask;
+                auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
+                for (int i{0}; i < mw; ++i) {*pixel_bottom = tmask & 1 ? rgba : *pixel_bottom; ++pixel_bottom;}
+            }
+            
+            // Draw Left
+            if (x == sx) {
+                auto tmask = mask;
+                auto *pixel_left = upper_left + (y == sy ? s_->get_handle()->w : 0);
+                auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
+                for (int i{0}; i < mh - d; ++i) {
+                    *pixel_left = tmask & 1 ? rgba : *pixel_left;
+                    pixel_left += s_->get_handle()->w;
+                }
+            }
+
+            // Draw Right
+            if (x + w - 1 < s_->get_handle()->w) {
+                auto tmask = mask;
+                auto *pixel_right = upper_left + (y == sy ? s_->get_handle()->w : 0) + mw - 1;
+                auto d = (y + h - 1 < s_->get_handle()->h ? 2 : 1) + (y == sy ? 0 : -1);
+                for (int i{0}; i < mh - d; ++i) {
+                    *pixel_right = tmask & 1 ? rgba : *pixel_right;
                     pixel_right += s_->get_handle()->w;
                 }                
             }            
