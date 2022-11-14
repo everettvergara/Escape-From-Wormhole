@@ -3,6 +3,8 @@
 #include "game/engine/config.hpp"
 #include "game/worm/demo.hpp"
 
+// TODO: Palette, should have an implementation of for_each and increment.
+
 auto main(int argc, char *argv[]) -> int {
 
     using namespace g80::game::engine;
