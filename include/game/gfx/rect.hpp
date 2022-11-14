@@ -93,17 +93,19 @@ namespace g80::game::gfx {
                 *pixel_bottom = pal[ix];
                 pixel_top += iw;
                 pixel_bottom += iw;
+                ix += ix_inc;
             }
 
-            ix = ix_from;
-            ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / ((ah - 2) == 0 ? 1 : ah - 2));
             auto ah = h > 0 ? h : -h;
             auto ih = h > 0 ? s_->get_handle()->w : -s_->get_handle()->w;
+            ix = ix_from;
+            ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / ((ah - 2) == 0 ? 1 : ah - 2));
             for(int i{0}; i < ah - 2; ++i) {
                 *pixel_left = pal[ix];;
                 *pixel_right = pal[ix];;
                 pixel_left += ih;
                 pixel_right += ih;
+                ix += ix_inc;
             }
         }    
 
