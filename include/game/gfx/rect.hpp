@@ -291,6 +291,99 @@ namespace g80::game::gfx {
                     tmask = !tmask ? mask : tmask;
                 }                
             }            
+        }
+
+        inline auto draw_s(point p, int_type w, int_type h, const palette_gradient &pal, const int ix_from, const int ix_to) -> void {
+            
+            {
+                int_type x1 = p.x;
+                int_type y1 = p.y;
+                int_type x2 = p.x + w + (w >= 0 ? -1 : 1);
+                int_type y2 = p.y + h + (w >= 0 ? -1 : 1);
+                p.x = std::min(x1, x2);
+                p.y = std::min(y1, y2);
+                w = std::max(x1, x2) - p.x + 1;
+                h = std::max(y1, y2) - p.y + 1;
+            }
+
+            int_type sx, sy, mw, mh;
+
+            // Starting X
+            if (0 > p.x && 0 <= p.x + w - 1) {
+                sx = 0;
+                mw = w + p.x;
+
+            } else if (p.x + w - 1 < 0 || p.x >= s_->get_handle()->w) {
+                return;
+
+            } else {
+                sx = p.x;
+                mw = w;
+            }
+
+            // Starting Y
+            if (0 > p.y && 0 <= p.y + h - 1) {
+                sy = 0;
+                mh = h + p.y;
+
+            } else if (p.y + h - 1 < 0 || p.y >= s_->get_handle()->h) {
+                return;
+                
+            } else {
+                sy = p.y;
+                mh = h;
+            }
+
+            // Modified Width
+            if (sx + mw >= s_->get_handle()->w) mw -= sx + mw - s_->get_handle()->w;
+
+            // Modified Height
+            if (sy + mh >= s_->get_handle()->h) mh -= sy + mh - s_->get_handle()->h;
+
+
+            auto *upper_left = (static_cast<Uint32 *>(s_->get_handle()->pixels) + sx) + (sy * s_->get_handle()->w);
+            
+            // Draw Top
+            if(p.y == sy) {
+                fp_type ix = ix_from;
+                fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (mw == 0 ? 1 : mw));
+                auto *pixel_top = upper_left;
+                for (int i{0}; i < mw; ++i) *pixel_top++ = pal[ix];
+            }
+            
+            // Draw Bottom
+            if (p.y + h - 1 < s_->get_handle()->h) {
+                fp_type ix = ix_from;
+                fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (mw == 0 ? 1 : mw));
+                auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
+                for (int i{0}; i < mw; ++i) *pixel_bottom++ = pal[ix];
+            }
+            
+            // Draw Left
+            if (p.x == sx) {
+                auto *pixel_left = upper_left + (p.y == sy ? s_->get_handle()->w : 0);
+                auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
+                fp_type ix = ix_from;
+                fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (mh == 0 ? 1 : mh));
+                for (int i{0}; i < mh - d; ++i) {
+                    *pixel_left = pal[ix];
+                    pixel_left += s_->get_handle()->w;
+                }
+            }
+
+            // Draw Right
+            if (p.x + w - 1 < s_->get_handle()->w) {
+                auto *pixel_right = upper_left + (p.y == sy ? s_->get_handle()->w : 0) + mw - 1;
+                auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
+                fp_type ix = ix_from;
+                fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / ((mh - d)== 0 ? 1 : mh - d));
+                for (int i{0}; i < mh - d; ++i) {
+                    *pixel_right = pal[ix];
+                    pixel_right += s_->get_handle()->w;
+                }                
+            }            
         }            
+
+
     };
 }
