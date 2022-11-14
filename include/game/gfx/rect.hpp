@@ -1,6 +1,8 @@
 #pragma once
 
 #include "game/engine/surface.hpp" 
+#include "game/gfx/palette.hpp"
+
 
 namespace g80::game::gfx {
 
@@ -74,6 +76,37 @@ namespace g80::game::gfx {
                 tmask = !tmask ? mask : tmask;
             }
         }    
+
+        inline auto draw(const point &p, const int_type w, const int_type h, const palette_gradient &pal, const int ix_from, const int ix_to) -> void {
+            auto *pixel_top     = (static_cast<Uint32 *>(s_->get_handle()->pixels) + p.x) + (p.y * s_->get_handle()->w);
+            auto *pixel_bottom  = h > 0 ? pixel_top + ((h - 1) * s_->get_handle()->w) :
+                                        pixel_top + ((h + 1) * s_->get_handle()->w);
+            auto *pixel_left    = w > 0 ? pixel_top + s_->get_handle()->w : pixel_top - s_->get_handle()->w;
+            auto *pixel_right   = w > 0 ? pixel_top + s_->get_handle()->w + w - 1 : (pixel_top - s_->get_handle()->w) + (w + 1);
+
+            auto aw = w > 0 ? w : -w;
+            auto iw = w > 0 ? 1 : -1;
+            fp_type ix = ix_from;
+            fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (aw == 0 ? 1 : aw));
+            for(int i{0}; i < aw; ++i) {
+                *pixel_top = pal[ix];
+                *pixel_bottom = pal[ix];
+                pixel_top += iw;
+                pixel_bottom += iw;
+            }
+
+            ix = ix_from;
+            ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / ((ah - 2) == 0 ? 1 : ah - 2));
+            auto ah = h > 0 ? h : -h;
+            auto ih = h > 0 ? s_->get_handle()->w : -s_->get_handle()->w;
+            for(int i{0}; i < ah - 2; ++i) {
+                *pixel_left = pal[ix];;
+                *pixel_right = pal[ix];;
+                pixel_left += ih;
+                pixel_right += ih;
+            }
+        }    
+
 
         inline auto draw_s(point p, int_type w, int_type h, const Uint32 rgba) -> void {
             
