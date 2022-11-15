@@ -353,7 +353,7 @@ namespace g80::game::gfx {
                 fp_type ix = ix_from * (static_cast<fp_type>(1.0) - fw);
                 fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (mw == 0 ? 1 : mw));
                 auto *pixel_top = upper_left;
-                for (int i{0}; i < mw; ++i) *pixel_top++ = pal[ix];
+                for (int i{0}; i < mw; ++i) {*pixel_top++ = pal[ix]; ix += ix_inc;} 
             }
             
             // Draw Bottom
@@ -361,7 +361,7 @@ namespace g80::game::gfx {
                 fp_type ix = ix_from * (static_cast<fp_type>(1.0) - fw);
                 fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (mw == 0 ? 1 : mw));
                 auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
-                for (int i{0}; i < mw; ++i) *pixel_bottom++ = pal[ix];
+                for (int i{0}; i < mw; ++i) {*pixel_bottom++ = pal[ix]; ix += ix_inc;}
             }
             
             // Draw Left
@@ -373,6 +373,7 @@ namespace g80::game::gfx {
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_left = pal[ix];
                     pixel_left += s_->get_handle()->w;
+                    ix += ix_inc;
                 }
             }
 
@@ -385,6 +386,7 @@ namespace g80::game::gfx {
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = pal[ix];
                     pixel_right += s_->get_handle()->w;
+                    ix += ix_inc;
                 }                
             }            
         }            

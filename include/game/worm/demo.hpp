@@ -39,13 +39,13 @@ namespace g80::game::worm {
             // rect.draw_s(600, 600, 1, 0, SDL_MapRGBA(s.get_handle()->format, 255, 255, 0, 255));
 
             // rect.draw_s(500, 500, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{-50, -50}, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{-50, s.get_h() - 50}, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{s.get_w() - 50, -50}, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{s.get_w() - 50, s.get_h() - 50}, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{-50, -50}, 3000, 1000, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{-50, 300}, 3000, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{700, 850}, -200, -1000, SDL_MapRGBA(s.get_handle()->format, 255, 255, 0, 255), 0x00ff00ff);
+            rect.draw_s(point{-50, -50}, 100, 100, one_shade.value(), 0, 199);
+            rect.draw_s(point{-50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
+            rect.draw_s(point{s.get_w() - 50, -50}, 100, 100, one_shade.value(), 0, 199);
+            rect.draw_s(point{s.get_w() - 50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
+            rect.draw_s(point{-50, -50}, 3000, 1000, one_shade.value(), 0, 199);
+            rect.draw_s(point{-50, 300}, 3000, 100, one_shade.value(), 0, 199);
+            rect.draw_s(point{700, 850}, -200, -1000, one_shade.value(), 0, 199);
 
 
 //            line.draw(point{50, s.get_h() - 1}, point{300, s.get_h() - 1}, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
