@@ -109,7 +109,6 @@ namespace g80::game::gfx {
             }
         }    
 
-
         inline auto draw_s(point p, int_type w, int_type h, const Uint32 rgba) -> void {
             
             {
@@ -309,9 +308,11 @@ namespace g80::game::gfx {
             int_type sx, sy, mw, mh;
 
             // Starting X
+            fp_type fw;
             if (0 > p.x && 0 <= p.x + w - 1) {
                 sx = 0;
                 mw = w + p.x;
+                fw = (static_cast<fp_type>(w) - mw) / w;
 
             } else if (p.x + w - 1 < 0 || p.x >= s_->get_handle()->w) {
                 return;
@@ -319,12 +320,15 @@ namespace g80::game::gfx {
             } else {
                 sx = p.x;
                 mw = w;
+                fw = static_cast<fp_type>(1.0);
             }
 
             // Starting Y
+            fp_type fh;
             if (0 > p.y && 0 <= p.y + h - 1) {
                 sy = 0;
                 mh = h + p.y;
+                fh = (static_cast<fp_type>(h) - mh) / h;
 
             } else if (p.y + h - 1 < 0 || p.y >= s_->get_handle()->h) {
                 return;
@@ -332,6 +336,7 @@ namespace g80::game::gfx {
             } else {
                 sy = p.y;
                 mh = h;
+                fh = static_cast<fp_type>(1.0);
             }
 
             // Modified Width
