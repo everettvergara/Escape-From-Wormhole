@@ -254,6 +254,7 @@ namespace g80::game::gfx {
                 }
             }
             
+
             // Draw Bottom
             if (p.y + h - 1 < s_->get_handle()->h) {
                 auto tmask = mask >> ((sx - p.x) % 32);
