@@ -242,7 +242,7 @@ namespace g80::game::gfx {
             
             // Draw Top
             if(p.y == sy) {
-                auto tmask = mask;
+                auto tmask = mask >> ((sx - p.x) % w);
                 auto *pixel_top = upper_left;
                 for (int i{0}; i < mw; ++i) {
                     *pixel_top = tmask & 1 ? rgba : 
@@ -254,7 +254,7 @@ namespace g80::game::gfx {
             
             // Draw Bottom
             if (p.y + h - 1 < s_->get_handle()->h) {
-                auto tmask = mask;
+                auto tmask = mask >> ((sx - p.x) % w);
                 auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
                 for (int i{0}; i < mw; ++i) {
                     *pixel_bottom = tmask & 1 ? rgba : *pixel_bottom; 
@@ -266,7 +266,7 @@ namespace g80::game::gfx {
             
             // Draw Left
             if (p.x == sx) {
-                auto tmask = mask;
+                auto tmask = mask >> ((sx - p.x) % w);
                 auto *pixel_left = upper_left + (p.y == sy ? s_->get_handle()->w : 0);
                 auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
@@ -279,7 +279,7 @@ namespace g80::game::gfx {
 
             // Draw Right
             if (p.x + w - 1 < s_->get_handle()->w) {
-                auto tmask = mask;
+                auto tmask = mask >> ((sx - p.x) % w);
                 auto *pixel_right = upper_left + (p.y == sy ? s_->get_handle()->w : 0) + mw - 1;
                 auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
