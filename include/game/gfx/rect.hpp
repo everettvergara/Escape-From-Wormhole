@@ -242,6 +242,8 @@ namespace g80::game::gfx {
             
             // Draw Top
             if(p.y == sy) {
+
+                // BUG: shift not correct
                 auto tmask = mask >> ((sx - p.x) % 32);
                 auto *pixel_top = upper_left;
                 for (int i{0}; i < mw; ++i) {
