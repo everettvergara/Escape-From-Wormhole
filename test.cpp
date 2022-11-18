@@ -23,6 +23,7 @@ auto main(int argc, char *argv[]) -> int {
     worm.create_window(c);
     worm.run(c.get_MSPF());
     
+    
     // DeInitialize SDL
     video::quit();
 
