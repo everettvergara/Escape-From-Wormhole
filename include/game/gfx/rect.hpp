@@ -363,7 +363,7 @@ namespace g80::game::gfx {
                 auto *pixel_left = upper_left + (p.y == sy ? s_->get_handle()->w : 0);
                 auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / (mh == 0 ? 1 : mh));
-                fp_type ix = ix_from + ix_inc * (sx - p.x);
+                fp_type ix = ix_from + ix_inc * (sy - p.y);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_left = pal[ix];
                     pixel_left += s_->get_handle()->w;
@@ -375,8 +375,8 @@ namespace g80::game::gfx {
             if (p.x + w - 1 < s_->get_handle()->w) {
                 auto *pixel_right = upper_left + (p.y == sy ? s_->get_handle()->w : 0) + mw - 1;
                 auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
-                fp_type ix = ix_from * (static_cast<fp_type>(1.0) - fh);
                 fp_type ix_inc = static_cast<fp_type>(1.0 * (ix_to - ix_from) / ((mh - d)== 0 ? 1 : mh - d));
+                fp_type ix = ix_from + ix_inc * (sy - p.y);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = pal[ix];
                     pixel_right += s_->get_handle()->w;
