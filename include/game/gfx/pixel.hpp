@@ -7,6 +7,7 @@ namespace g80::game::gfx {
     using namespace g80::game::engine;
     
     class pixel {
+    
     private:
         surface *s_;
 
