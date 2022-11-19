@@ -53,6 +53,7 @@ namespace g80::game::gfx {
             auto *pixel_right   = w > 0 ? pixel_top + s_->get_handle()->w + w - 1 : (pixel_top - s_->get_handle()->w) + (w + 1);
 
             auto tmask = mask;
+            Uint32 tctr = 0;
             auto aw = w > 0 ? w : -w;
             auto iw = w > 0 ? 1 : -1;
             for(int i{0}; i < aw; ++i) {
@@ -61,10 +62,11 @@ namespace g80::game::gfx {
                 pixel_top += iw;
                 pixel_bottom += iw;
                 tmask >>= 1;
-                tmask = !tmask ? mask : tmask;
+                tmask = (++tctr % 32 == 0) ? mask : tmask;
             }
 
             tmask = mask;
+            tctr = 0;
             auto ah = h > 0 ? h : -h;
             auto ih = h > 0 ? s_->get_handle()->w : -s_->get_handle()->w;
             for(int i{0}; i < ah - 2; ++i) {
@@ -73,7 +75,7 @@ namespace g80::game::gfx {
                 pixel_left += ih;
                 pixel_right += ih;
                 tmask >>= 1;
-                tmask = !tmask ? mask : tmask;
+                tmask = (++tctr % 32 == 0) ? mask : tmask;
             }
         }    
 
@@ -245,13 +247,13 @@ namespace g80::game::gfx {
 
                 // BUG: shift not correct
                 auto tmask = mask >> ((sx - p.x) % 32);
-                std::cout << (sx - p.x) << " " << ((sx - p.x) % 32) << "\n";
+                Uint32 tctr = 0;
                 auto *pixel_top = upper_left;
                 for (int i{0}; i < mw; ++i) {
                     *pixel_top = tmask & 1 ? rgba : 
                     *pixel_top; ++pixel_top;
                     tmask >>= 1;
-                    tmask = !tmask ? mask : tmask;
+                    tmask = (++tctr % 32 == 0) ? mask : tmask;
                 }
             }
             
@@ -259,38 +261,41 @@ namespace g80::game::gfx {
             // Draw Bottom
             if (p.y + h - 1 < s_->get_handle()->h) {
                 auto tmask = mask >> ((sx - p.x) % 32);
+                Uint32 tctr = 0;
                 auto *pixel_bottom = upper_left + ((mh - 1) * s_->get_handle()->w);
                 for (int i{0}; i < mw; ++i) {
                     *pixel_bottom = tmask & 1 ? rgba : *pixel_bottom; 
                     ++pixel_bottom;
                     tmask >>= 1;
-                    tmask = !tmask ? mask : tmask;
+                    tmask = (++tctr % 32 == 0) ? mask : tmask;
                 }
             }
             
             // Draw Left
             if (p.x == sx) {
                 auto tmask = mask >> ((sy - p.y) % 32);
+                Uint32 tctr = 0;
                 auto *pixel_left = upper_left + (p.y == sy ? s_->get_handle()->w : 0);
                 auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_left = tmask & 1 ? rgba : *pixel_left;
                     pixel_left += s_->get_handle()->w;
                     tmask >>= 1;
-                    tmask = !tmask ? mask : tmask;
+                    tmask = (++tctr % 32 == 0) ? mask : tmask;
                 }
             }
 
             // Draw Right
             if (p.x + w - 1 < s_->get_handle()->w) {
                 auto tmask = mask >> ((sy - p.y) % 32);
+                Uint32 tctr = 0;
                 auto *pixel_right = upper_left + (p.y == sy ? s_->get_handle()->w : 0) + mw - 1;
                 auto d = (p.y + h - 1 < s_->get_handle()->h ? 2 : 1) + (p.y == sy ? 0 : -1);
                 for (int i{0}; i < mh - d; ++i) {
                     *pixel_right = tmask & 1 ? rgba : *pixel_right;
                     pixel_right += s_->get_handle()->w;
                     tmask >>= 1;
-                    tmask = !tmask ? mask : tmask;
+                    tmask = (++tctr % 32 == 0) ? mask : tmask;
                 }                
             }            
         }
