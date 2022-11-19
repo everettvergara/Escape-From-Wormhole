@@ -245,6 +245,7 @@ namespace g80::game::gfx {
 
                 // BUG: shift not correct
                 auto tmask = mask >> ((sx - p.x) % 32);
+                std::cout << (sx - p.x) << " " << ((sx - p.x) % 32) << "\n";
                 auto *pixel_top = upper_left;
                 for (int i{0}; i < mw; ++i) {
                     *pixel_top = tmask & 1 ? rgba : 
