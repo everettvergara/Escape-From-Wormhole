@@ -34,13 +34,13 @@ namespace g80::game::worm {
             SDL_FillRect(s.get_handle(), NULL, 0); 
 
             rect.draw_s(point{300, 270}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
-            rect.draw_s(point{-32, 270}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
+            rect.draw_s(point{-32, -64}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
 
 
             // rect.draw_s(600, 600, 1, 0, SDL_MapRGBA(s.get_handle()->format, 255, 255, 0, 255));
 
             // rect.draw_s(500, 500, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            rect.draw_s(point{-50, -50}, 100, 100, one_shade.value(), 0, 199);
+//            rect.draw_s(point{-50, -50}, 100, 100, one_shade.value(), 0, 199);
             rect.draw_s(point{-50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
             rect.draw_s(point{s.get_w() - 50, -50}, 100, 100, one_shade.value(), 0, 199);
             rect.draw_s(point{s.get_w() - 50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
