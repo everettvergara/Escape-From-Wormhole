@@ -23,6 +23,7 @@ namespace g80::game::gfx {
         auto draw(const point &p1, const point &p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
         auto draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask) -> void;
         auto draw_s(point p1, point p2, const Uint32 rgba) -> void;
+        // Bug: mask should be adjusted accordingly when points are recalculated
         auto draw_s(point p1, point p2, const Uint32 rgba, const Uint32 mask) -> void;
         auto draw_s(point p1, point p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
     };
