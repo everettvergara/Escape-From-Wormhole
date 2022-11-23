@@ -30,24 +30,15 @@ namespace g80::game::gfx {
         Sint32 dy = 1;
         Sint32 re = 0;
 
-        while (x >= y)
-        {
-            // Upper Right: Bottom, 
-            *(center + x - by) = rgba;
-            // Upper Right: Top, y++, x--
-            *(center + y - bx) = rgba;
-            // Upper Left: Top 
-            *(center - y - bx) = rgba;
-            // Upper Left: Bottom,
-            *(center - x - by) = rgba;
-            // Bottom Left: Top
-            *(center - x + by) = rgba;
-            // Bottom Left: Bottom 
-            *(center - y + bx) = rgba;
-            // Bottom Right: Bottom 
-            *(center + y + bx) = rgba;
-            // Bottom Right: Top
-            *(center + x + by) = rgba;
+        while (x >= y) {
+            *(center + x - by) = rgba;  // Upper Right: Bottom, 
+            *(center + y - bx) = rgba;  // Upper Right: Top, y++, x--
+            *(center - y - bx) = rgba;  // Upper Left: Top 
+            *(center - x - by) = rgba;  // Upper Left: Bottom,
+            *(center - x + by) = rgba;  // Bottom Left: Top
+            *(center - y + bx) = rgba;  // Bottom Left: Bottom 
+            *(center + y + bx) = rgba;  // Bottom Right: Bottom 
+            *(center + x + by) = rgba;  // Bottom Right: Top
 
             ++y;
             re += dy;
