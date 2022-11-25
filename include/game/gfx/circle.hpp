@@ -22,28 +22,28 @@ namespace g80::game::gfx {
     auto circle::draw(const point &p, const int_type r, Uint32 rgba) -> void {
         auto center = static_cast<Uint32 *>(s_->get_handle()->pixels) + p.y * s_->get_w() + p.x;
 
-        int_type x = r, y = 0;
-        int_type bx = x * s_->get_w(), by = 0;
+        int_type slow = r, fast = 0;
+        int_type bx = slow * s_->get_w(), by = 0;
 
         Sint32 dx = 1 - (r << 1);
         Sint32 dy = 1;
         Sint32 re = 0;
 
-        while (x >= y) {
-            *(center + x - by) = rgba;  // Upper Right: Bottom, 
-            *(center + y - bx) = rgba;  // Upper Right: Top, y++, x--
-            *(center - y - bx) = rgba;  // Upper Left: Top 
-            *(center - x - by) = rgba;  // Upper Left: Bottom,
-            *(center - x + by) = rgba;  // Bottom Left: Top
-            *(center - y + bx) = rgba;  // Bottom Left: Bottom 
-            *(center + y + bx) = rgba;  // Bottom Right: Bottom 
-            *(center + x + by) = rgba;  // Bottom Right: Top
+        while (slow >= fast) {
+            *(center + slow - by) = rgba;  // Upper Right: Bottom, 
+            *(center + fast - bx) = rgba;  // Upper Right: Top, y++, x--
+            *(center - fast - bx) = rgba;  // Upper Left: Top 
+            *(center - slow - by) = rgba;  // Upper Left: Bottom,
+            *(center - slow + by) = rgba;  // Bottom Left: Top
+            *(center - fast + bx) = rgba;  // Bottom Left: Bottom 
+            *(center + fast + bx) = rgba;  // Bottom Right: Bottom 
+            *(center + slow + by) = rgba;  // Bottom Right: Top
 
-            ++y;
+            ++fast;
             re += dy;
             dy += 2;
             if ((re << 1) + dx > 0) {
-                --x;
+                --slow;
                 bx -= s_->get_w();
                 re += dx;
                 dx += 2;
