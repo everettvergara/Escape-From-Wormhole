@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stack>
 #include "game/engine/surface.hpp" 
 
 namespace g80::game::gfx {
@@ -18,15 +17,13 @@ namespace g80::game::gfx {
     };
 
     circle::circle(surface *s) : s_(s) {
-
     }
 
     auto circle::draw(const point &p, const int_type r, Uint32 rgba) -> void {
-        
-        auto center = static_cast<Uint32 *>(s_->get_handle()->pixels);
+        auto center = static_cast<Uint32 *>(s_->get_handle()->pixels) + p.y * s_->get_w() + p.x;
 
         int_type x = r, y = 0;
-        int_type bx = x * s_->w, by = 0;
+        int_type bx = x * s_->get_w(), by = 0;
 
         Sint32 dx = 1 - (r << 1);
         Sint32 dy = 1;
@@ -47,11 +44,11 @@ namespace g80::game::gfx {
             dy += 2;
             if ((re << 1) + dx > 0) {
                 --x;
-                bx -= s_->w;
+                bx -= s_->get_w();
                 re += dx;
                 dx += 2;
             }
-            by += s_->w;
+            by += s_->get_w();
         }
     }
 }

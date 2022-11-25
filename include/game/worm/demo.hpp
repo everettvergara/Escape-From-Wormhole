@@ -6,6 +6,7 @@
 #include "game/gfx/pixel.hpp"
 #include "game/gfx/line.hpp"
 #include "game/gfx/rect.hpp"
+#include "game/gfx/circle.hpp"
 #include "game/gfx/palette.hpp"
 
 
@@ -28,6 +29,7 @@ namespace g80::game::worm {
             g80::game::gfx::line line(&s);
             g80::game::gfx::palette pal(&s);
             g80::game::gfx::rect rect(&s);
+            g80::game::gfx::circle circle(&s);
 
             auto one_shade = pal.get_palette_gradient({{0, 0}, {100, 255}, {199, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255)}});
 
@@ -69,6 +71,9 @@ namespace g80::game::worm {
             // s.line_s( point{s.get_cw(), s.get_ch()}, 
             //             point{s.get_cw() + static_cast<int_type>(s.get_w() * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(s.get_w() * SDL_sinf(rads_))}, 
             //         SDL_MapRGBA(s.get_format(), 255, 0, 0, 255));
+
+
+            circle.draw(point{s.get_cw(), s.get_ch()}, 150, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255));
         }
     };
 }
