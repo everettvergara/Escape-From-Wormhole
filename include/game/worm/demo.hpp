@@ -58,10 +58,10 @@ namespace g80::game::worm {
             //             rand() % s.get_handle()->h},
             //             SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             // }
-            rads_ += 0.005;
-            line.draw( point{s.get_cw(), s.get_ch()}, 
-                        point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
-                    one_shade.value(), 0, 199);
+            // rads_ += 0.005;
+            // line.draw( point{s.get_cw(), s.get_ch()}, 
+            //             point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
+            //         one_shade.value(), 0, 199);
             
             
             // line.draw( point{s.get_cw(), s.get_ch()}, 
@@ -72,7 +72,7 @@ namespace g80::game::worm {
             //             point{s.get_cw() + static_cast<int_type>(s.get_w() * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(s.get_w() * SDL_sinf(rads_))}, 
             //         SDL_MapRGBA(s.get_format(), 255, 0, 0, 255));
 
-
+            line.draw(point{s.get_cw(), s.get_ch()}, point{s.get_cw() + 500, s.get_ch()}, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255));
             circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255));
         }
     };

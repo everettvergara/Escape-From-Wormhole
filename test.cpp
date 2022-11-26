@@ -20,7 +20,7 @@ auto main(int argc, char *argv[]) -> int {
     
     // Game / Demo Proper
     demo worm;
-    worm.create_window(c);
+    worm.create_window(c); 
     worm.run(c.get_MSPF());
     
     
