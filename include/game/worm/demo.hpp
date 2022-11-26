@@ -43,21 +43,21 @@ namespace g80::game::worm {
 
             // rect.draw_s(500, 500, 100, 100, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
 //            rect.draw_s(point{-50, -50}, 100, 100, one_shade.value(), 0, 199);
-            rect.draw_s(point{-50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
-            rect.draw_s(point{s.get_w() - 50, -50}, 100, 100, one_shade.value(), 0, 199);
-            rect.draw_s(point{s.get_w() - 50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
-            rect.draw_s(point{-50, -50}, 3000, 1000, one_shade.value(), 0, 199);
-            rect.draw_s(point{-50, 300}, 3000, 100, one_shade.value(), 0, 199);
-            rect.draw_s(point{700, 850}, -200, -1000, one_shade.value(), 0, 199);
+            // rect.draw_s(point{-50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
+            // rect.draw_s(point{s.get_w() - 50, -50}, 100, 100, one_shade.value(), 0, 199);
+            // rect.draw_s(point{s.get_w() - 50, s.get_h() - 50}, 100, 100, one_shade.value(), 0, 199);
+            // rect.draw_s(point{-50, -50}, 3000, 1000, one_shade.value(), 0, 199);
+            // rect.draw_s(point{-50, 300}, 3000, 100, one_shade.value(), 0, 199);
+            // rect.draw_s(point{700, 850}, -200, -1000, one_shade.value(), 0, 199);
 
 
 //            line.draw(point{50, s.get_h() - 1}, point{300, s.get_h() - 1}, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
 
-            for(size_t i{0}; i< 1000; ++i) {
-                pixel.draw(point{rand() % s.get_handle()->w,
-                        rand() % s.get_handle()->h},
-                        SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
-            }
+            // for(size_t i{0}; i< 1000; ++i) {
+            //     pixel.draw(point{rand() % s.get_handle()->w,
+            //             rand() % s.get_handle()->h},
+            //             SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
+            // }
             rads_ += 0.005;
             line.draw( point{s.get_cw(), s.get_ch()}, 
                         point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
@@ -73,7 +73,7 @@ namespace g80::game::worm {
             //         SDL_MapRGBA(s.get_format(), 255, 0, 0, 255));
 
 
-            circle.draw(point{s.get_cw(), s.get_ch()}, 150, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255));
+            circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255));
         }
     };
 }

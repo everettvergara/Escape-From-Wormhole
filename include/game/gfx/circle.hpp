@@ -23,17 +23,17 @@ namespace g80::game::gfx {
         auto center = static_cast<Uint32 *>(s_->get_handle()->pixels) + p.y * s_->get_w() + p.x;
 
         int_type slow = 0;
-        int_type fast = r * s_->get_w();
+        int_type fast_adder = r * s_->get_w();
 
         int_type dx = 1 - (r << 1);
         int_type dy = 1;
         int_type re = 0;
-        int_type adder = 0;
+        int_type slow_adder = 0;
 
+        // center -= fast_adder;
 
-        while (slow <= fast) {
-            // std::cout << "slow: " << slow << " fast: " << fast << "\n";
-            *(center - fast + adder) = rgba;
+        while (slow <= fast_adder) {
+            *(center - fast_adder + slow_adder) = rgba;     // Q1: bottom
 
             re += dy;
             dy += 2;
@@ -41,9 +41,9 @@ namespace g80::game::gfx {
                 slow += s_->get_w();
                 re += dx;
                 dx += 2;
-                adder += 1;
+                ++slow_adder;
             }
-            fast -= s_->get_w();
+            fast_adder -= s_->get_w();
         }
     }
 } 
