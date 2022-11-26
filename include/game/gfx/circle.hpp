@@ -22,10 +22,8 @@ namespace g80::game::gfx {
     auto circle::draw(const point &p, const int_type r, Uint32 rgba) -> void {
         auto center = static_cast<Uint32 *>(s_->get_handle()->pixels) + p.y * s_->get_w() + p.x;
 
-
         int_type fast_adder_by_y_inc = 0;
         int_type fast_adder_by_x_inc = 0;
-
         int_type slow_adder_by_x_dec = r;
         int_type slow_adder_by_y_dec = r * s_->get_w();
 
@@ -33,12 +31,15 @@ namespace g80::game::gfx {
         int_type dy = 1;
         int_type re = 0;
 
-        while (slow_adder_by_x_dec >= fast_adder_by_x_inc) {
+        while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;     // Q1: bottom
+            *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     // Q1: top
+            *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     // Q2: top
+            *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;     // Q2: top
 
             re += dy;
             dy += 2;
-            if ((re << 1) + dx > 0) {
+            if((re << 1) + dx > 0) {
                 re += dx;
                 dx += 2;
                 slow_adder_by_x_dec -= 1;
