@@ -49,7 +49,6 @@ namespace g80::game::gfx {
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
         }
-        exit(0);
     }
 
     auto circle::draw(const point &p, const int_type r, const Uint32 rgba, const Uint32 mask) -> void {
@@ -61,8 +60,7 @@ namespace g80::game::gfx {
         int_type delta_x = 1 - (r << 1);
         int_type delta_y = 1;
         int_type radius_error = 0;
-        
-        int_type tctr = 31;
+        int_type tctr = 0;
         auto tmask = mask;
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             if(tmask & 1) {
@@ -85,9 +83,9 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
-            tctr -= tctr > 0 ? 1 : -31;
+            tmask >>= 1;
+            tmask = (++tctr % 32 == 0) ? mask : tmask;
         }
-        exit(0);
     }
 
 
