@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "game/engine/surface.hpp" 
 
 namespace g80::game::gfx {
@@ -60,19 +61,22 @@ namespace g80::game::gfx {
         int_type delta_x = 1 - (r << 1);
         int_type delta_y = 1;
         int_type radius_error = 0;
-        int_type tctr = 0;
-        auto tmask = mask;
+        fp_type oct_perimeter = static_cast<fp_type>(2.0 * M_PI * r / 8.0);
+        std::array<Uint32, 8> tmask;
+        std::array<size_t, 8> tctr;
+        for(size_t i{0}; i < 8; ++i) {
+            tctr[i] = static_cast<Uint32>(i * oct_perimeter) % 32;
+            tmask[i] = mask >> tctr[i];
+        }
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
-            if(tmask & 1) {
-                *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
-                *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     
-                *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
-                *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
-                *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
-                *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
-                *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
-                *(center + fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
-            }
+            *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
+            *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     
+            *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
+            *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
+            *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
+            *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
+            *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
+            *(center + fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
             radius_error += delta_y;
             delta_y += 2;
             if((radius_error << 1) + delta_x > 0) {
@@ -83,8 +87,10 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
-            tmask >>= 1;
-            tmask = (++tctr % 32 == 0) ? mask : tmask;
+            for(size_t i{0}; i < 8; ++i) {
+                tmask[i] >>= 1;
+                tmask[i] = (++tctr[i] % 32 == 0) ? mask : tmask[i];
+            }            
         }
     }
 
