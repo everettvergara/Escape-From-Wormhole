@@ -69,8 +69,8 @@ namespace g80::game::gfx {
             tmask[i] = mask >> tctr[i];
         }
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
-            *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
-            *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     
+            if(tmask[0] & 1) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
+            if(tmask[1] & 1) *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     
             *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
             *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
             *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
