@@ -168,15 +168,15 @@ namespace g80::game::gfx {
         Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->get_handle()->pixels) + p1.y * s_->get_handle()->w + p1.x;
         auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
             auto tmask = mask;
+            decltype(tmask) tctr = 0;
             for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
-                *pixel_buffer = tmask & 1 ? rgba : *pixel_buffer;
+                *pixel_buffer = ((tmask >> tctr) & 1) ? rgba : *pixel_buffer;
                 if (t >= abs_g) {
                     pixel_buffer += sig_l;
                     t -= abs_g;
                 }
                 pixel_buffer += sig_g;
-                tmask >>= 1;
-                tmask = !tmask ? mask : tmask;
+                tctr += (tctr == 32) ? -32 : +1;
             }
         };
 
