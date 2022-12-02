@@ -77,14 +77,22 @@ namespace g80::game::gfx {
 
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             decltype(center) addr;
-            addr = center - fast_adder_by_y_inc + slow_adder_by_x_dec; *addr = (mask >> tctr[0] & 1) ? rgba : *addr;
-            addr = center + fast_adder_by_x_inc - slow_adder_by_y_dec; *addr = (mask >> tctr[1] & 1) ? rgba : *addr;
-            addr = center - fast_adder_by_x_inc - slow_adder_by_y_dec; *addr = (mask >> tctr[2] & 1) ? rgba : *addr;
-            addr = center - fast_adder_by_y_inc - slow_adder_by_x_dec; *addr = (mask >> tctr[3] & 1) ? rgba : *addr;
-            addr = center + fast_adder_by_y_inc - slow_adder_by_x_dec; *addr = (mask >> tctr[4] & 1) ? rgba : *addr;
-            addr = center - fast_adder_by_x_inc + slow_adder_by_y_dec; *addr = (mask >> tctr[5] & 1) ? rgba : *addr;
-            addr = center + fast_adder_by_x_inc + slow_adder_by_y_dec; *addr = (mask >> tctr[6] & 1) ? rgba : *addr;
-            addr = center + fast_adder_by_y_inc + slow_adder_by_x_dec; *addr = (mask >> tctr[7] & 1) ? rgba : *addr;
+            addr = center - fast_adder_by_y_inc + slow_adder_by_x_dec; 
+            *addr = (mask >> tctr[0] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_x_inc - slow_adder_by_y_dec; 
+            *addr = (mask >> tctr[1] & 1) ? rgba : *addr;
+            addr = center - fast_adder_by_x_inc - slow_adder_by_y_dec; 
+            *addr = (mask >> tctr[2] & 1) ? rgba : *addr;
+            addr = center - fast_adder_by_y_inc - slow_adder_by_x_dec; 
+            *addr = (mask >> tctr[3] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_y_inc - slow_adder_by_x_dec; 
+            *addr = (mask >> tctr[4] & 1) ? rgba : *addr;
+            addr = center - fast_adder_by_x_inc + slow_adder_by_y_dec; 
+            *addr = (mask >> tctr[5] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_x_inc + slow_adder_by_y_dec; 
+            *addr = (mask >> tctr[6] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_y_inc + slow_adder_by_x_dec; 
+            *addr = (mask >> tctr[7] & 1) ? rgba : *addr;
 
             radius_error += delta_y;
             delta_y += 2;
