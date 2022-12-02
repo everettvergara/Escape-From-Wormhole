@@ -62,6 +62,57 @@ namespace g80::game::gfx {
         int_type delta_y = 1;
         int_type radius_error = 0;
         fp_type oct_perimeter = static_cast<fp_type>(2.0 * M_PI * r / 8.0); // 157.08
+        std::array<size_t, 8> tctr;
+        std::array<int, 8> tn;
+
+        tctr[0] = 0;                        
+        tctr[1] = oct_perimeter * 2 - 1;
+
+        tn[0] = 1;
+        tn[1] = -1;
+
+        while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
+            if(mask >> (tctr[0] % 32)) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;  // bottom -> top
+            if(mask >> (tctr[1] % 32)) *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;  // top -> bottom
+            // if(tmask[2] & 1) *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;  // top -> bottom
+            // if(tmask[3] & 1) *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;  // bottom -> top
+            // *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
+            // *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
+            // *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
+            // *(center + fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
+            radius_error += delta_y;
+            delta_y += 2;
+            if((radius_error << 1) + delta_x > 0) {
+                radius_error += delta_x;
+                delta_x += 2;
+                slow_adder_by_x_dec -= 1;
+                slow_adder_by_y_dec -= s_->get_w();
+            }
+            fast_adder_by_x_inc += 1;
+            fast_adder_by_y_inc += s_->get_w();
+            for(size_t i{0}; i < 2; ++i) {
+                tctr[i] += tn[i];
+                // if(i == 1 || i == 3) {
+                //     tmask[i] = (++tctr[i] % 32 == 0) ? rev_mask : tmask[i];
+                // } else {
+                //     tmask[i] = (++tctr[i] % 32 == 0) ? mask : tmask[i];
+                // }
+            }            
+        }
+    }
+
+/*
+
+    auto circle::draw(const point &p, const int_type r, const Uint32 rgba, const Uint32 mask) -> void {
+        auto center = static_cast<Uint32 *>(s_->get_handle()->pixels) + p.y * s_->get_w() + p.x;
+        int_type fast_adder_by_y_inc = 0;
+        int_type fast_adder_by_x_inc = 0;
+        int_type slow_adder_by_x_dec = r;
+        int_type slow_adder_by_y_dec = r * s_->get_w();
+        int_type delta_x = 1 - (r << 1);
+        int_type delta_y = 1;
+        int_type radius_error = 0;
+        fp_type oct_perimeter = static_cast<fp_type>(2.0 * M_PI * r / 8.0); // 157.08
         std::array<Uint32, 8> tmask;
         std::array<size_t, 8> tctr;
 
@@ -114,5 +165,6 @@ namespace g80::game::gfx {
             }            
         }
     }
+*/
 } 
 
