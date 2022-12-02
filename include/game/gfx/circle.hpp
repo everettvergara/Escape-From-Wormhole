@@ -93,6 +93,7 @@ namespace g80::game::gfx {
                 slow_adder_by_x_dec -= 1;
                 slow_adder_by_y_dec -= s_->get_w();
             }
+            
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
             for(size_t i{0}; i < 8; ++i) {
