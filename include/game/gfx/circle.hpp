@@ -65,7 +65,7 @@ namespace g80::game::gfx {
         std::array<Uint32, 8> tmask;
         std::array<size_t, 8> tctr;
 
-        [[nodiscard]] auto reverse = [](Uint32 mask) {
+        auto reverse = [](Uint32 mask) {
             Uint32 rev {0};
             auto ts {sizeof(Uint32) * 8};
             decltype(ts) ctr {0};
@@ -83,18 +83,13 @@ namespace g80::game::gfx {
         for(size_t i{0}; i < 8; ++i) {
             tctr[i] = (static_cast<Uint32>(i * oct_perimeter) % 32);
             tmask[i] = mask >> tctr[i];
-            if(i == 1) {
-                //tctr[i] = 31 - tctr[i];
-                tmask[i] = reverse(tmask[i]); 
-            }
-
-            if(i == 2) std::cout << tctr[i] << "\n";
+            if(i == 1 || i == 3) tmask[i] = reverse(tmask[i]); 
         }
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
-            if(tmask[0] & 1) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
-            if(tmask[1] & 1) *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     
-            if(tmask[2] & 1) *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
-            // *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
+            if(tmask[0] & 1) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;  // bottom -> top
+            if(tmask[1] & 1) *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;  // top -> bottom
+            if(tmask[2] & 1) *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;  // top -> bottom
+            if(tmask[3] & 1) *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;  // bottom -> top
             // *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
             // *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
             // *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
@@ -111,7 +106,7 @@ namespace g80::game::gfx {
             fast_adder_by_y_inc += s_->get_w();
             for(size_t i{0}; i < 8; ++i) {
                 tmask[i] >>= 1;
-                if(i == 1) {
+                if(i == 1 || i == 3) {
                     tmask[i] = (++tctr[i] % 32 == 0) ? rev_mask : tmask[i];
                 } else {
                     tmask[i] = (++tctr[i] % 32 == 0) ? mask : tmask[i];
