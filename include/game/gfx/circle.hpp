@@ -123,6 +123,11 @@ namespace g80::game::gfx {
         int_type delta_y = 1;
         int_type radius_error = 0;
         fp_type oct_perimeter = static_cast<fp_type>(2.0 * M_PI * r / 8.0);
+        std::array<fp_type, 8> tctr;
+        fp_type d = ix_to - ix_from + 1;
+        tctr[0] = ix_from;
+        // tctr[1] = ix_from + (oct_perimeter * 2 - 1);
+
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = 0;
             *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = 0;
