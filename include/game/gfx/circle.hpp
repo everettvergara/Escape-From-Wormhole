@@ -67,15 +67,19 @@ namespace g80::game::gfx {
 
         tctr[0] = 0;                        
         tctr[1] = oct_perimeter * 2 - 1;
+        tctr[2] = oct_perimeter * 2;
+        tctr[3] = oct_perimeter * 4 - 1;
 
-        tn[0] = 1;
+        tn[0] = +1;
         tn[1] = -1;
+        tn[2] = +1;
+        tn[3] = -1;
 
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             if(mask >> (tctr[0] % 32)) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;  // bottom -> top
             if(mask >> (tctr[1] % 32)) *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;  // top -> bottom
-            // if(tmask[2] & 1) *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;  // top -> bottom
-            // if(tmask[3] & 1) *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;  // bottom -> top
+            if(mask >> (tctr[2] % 32)) *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;  // top -> bottom
+            if(mask >> (tctr[3] % 32)) *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;  // bottom -> top
             // *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
             // *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
             // *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
@@ -90,14 +94,7 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
-            for(size_t i{0}; i < 2; ++i) {
-                tctr[i] += tn[i];
-                // if(i == 1 || i == 3) {
-                //     tmask[i] = (++tctr[i] % 32 == 0) ? rev_mask : tmask[i];
-                // } else {
-                //     tmask[i] = (++tctr[i] % 32 == 0) ? mask : tmask[i];
-                // }
-            }            
+            for(size_t i{0}; i < 4; ++i) tctr[i] += tn[i];
         }
     }
 
