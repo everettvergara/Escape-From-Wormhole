@@ -179,7 +179,6 @@ namespace g80::game::gfx {
                 tctr += (tctr == 32) ? -32 : +1;
             }
         };
-
         if (ad.x >= ad.y) draw_line(ad.x, ad.y, sdx, sdy);
         else draw_line(ad.y, ad.x, sdy, sdx);
     }
