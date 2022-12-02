@@ -66,8 +66,8 @@ namespace g80::game::gfx {
         std::array<size_t, 8> tctr;
 
         [[nodiscard]] auto reverse = [](Uint32 mask) {
-            uint32_t rev {0};
-            auto ts {sizeof(uint32_t) * 8};
+            Uint32 rev {0};
+            auto ts {sizeof(Uint32) * 8};
             decltype(ts) ctr {0};
             while(mask > 0) {
                 rev <<= 1;
@@ -80,20 +80,20 @@ namespace g80::game::gfx {
         };
 
         auto rev_mask = reverse(mask);
-        std::cout << mask << " - " << rev_mask << "\n";
-
         for(size_t i{0}; i < 8; ++i) {
             tctr[i] = (static_cast<Uint32>(i * oct_perimeter) % 32);
             tmask[i] = mask >> tctr[i];
-            if(i == 1 or i == 2 or i == 5 or i == 6) {
-                tctr[i] = 31 - tctr[i];
+            if(i == 1) {
+                //tctr[i] = 31 - tctr[i];
                 tmask[i] = reverse(tmask[i]); 
             }
+
+            if(i == 2) std::cout << tctr[i] << "\n";
         }
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             if(tmask[0] & 1) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
             if(tmask[1] & 1) *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     
-            // *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
+            if(tmask[2] & 1) *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
             // *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
             // *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
             // *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
@@ -111,7 +111,7 @@ namespace g80::game::gfx {
             fast_adder_by_y_inc += s_->get_w();
             for(size_t i{0}; i < 8; ++i) {
                 tmask[i] >>= 1;
-                if(i == 1 or i == 2 or i == 5 or i == 6) {
+                if(i == 1) {
                     tmask[i] = (++tctr[i] % 32 == 0) ? rev_mask : tmask[i];
                 } else {
                     tmask[i] = (++tctr[i] % 32 == 0) ? mask : tmask[i];
