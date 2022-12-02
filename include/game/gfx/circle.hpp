@@ -76,14 +76,16 @@ namespace g80::game::gfx {
         tctr[7] = static_cast<int_type>(oct_perimeter * 8 - 1) % 32;
 
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
-            if(mask >> tctr[0] & 1) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
-            if(mask >> tctr[1] & 1) *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
-            if(mask >> tctr[2] & 1) *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;
-            if(mask >> tctr[3] & 1) *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
-            if(mask >> tctr[4] & 1) *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;
-            if(mask >> tctr[5] & 1) *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
-            if(mask >> tctr[6] & 1) *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;
-            if(mask >> tctr[7] & 1) *(center + fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
+            decltype(center) addr;
+            addr = center - fast_adder_by_y_inc + slow_adder_by_x_dec; *addr = (mask >> tctr[0] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_x_inc - slow_adder_by_y_dec; *addr = (mask >> tctr[1] & 1) ? rgba : *addr;
+            addr = center - fast_adder_by_x_inc - slow_adder_by_y_dec; *addr = (mask >> tctr[2] & 1) ? rgba : *addr;
+            addr = center - fast_adder_by_y_inc - slow_adder_by_x_dec; *addr = (mask >> tctr[3] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_y_inc - slow_adder_by_x_dec; *addr = (mask >> tctr[4] & 1) ? rgba : *addr;
+            addr = center - fast_adder_by_x_inc + slow_adder_by_y_dec; *addr = (mask >> tctr[5] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_x_inc + slow_adder_by_y_dec; *addr = (mask >> tctr[6] & 1) ? rgba : *addr;
+            addr = center + fast_adder_by_y_inc + slow_adder_by_x_dec; *addr = (mask >> tctr[7] & 1) ? rgba : *addr;
+
             radius_error += delta_y;
             delta_y += 2;
             if((radius_error << 1) + delta_x > 0) {
@@ -94,6 +96,7 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
+
             for(size_t i{0}; i < 8; ++i) {
                 tctr[i] += std::get<0>(t[i & 1]);
                 tctr[i] = (tctr[i] & std::get<1>(t[i & 1])) == std::get<1>(t[i & 1]) ? std::get<2>(t[i & 1]) : tctr[i];
