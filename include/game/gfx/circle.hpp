@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 #include <array>
 #include "game/engine/surface.hpp" 
 
@@ -62,19 +63,17 @@ namespace g80::game::gfx {
         int_type delta_y = 1;
         int_type radius_error = 0;
         fp_type oct_perimeter = static_cast<fp_type>(2.0 * M_PI * r / 8.0);
-        static constexpr std::array<int, 8> tn {+1, -1, +1, -1, +1, -1, +1, -1};
-        static constexpr std::array<int, 8> cap {32, -1, 32, -1, 32, -1, 32, -1};
-        static constexpr std::array<int, 8> def {0, 31, 0, 31, 0, 31, 0, 31};
-        std::array<int, 8> tctr;
+        static constexpr std::array<std::tuple<int_type, int_type, int_type>, 2> t{std::tuple{+1, 32, 0}, std::tuple{-1, -1, 31}};
+        std::array<int_type, 8> tctr;
 
         tctr[0] = 0;
-        tctr[1] = static_cast<int>(oct_perimeter * 2 - 1) % 32;
-        tctr[2] = static_cast<int>(oct_perimeter * 2) % 32;
-        tctr[3] = static_cast<int>(oct_perimeter * 4 - 1) % 32;
-        tctr[4] = static_cast<int>(oct_perimeter * 4) % 32;
-        tctr[5] = static_cast<int>(oct_perimeter * 6 - 1) % 32;
-        tctr[6] = static_cast<int>(oct_perimeter * 6) % 32;
-        tctr[7] = static_cast<int>(oct_perimeter * 8 - 1) % 32;
+        tctr[1] = static_cast<int_type>(oct_perimeter * 2 - 1) % 32;
+        tctr[2] = static_cast<int_type>(oct_perimeter * 2) % 32;
+        tctr[3] = static_cast<int_type>(oct_perimeter * 4 - 1) % 32;
+        tctr[4] = static_cast<int_type>(oct_perimeter * 4) % 32;
+        tctr[5] = static_cast<int_type>(oct_perimeter * 6 - 1) % 32;
+        tctr[6] = static_cast<int_type>(oct_perimeter * 6) % 32;
+        tctr[7] = static_cast<int_type>(oct_perimeter * 8 - 1) % 32;
 
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             if(mask >> tctr[0] & 1) *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;
@@ -93,15 +92,13 @@ namespace g80::game::gfx {
                 slow_adder_by_x_dec -= 1;
                 slow_adder_by_y_dec -= s_->get_w();
             }
-            
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
             for(size_t i{0}; i < 8; ++i) {
-                tctr[i] += tn[i];
-                tctr[i] = (tctr[i] & cap[i]) == cap[i] ? def[i] : tctr[i];
+                tctr[i] += std::get<0>(t[i & 1]);
+                tctr[i] = (tctr[i] & std::get<1>(t[i & 1])) == std::get<1>(t[i & 1]) ? std::get<2>(t[i & 1]) : tctr[i];
             }
         }
     }
-
 } 
 
