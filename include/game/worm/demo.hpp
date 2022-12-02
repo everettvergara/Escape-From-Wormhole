@@ -74,7 +74,7 @@ namespace g80::game::worm {
 
             line.draw(point{100, s.get_ch()}, point{s.get_cw() + 500, s.get_ch()}, SDL_MapRGBA(s.get_handle()->format, 255, 255, 255, 255));
             line.draw(point{s.get_cw(), 50}, point{s.get_cw(), 600}, SDL_MapRGBA(s.get_handle()->format, 255, 255, 255, 255));
-            circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00000005); // 0x00f3000A
+            circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x0000fff); // 0x00f3000A
         }
     };
 }
