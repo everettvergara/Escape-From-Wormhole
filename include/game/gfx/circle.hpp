@@ -65,27 +65,29 @@ namespace g80::game::gfx {
         std::array<Uint32, 8> tmask;
         std::array<size_t, 8> tctr;
 
-        auto reverse = [](Uint32 &mask) -> void {
-            Uint32 orig = mask;
-            mask = 0;
-            
-            while (orig > 0) {
-                mask |= orig & 1;
-                mask <<= 1;
-                orig >>= 1;        
+        [[nodiscard]] auto reverse = [](Uint32 mask) {
+            uint32_t rev {0};
+            auto ts {sizeof(uint32_t) * 8};
+            decltype(ts) ctr {0};
+            while(mask > 0) {
+                rev <<= 1;
+                rev |= mask & 1;
+                mask >>= 1;
+                ++ctr;
             }
+            rev <<= ts - ctr;
+            return rev;
         };
 
-        auto rev_mask = mask;
-        reverse(rev_mask);
-        std::cout << mask << " " << rev_mask << "\n";
+        auto rev_mask = reverse(mask);
+        std::cout << mask << " - " << rev_mask << "\n";
 
         for(size_t i{0}; i < 8; ++i) {
             tctr[i] = (static_cast<Uint32>(i * oct_perimeter) % 32);
             tmask[i] = mask >> tctr[i];
             if(i == 1 or i == 2 or i == 5 or i == 6) {
                 tctr[i] = 31 - tctr[i];
-                reverse(tmask[i]); 
+                tmask[i] = reverse(tmask[i]); 
             }
         }
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
