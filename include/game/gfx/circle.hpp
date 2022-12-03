@@ -122,21 +122,32 @@ namespace g80::game::gfx {
         int_type delta_x = 1 - (r << 1);
         int_type delta_y = 1;
         int_type radius_error = 0;
-        fp_type oct_perimeter = static_cast<fp_type>(2.0 * M_PI * r / 8.0);
+        fp_type perimeter = static_cast<fp_type>(2.0 * M_PI * r);
+        fp_type oct_perimeter = perimeter / 8.0;
+        fp_type oct_inc = 1.0 / oct_perimeter;
         std::array<fp_type, 8> tctr;
-        fp_type d = ix_to - ix_from + 1;
+        std::array<fp_type, 8> tn {+oct_inc, -oct_inc};
+
+        // BUG: when oct_perimeter = 0
+        fp_type d = (ix_to - ix_from + 1) / oct_perimeter;
         tctr[0] = ix_from;
-        // tctr[1] = ix_from + (oct_perimeter * 2 - 1);
+        tctr[1] = ix_from + (d * 2 - 1);
+        tctr[2] = ix_from + (d * 2);
+        tctr[3] = ix_from + (d * 4 - 1);
+        tctr[4] = ix_from + (d * 4);
+        tctr[5] = ix_from + (d * 6 - 1);
+        tctr[6] = ix_from + (d * 6);
+        tctr[7] = ix_from + (d * 8 - 1);
 
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
-            *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = 0;
-            *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = 0;
-            *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = 0;
-            *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = 0;
-            *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = 0;
-            *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = 0;
-            *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = 0;
-            *(center + fast_adder_by_y_inc + slow_adder_by_x_dec) = 0;
+            *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = tctr[0];
+            *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = tctr[1];
+            *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = tctr[2];
+            *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = tctr[3];
+            *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = tctr[4];
+            *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = tctr[5];
+            *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = tctr[6];
+            *(center + fast_adder_by_y_inc + slow_adder_by_x_dec) = tctr[7];
             radius_error += delta_y;
             delta_y += 2;
             if((radius_error << 1) + delta_x > 0) {
@@ -147,6 +158,7 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
+            for(size_t i{0}; i < 8; ++i) tctr[i] += tn[i & 2];
         }
     }
 } 
