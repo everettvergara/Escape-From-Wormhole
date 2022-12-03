@@ -42,8 +42,8 @@ namespace g80::game::worm {
 
             SDL_FillRect(s.get_handle(), NULL, 0); 
 
-            rect.draw_s(point{300, 270}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
-            rect.draw_s(point{-32, -64}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
+            // rect.draw_s(point{300, 270}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
+            // rect.draw_s(point{-32, -64}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
 
 
             // rect.draw_s(600, 600, 1, 0, SDL_MapRGBA(s.get_handle()->format, 255, 255, 0, 255));
@@ -71,9 +71,9 @@ namespace g80::game::worm {
             //         one_shade.value(), 0, 199);
             
             
-            line.draw( point{s.get_cw(), s.get_ch()}, 
-                        point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
-                    SDL_MapRGBA(s.get_format(), 255, 0, 0, 255), 0x0000fff);
+            // line.draw( point{s.get_cw(), s.get_ch()}, 
+            //             point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
+            //         SDL_MapRGBA(s.get_format(), 255, 0, 0, 255), 0x0000fff);
             
             // s.line_s( point{s.get_cw(), s.get_ch()}, 
             //             point{s.get_cw() + static_cast<int_type>(s.get_w() * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(s.get_w() * SDL_sinf(rads_))}, 
@@ -84,7 +84,10 @@ namespace g80::game::worm {
             //circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x0000fff); // 0x00f3000A
 
             circle.draw(point{s.get_cw(), s.get_ch()}, 200, multi_shade.value(), 0, 255); // 0x00f3000A
-
+            for(auto &v : multi_shade.value()) {
+                std::cout << v << " ";
+            }
+            std::cout << "\n";
         }
     };
 }
