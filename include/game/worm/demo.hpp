@@ -70,7 +70,7 @@ namespace g80::game::worm {
                         point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 
                     multi_shade.value(), 0, 255);
             
-            rect.draw_s(point{50, 50}, 100, 100, multi_shade.value(), 0, 255);
+            rect.draw_s(point{-50, -50}, 100, 100, multi_shade.value(), 0, 255);
             
             // line.draw( point{s.get_cw(), s.get_ch()}, 
             //             point{s.get_cw() + static_cast<int_type>(200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(200 * SDL_sinf(rads_))}, 

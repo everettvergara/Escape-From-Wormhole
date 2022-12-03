@@ -123,7 +123,7 @@ namespace g80::game::gfx {
         int_type delta_y = 1;
         int_type radius_error = 0;
         fp_type perimeter = static_cast<fp_type>(2.0 * M_PI * r);
-        fp_type oct_perimeter = perimeter / 8.0;
+        fp_type oct_perimeter = !perimeter ? 1 : (perimeter / 8.0);
         fp_type d = (ix_to - ix_from + 1) / 8.0; 
         fp_type oct_inc = d / oct_perimeter;
         std::array<fp_type, 8> tctr;
