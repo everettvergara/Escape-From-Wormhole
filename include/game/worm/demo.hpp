@@ -32,6 +32,13 @@ namespace g80::game::worm {
             g80::game::gfx::circle circle(&s);
 
             auto one_shade = pal.get_palette_gradient({{0, 0}, {100, 255}, {199, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255)}});
+            auto multi_shade = pal.get_palette_gradient({
+                {0, SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255)}, 
+                {50, SDL_MapRGBA(s.get_handle()->format, 0, 255, 0, 255)}, 
+                {100, SDL_MapRGBA(s.get_handle()->format, 0, 0, 255, 255)}, 
+                {150, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255)}, 
+                {200, SDL_MapRGBA(s.get_handle()->format, 0, 255, 255, 255)}, 
+                {255, SDL_MapRGBA(s.get_handle()->format, 0, 255, 255, 255)},});
 
             SDL_FillRect(s.get_handle(), NULL, 0); 
 
@@ -74,7 +81,10 @@ namespace g80::game::worm {
 
             // line.draw(point{100, s.get_ch()}, point{s.get_cw() + 500, s.get_ch()}, SDL_MapRGBA(s.get_handle()->format, 255, 255, 255, 255));
             // line.draw(point{s.get_cw(), 50}, point{s.get_cw(), 600}, SDL_MapRGBA(s.get_handle()->format, 255, 255, 255, 255));
-            circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x0000fff); // 0x00f3000A
+            //circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x0000fff); // 0x00f3000A
+
+            circle.draw(point{s.get_cw(), s.get_ch()}, 200, multi_shade.value(), 0, 255); // 0x00f3000A
+
         }
     };
 }
