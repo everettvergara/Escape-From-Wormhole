@@ -124,7 +124,7 @@ namespace g80::game::gfx {
         int_type radius_error = 0;
         fp_type perimeter = static_cast<fp_type>(2.0 * M_PI * r);
         fp_type oct_perimeter = perimeter / 8.0;
-        fp_type d = (ix_to - ix_from + 1) / 8; // oct_perimeter;
+        fp_type d = (ix_to - ix_from + 1) / 8.0; // oct_perimeter;
         fp_type oct_inc = d / oct_perimeter;
         std::array<fp_type, 8> tctr;
         std::array<fp_type, 2> tn{+oct_inc, -oct_inc};
@@ -143,6 +143,9 @@ namespace g80::game::gfx {
         //     std::cout << " " << tctr[i] << "\n";
         // }
 
+        // for(size_t i{0}; i < 2; ++i) {
+        //     std::cout << " " << tn[i] << "\n";
+        // }
 
         while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
             *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = pal[tctr[0]];
@@ -163,7 +166,7 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
-            for(size_t i{0}; i < 8; ++i) tctr[i] += tn[i & 2];
+            for(size_t i{0}; i < 8; ++i) tctr[i] += tn[i & 1];
         }
     }
 } 
