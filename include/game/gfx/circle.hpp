@@ -18,6 +18,10 @@ namespace g80::game::gfx {
         auto draw(const point &p, const int_type r, const Uint32 rgba) -> void;
         auto draw(const point &p, const int_type r, const Uint32 rgba, const Uint32 mask) -> void;
         auto draw(const point &p, const int_type r, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
+        auto draw_s(const point &p, const int_type r, const Uint32 rgba) -> void;
+        auto draw_s(const point &p, const int_type r, const Uint32 rgba, const Uint32 mask) -> void;
+        auto draw_s(const point &p, const int_type r, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
+
     };
 
     circle::circle(surface *s) : s_(s) {
@@ -161,5 +165,38 @@ namespace g80::game::gfx {
             for(size_t i{0}; i < 8; ++i) tctr[i] += tn[i & 1];
         }
     }
+
+    auto circle::draw_s(const point &p, const int_type r, const Uint32 rgba) -> void {
+        auto center = static_cast<Uint32 *>(s_->get_handle()->pixels) + p.y * s_->get_w() + p.x;
+        int_type fast_adder_by_y_inc = 0;
+        int_type fast_adder_by_x_inc = 0;
+        int_type slow_adder_by_x_dec = r;
+        int_type slow_adder_by_y_dec = r * s_->get_w();
+        int_type delta_x = 1 - (r << 1);
+        int_type delta_y = 1;
+        int_type radius_error = 0;
+        while(slow_adder_by_x_dec > fast_adder_by_x_inc) {
+            *(center - fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;     // Q1: bottom
+            *(center + fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     // Q1: top
+            *(center - fast_adder_by_x_inc - slow_adder_by_y_dec) = rgba;     // Q2: top
+            *(center - fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;     // Q2: bottom
+            *(center + fast_adder_by_y_inc - slow_adder_by_x_dec) = rgba;     // Q3: top
+            *(center - fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;     // Q3: bottom
+            *(center + fast_adder_by_x_inc + slow_adder_by_y_dec) = rgba;     // Q4: bottom
+            *(center + fast_adder_by_y_inc + slow_adder_by_x_dec) = rgba;     // Q4: top
+            radius_error += delta_y;
+            delta_y += 2;
+            if((radius_error << 1) + delta_x > 0) {
+                radius_error += delta_x;
+                delta_x += 2;
+                slow_adder_by_x_dec -= 1;
+                slow_adder_by_y_dec -= s_->get_w();
+            }
+            fast_adder_by_x_inc += 1;
+            fast_adder_by_y_inc += s_->get_w();
+        }
+    }
+
+
 } 
 
