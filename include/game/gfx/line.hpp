@@ -21,7 +21,7 @@ namespace g80::game::gfx {
         line(surface *s);
         auto draw(const point &p1, const point &p2, const Uint32 rgba) -> void;
         auto draw(const point &p1, const point &p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
-        auto draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask) -> void;
+        auto draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask, const Uint32 mask_offset = 0) -> void;
         auto draw_s(point p1, point p2, const Uint32 rgba) -> void;
         // Bug: mask should be adjusted accordingly when points are recalculated
         auto draw_s(point p1, point p2, const Uint32 rgba, const Uint32 mask) -> void;
@@ -141,7 +141,7 @@ namespace g80::game::gfx {
         }
     }
 
-    auto line::draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask) -> void {
+    auto line::draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask, const Uint32 mask_offset = 0) -> void {
         auto d = p2 - p1;
         auto ad = d.abs();
         int_type sdx = d.x < 0 ? -1 : 1;
@@ -149,7 +149,7 @@ namespace g80::game::gfx {
         Uint32 *pixel_buffer = static_cast<Uint32 *>(s_->get_handle()->pixels) + p1.y * s_->get_handle()->w + p1.x;
         auto draw_line = [&](int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
             auto tmask = mask;
-            decltype(tmask) tctr = 0;
+            decltype(tmask) tctr = mask_offset;
             for (int_type i = 0, t = abs_l; i <= abs_g; ++i, t += abs_l) {
                 *pixel_buffer = ((tmask >> tctr) & 1) ? rgba : *pixel_buffer;
                 if (t >= abs_g) {
@@ -175,9 +175,15 @@ namespace g80::game::gfx {
     auto line::draw_s(point p1, point p2, const Uint32 rgba, const Uint32 mask) -> void {
         auto sp1 = s_->get_screen_plane(p1);
         auto sp2 = s_->get_screen_plane(p2);
-        if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] 
+        Uint32 mask_offset = 0;
+        if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] {
+            auto sp1_copy = p1;
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
-        draw(p1, p2, rgba, mask);
+            if(sp1 != surface::ON_SCREEN) {
+                // recalculate mask_offset 
+            }
+        }
+        draw(p1, p2, rgba, mask, mask_offset);
     }    
 
     auto line::draw_s(point p1, point p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void {

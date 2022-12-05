@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include <SDL.h>
 
 namespace g80::game::engine {
@@ -47,4 +48,18 @@ namespace g80::game::engine {
     template<typename T> auto operator<<(std::ostream &os, const base_point<T> &r) -> std::ostream & {return os << "{" << r.x << "," << r.y << "}";}
 
     using point = base_point<int_type>;
+
+
+    // distance
+    template<typename T> auto get_distance(const base_point<T> &p1, const base_point<T> &p2) -> T {
+        auto x = p2.x - p1.x;
+        auto y = p2.y - p1.y;
+        
+        if(std::is_integral_v<T>) return static_cast<T>(SDL_sqrtf(x * x + y * y));
+        else if(std::is_same_v<T, float>) return SDL_sqrtf(x * x + y * y);
+        else return SDL_sqrt(x * x + y * y);
+ 
+        return 
+
+    }
 }
