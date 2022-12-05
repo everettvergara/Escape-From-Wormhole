@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <array>
+#include "game/gfx/palette.hpp"
 #include "game/engine/surface.hpp" 
 
 namespace g80::game::gfx {

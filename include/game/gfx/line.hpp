@@ -31,7 +31,7 @@ namespace g80::game::gfx {
     line::line(surface *s) : s_(s) {
     }
 
-    auto line::recalc_line_points(point &p1, point &p2, const SCREEN_PLANE sp1, const SCREEN_PLANE sp2) -> bool {
+    auto line::recalc_line_points(point &p1, point &p2, const surface::SCREEN_PLANE sp1, const surface::SCREEN_PLANE sp2) -> bool {
         fp_type h = p2.y - p1.y;
         fp_type w = p2.x - p1.x;
 
@@ -49,7 +49,7 @@ namespace g80::game::gfx {
             return static_cast<int_type>(m * x_equals + b);
         };
 
-        auto recalc_point_at_bound = [&](point &p, SCREEN_PLANE screen_plane) -> void {
+        auto recalc_point_at_bound = [&](point &p, surface::SCREEN_PLANE screen_plane) -> void {
 
             auto is_x_at_top = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, 0); 
                                                 s_->is_point_within_bounds(tx, 0)) {p.x = tx; p.y = 0; return true;} 
@@ -67,26 +67,26 @@ namespace g80::game::gfx {
             auto check_bottom_right = [&]() -> void {if(is_x_at_bottom()) return; get_y_at_right(); return;};
 
             switch(screen_plane) {
-                case TOP_LEFT: check_top_left(); break;
-                case TOP: get_x_at_top(); break;
-                case TOP_RIGHT: check_top_right(); break;
-                case BOTTOM_LEFT: check_bottom_left(); break;
-                case BOTTOM_RIGHT: check_bottom_right(); break;
-                case BOTTOM: get_x_at_bottom(); break;
-                case LEFT: get_y_at_left(); break;
-                case RIGHT: get_y_at_right(); break;
+                case surface::TOP_LEFT: check_top_left(); break;
+                case surface::TOP: get_x_at_top(); break;
+                case surface::TOP_RIGHT: check_top_right(); break;
+                case surface::BOTTOM_LEFT: check_bottom_left(); break;
+                case surface::BOTTOM_RIGHT: check_bottom_right(); break;
+                case surface::BOTTOM: get_x_at_bottom(); break;
+                case surface::LEFT: get_y_at_left(); break;
+                case surface::RIGHT: get_y_at_right(); break;
                 default: break;
             }
         };
 
-        if(sp1 != ON_SCREEN) {
+        if(sp1 != surface::ON_SCREEN) {
             recalc_point_at_bound(p1, sp1);
-            if(get_screen_plane(p1) != ON_SCREEN) return false;
+            if(s_->get_screen_plane(p1) != surface::ON_SCREEN) return false;
         }
 
-        if(sp2 != ON_SCREEN) {
+        if(sp2 != surface::ON_SCREEN) {
             recalc_point_at_bound(p2, sp2);
-            if(get_screen_plane(p2) != ON_SCREEN) return false;
+            if(s_->get_screen_plane(p2) != surface::ON_SCREEN) return false;
         }
 
         return true;
@@ -165,25 +165,25 @@ namespace g80::game::gfx {
     }
 
     auto line::draw_s(point p1, point p2, const Uint32 rgba) -> void {
-        auto sp1 = get_screen_plane(p1);
-        auto sp2 = get_screen_plane(p2);
-        if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+        auto sp1 = s_->get_screen_plane(p1);
+        auto sp2 = s_->get_screen_plane(p2);
+        if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] 
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
         draw(p1, p2, rgba);
     }    
 
     auto line::draw_s(point p1, point p2, const Uint32 rgba, const Uint32 mask) -> void {
-        auto sp1 = get_screen_plane(p1);
-        auto sp2 = get_screen_plane(p2);
-        if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+        auto sp1 = s_->get_screen_plane(p1);
+        auto sp2 = s_->get_screen_plane(p2);
+        if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] 
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
         draw(p1, p2, rgba, mask);
     }    
 
     auto line::draw_s(point p1, point p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void {
-        auto sp1 = get_screen_plane(p1);
-        auto sp2 = get_screen_plane(p2);
-        if(sp1 != ON_SCREEN || sp2 != ON_SCREEN) [[unlikely]] 
+        auto sp1 = s_->get_screen_plane(p1);
+        auto sp2 = s_->get_screen_plane(p2);
+        if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] 
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
         draw(p1, p2, pal, ix_from, ix_to);
     }    
