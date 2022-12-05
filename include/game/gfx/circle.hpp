@@ -131,9 +131,7 @@ namespace g80::game::gfx {
         fp_type d = (ix_to - ix_from + 1) / 8.0; 
         fp_type oct_inc = d / oct_perimeter;
         std::array<fp_type, 8> tctr;
-        std::array<fp_type, 2> tn{+oct_inc, -oct_inc};
 
-        // BUG: when oct_perimeter = 0
         tctr[0] = ix_from;
         tctr[1] = ix_from + (d * 2 - 1);
         tctr[2] = ix_from + (d * 2);
@@ -162,7 +160,7 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
-            for(size_t i{0}; i < 8; ++i) tctr[i] += tn[i & 1];
+            for(size_t i{0}; i < 8; ++i) tctr[i] += (i & 1) ? +oct_inc : -oct_inc;
         }
     }
 
