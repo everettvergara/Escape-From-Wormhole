@@ -13,8 +13,6 @@ namespace g80::game::gfx {
         surface *s_;
 
     private:
-        // enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
-        // auto get_screen_plane(const point &p) const -> SCREEN_PLANE;
         auto recalc_line_points(point &p1, point &p2, const surface::SCREEN_PLANE sp1, const surface::SCREEN_PLANE sp2) -> bool;
 
     public:
@@ -141,7 +139,7 @@ namespace g80::game::gfx {
         }
     }
 
-    auto line::draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask, const Uint32 mask_offset = 0) -> void {
+    auto line::draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask, const Uint32 mask_offset) -> void {
         auto d = p2 - p1;
         auto ad = d.abs();
         int_type sdx = d.x < 0 ? -1 : 1;
@@ -191,6 +189,5 @@ namespace g80::game::gfx {
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
         draw(p1, p2, pal, ix_from, ix_to);
     }    
-
 }
 
