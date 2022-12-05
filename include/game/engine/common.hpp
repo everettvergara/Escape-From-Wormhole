@@ -58,8 +58,6 @@ namespace g80::game::engine {
         if(std::is_integral_v<T>) return static_cast<T>(SDL_sqrtf(x * x + y * y));
         else if(std::is_same_v<T, float>) return SDL_sqrtf(x * x + y * y);
         else return SDL_sqrt(x * x + y * y);
- 
-        return 
 
     }
 }

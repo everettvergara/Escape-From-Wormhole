@@ -177,11 +177,9 @@ namespace g80::game::gfx {
         auto sp2 = s_->get_screen_plane(p2);
         Uint32 mask_offset = 0;
         if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] {
-            auto sp1_copy = p1;
+            auto p1_copy = p1, p2_copy = p2;
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
-            if(sp1 != surface::ON_SCREEN) {
-                // recalculate mask_offset 
-            }
+            if(sp1 != surface::ON_SCREEN) mask_offset = get_distance(p1, p1_copy) % 32;
         }
         draw(p1, p2, rgba, mask, mask_offset);
     }    
