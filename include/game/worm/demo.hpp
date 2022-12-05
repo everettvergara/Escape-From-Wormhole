@@ -42,6 +42,8 @@ namespace g80::game::worm {
 
             SDL_FillRect(s.get_handle(), NULL, 0); 
 
+            //line.draw(point{50,50}, point{1000,700}, multi_shade.value(), 0, 255);
+
             // rect.draw_s(point{300, 270}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
             // rect.draw_s(point{-32, -64}, 64, 128, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
 
@@ -85,10 +87,10 @@ namespace g80::game::worm {
             //circle.draw(point{s.get_cw(), s.get_ch()}, 200, SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x0000fff); // 0x00f3000A
 
             circle.draw(point{s.get_cw(), s.get_ch()}, 200, multi_shade.value(), 0, 255); // 0x00f3000A
-            for(auto &v : multi_shade.value()) {
-                std::cout << v << " ";
-            }
-            std::cout << "\n";
+            // for(auto &v : multi_shade.value()) {
+            //     std::cout << v << " ";
+            // }
+            // std::cout << "\n";
         }
     };
 }

@@ -19,9 +19,9 @@ namespace g80::game::gfx {
         auto draw(const point &p, const int_type r, const Uint32 rgba) -> void;
         auto draw(const point &p, const int_type r, const Uint32 rgba, const Uint32 mask) -> void;
         auto draw(const point &p, const int_type r, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
-        auto draw_s(const point &p, const int_type r, const Uint32 rgba) -> void;
-        auto draw_s(const point &p, const int_type r, const Uint32 rgba, const Uint32 mask) -> void;
-        auto draw_s(const point &p, const int_type r, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
+        // auto draw_s(const point &p, const int_type r, const Uint32 rgba) -> void;
+        // auto draw_s(const point &p, const int_type r, const Uint32 rgba, const Uint32 mask) -> void;
+        // auto draw_s(const point &p, const int_type r, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
 
     };
 
@@ -161,7 +161,7 @@ namespace g80::game::gfx {
             }
             fast_adder_by_x_inc += 1;
             fast_adder_by_y_inc += s_->get_w();
-            for(size_t i{0}; i < 8; ++i) tctr[i] += (i & 1) ? +oct_inc : -oct_inc;
+            for(size_t i{0}; i < 8; ++i) tctr[i] += (i & 1) ? -oct_inc : +oct_inc;
         }
     }
 
