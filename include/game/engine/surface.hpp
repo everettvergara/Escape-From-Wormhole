@@ -6,6 +6,27 @@
 namespace g80::game::engine {
 
     class surface {
+    public:
+        enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
+        auto get_screen_plane(const point &p) const -> SCREEN_PLANE {
+            if(p.x >= 0) [[likely]] {
+                if(p.x < s_->w) [[likely]] {
+                    if(p.y >= 0) [[likely]] {
+                        if(p.y < s_->h) [[likely]] return ON_SCREEN;
+                        else return BOTTOM;
+                    } else return TOP;
+                } else {
+                    if(p.y < 0) return TOP_RIGHT;
+                    else if(p.y >= s_->h) return BOTTOM_RIGHT;
+                    else return RIGHT;
+                }
+            } else {
+                if(p.y < 0) return TOP_LEFT;
+                else if(p.y >= s_->h) return BOTTOM_LEFT;
+                else return LEFT;
+            }
+        }
+
     private:
         SDL_Surface     *s_;                        
         int_type        wb_, hb_;                   

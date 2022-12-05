@@ -13,9 +13,9 @@ namespace g80::game::gfx {
         surface *s_;
 
     private:
-        enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
-        auto get_screen_plane(const point &p) const -> SCREEN_PLANE;
-        auto recalc_line_points(point &p1, point &p2, const SCREEN_PLANE sp1, const SCREEN_PLANE sp2) -> bool;
+        // enum SCREEN_PLANE{TOP_LEFT = 0, TOP = 1, TOP_RIGHT = 2, LEFT = 3, ON_SCREEN = 4, RIGHT = 5, BOTTOM_LEFT = 6, BOTTOM = 7, BOTTOM_RIGHT = 8};
+        // auto get_screen_plane(const point &p) const -> SCREEN_PLANE;
+        auto recalc_line_points(point &p1, point &p2, const surface::SCREEN_PLANE sp1, const surface::SCREEN_PLANE sp2) -> bool;
 
     public:
         line(surface *s);
@@ -29,25 +29,6 @@ namespace g80::game::gfx {
     };
 
     line::line(surface *s) : s_(s) {
-    }
-
-    auto line::get_screen_plane(const point &p) const -> SCREEN_PLANE {
-        if(p.x >= 0) [[likely]] {
-            if(p.x < s_->get_handle()->w) [[likely]] {
-                if(p.y >= 0) [[likely]] {
-                    if(p.y < s_->get_handle()->h) [[likely]] return ON_SCREEN;
-                    else return BOTTOM;
-                } else return TOP;
-            } else {
-                if(p.y < 0) return TOP_RIGHT;
-                else if(p.y >= s_->get_handle()->h) return BOTTOM_RIGHT;
-                else return RIGHT;
-            }
-        } else {
-            if(p.y < 0) return TOP_LEFT;
-            else if(p.y >= s_->get_handle()->h) return BOTTOM_LEFT;
-            else return LEFT;
-        }
     }
 
     auto line::recalc_line_points(point &p1, point &p2, const SCREEN_PLANE sp1, const SCREEN_PLANE sp2) -> bool {
