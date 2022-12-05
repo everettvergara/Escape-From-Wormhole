@@ -21,8 +21,9 @@ namespace g80::game::gfx {
         auto draw(const point &p1, const point &p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
         auto draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask, const Uint32 mask_offset = 0) -> void;
         auto draw_s(point p1, point p2, const Uint32 rgba) -> void;
-        // Bug: mask should be adjusted accordingly when points are recalculated
         auto draw_s(point p1, point p2, const Uint32 rgba, const Uint32 mask) -> void;
+        // Bug: pal_from should be adjusted accordingly when points are recalculated
+        // pal from and to and must be changed to Uint32 or int_type 
         auto draw_s(point p1, point p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
     };
 
@@ -175,7 +176,7 @@ namespace g80::game::gfx {
         auto sp2 = s_->get_screen_plane(p2);
         Uint32 mask_offset = 0;
         if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] {
-            auto p1_copy = p1, p2_copy = p2;
+            auto p1_copy = p1;
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
             if(sp1 != surface::ON_SCREEN) mask_offset = get_distance(p1, p1_copy) % 32;
         }
@@ -185,9 +186,13 @@ namespace g80::game::gfx {
     auto line::draw_s(point p1, point p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void {
         auto sp1 = s_->get_screen_plane(p1);
         auto sp2 = s_->get_screen_plane(p2);
-        if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] 
+        int offset = 0;
+        if(sp1 != surface::ON_SCREEN || sp2 != surface::ON_SCREEN) [[unlikely]] {
+            auto p1_copy = p1, p2_copy = p2;
             if(!recalc_line_points(p1, p2, sp1, sp2)) return;
-        draw(p1, p2, pal, ix_from, ix_to);
+            if(sp1 != surface::ON_SCREEN) offset = (static_cast<fp_type>(get_distance(p1, p1_copy)) / get_distance(p1_copy, p2_copy)) * (ix_to - ix_from + 1);
+        }
+        draw(p1, p2, pal, ix_from + offset, ix_to);
     }    
 }
 
