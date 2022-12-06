@@ -14,6 +14,7 @@ namespace g80::game::gfx {
 
     private:
         auto recalc_line_points(point &p1, point &p2, const surface::SCREEN_PLANE sp1, const surface::SCREEN_PLANE sp2) -> bool;
+        auto draw_loop(int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void;
 
     public:
         line(surface *s);
@@ -34,33 +35,26 @@ namespace g80::game::gfx {
 
         auto get_x_at_y_equals = [&](const point &p, const int_type y_equals) -> int_type {
             if(w == 0) return p.x;
-            fp_type m = h / w;
-            fp_type b = p.y - (m * p.x);
+            fp_type m = h / w, b = p.y - (m * p.x);
             return static_cast<int_type>((y_equals - b) / m);
         };
 
         auto get_y_at_x_equals = [&](const point &p, const int_type x_equals) -> int_type {
             if(h == 0) return p.y;
-            fp_type m = h / w;
-            fp_type b = p.y - (m * p.x);
+            fp_type m = h / w, b = p.y - (m * p.x);
             return static_cast<int_type>(m * x_equals + b);
         };
 
         auto recalc_point_at_bound = [&](point &p, surface::SCREEN_PLANE screen_plane) -> void {
-
-            auto is_x_at_top = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, 0); 
-                                                s_->is_point_within_bounds(tx, 0)) {p.x = tx; p.y = 0; return true;} 
-                                                return false;};
-            auto is_x_at_bottom = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, s_->get_hb()); 
-                                                    s_->is_point_within_bounds(tx, s_->get_hb())) {p.x = tx; p.y = s_->get_hb(); return true;} 
-                                                    return false;};
-            auto get_x_at_top = [&]() -> void {p.x = get_x_at_y_equals(p, 0); p.y = 0;};
-            auto get_x_at_bottom = [&]() -> void {p.x = get_x_at_y_equals(p, s_->get_hb()); p.y = s_->get_hb();};
-            auto get_y_at_left = [&]() -> void {p.y = get_y_at_x_equals(p, 0); p.x = 0;};
-            auto get_y_at_right = [&]() -> void {p.y = get_y_at_x_equals(p, s_->get_wb()); p.x = s_->get_wb();};
-            auto check_top_left = [&]() -> void {if(is_x_at_top()) return; get_y_at_left(); return;};
-            auto check_top_right = [&]() -> void {if(is_x_at_top()) return; get_y_at_right(); return;};
-            auto check_bottom_left = [&]() -> void {if(is_x_at_bottom()) return; get_y_at_left(); return;};
+            auto is_x_at_top        = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, 0); s_->is_point_within_bounds(tx, 0)) {p.x = tx; p.y = 0; return true;} return false;};
+            auto is_x_at_bottom     = [&]() -> bool {if(auto tx = get_x_at_y_equals(p, s_->get_hb()); s_->is_point_within_bounds(tx, s_->get_hb())) {p.x = tx; p.y = s_->get_hb(); return true;} return false;};
+            auto get_x_at_top       = [&]() -> void {p.x = get_x_at_y_equals(p, 0); p.y = 0;};
+            auto get_x_at_bottom    = [&]() -> void {p.x = get_x_at_y_equals(p, s_->get_hb()); p.y = s_->get_hb();};
+            auto get_y_at_left      = [&]() -> void {p.y = get_y_at_x_equals(p, 0); p.x = 0;};
+            auto get_y_at_right     = [&]() -> void {p.y = get_y_at_x_equals(p, s_->get_wb()); p.x = s_->get_wb();};
+            auto check_top_left     = [&]() -> void {if(is_x_at_top()) return; get_y_at_left(); return;};
+            auto check_top_right    = [&]() -> void {if(is_x_at_top()) return; get_y_at_right(); return;};
+            auto check_bottom_left  = [&]() -> void {if(is_x_at_bottom()) return; get_y_at_left(); return;};
             auto check_bottom_right = [&]() -> void {if(is_x_at_bottom()) return; get_y_at_right(); return;};
 
             switch(screen_plane) {
@@ -76,17 +70,21 @@ namespace g80::game::gfx {
             }
         };
 
-        if(sp1 != surface::ON_SCREEN) {
-            recalc_point_at_bound(p1, sp1);
-            if(s_->get_screen_plane(p1) != surface::ON_SCREEN) return false;
-        }
+        if(sp1 != surface::ON_SCREEN)
+            if(recalc_point_at_bound(p1, sp1); 
+                s_->get_screen_plane(p1) != surface::ON_SCREEN) 
+                return false;
 
-        if(sp2 != surface::ON_SCREEN) {
-            recalc_point_at_bound(p2, sp2);
-            if(s_->get_screen_plane(p2) != surface::ON_SCREEN) return false;
-        }
+        if(sp2 != surface::ON_SCREEN)
+            if(recalc_point_at_bound(p2, sp2);
+                s_->get_screen_plane(p2) != surface::ON_SCREEN) 
+                return false;
 
         return true;
+    }
+
+    auto line::draw_loop(int_type abs_g, int_type abs_l, int_type sig_g, int_type sig_l) -> void {
+    
     }
 
     auto line::draw(const point &p1, const point &p2, const Uint32 rgba) -> void {
