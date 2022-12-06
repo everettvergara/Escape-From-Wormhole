@@ -22,8 +22,6 @@ namespace g80::game::gfx {
         auto draw(const point &p1, const point &p2, const Uint32 rgba, const Uint32 mask, const Uint32 mask_offset = 0) -> void;
         auto draw_s(point p1, point p2, const Uint32 rgba) -> void;
         auto draw_s(point p1, point p2, const Uint32 rgba, const Uint32 mask) -> void;
-        // Bug: pal_from should be adjusted accordingly when points are recalculated
-        // pal from and to and must be changed to Uint32 or int_type 
         auto draw_s(point p1, point p2, const palette_gradient &pal, const int ix_from, const int ix_to) -> void;
     };
 

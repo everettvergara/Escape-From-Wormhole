@@ -67,10 +67,10 @@ namespace g80::game::worm {
             //             rand() % s.get_handle()->h},
             //             SDL_MapRGBA(s.get_handle()->format, 255, 0, 0, 255));
             // }
-            // rads_ += 0.005;
-            // line.draw_s( point{s.get_cw() + static_cast<int_type>(1200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(1200 * SDL_sinf(rads_))}, 
-            //         point{s.get_cw(), s.get_ch()},
-            //          SDL_MapRGBA(s.get_handle()->format, 255, 0, 255, 255), 0x00ff00ff);
+            rads_ += 0.005;
+            line.draw_s( point{s.get_cw() + static_cast<int_type>(1200 * SDL_cosf(rads_)), s.get_ch() + static_cast<int_type>(1200 * SDL_sinf(rads_))}, 
+                    point{s.get_cw(), s.get_ch()},
+                    multi_shade.value(), 0, 255);
             
             // rect.draw_s(point{-50, -50}, 100, 100, multi_shade.value(), 0, 255);
             
