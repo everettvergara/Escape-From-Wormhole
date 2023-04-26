@@ -1,0 +1,43 @@
+
+i dont know what language this is but if i understand the problem correctly, you need to travel a straight line from point A to point B with a nonlinear equation for time (t) like a quadractic equation (^2) to get that slowing down or accelaration effect. 
+If yes then refer to the following pseudo code which i often use in animation. 
+```
+    FPS = 60;
+    steps = 120;        // will travel for 2 seconds at 60 FPS 
+    MSPF = 1000 / 60;   // ms per frame
+    
+    point A, B;         // point is either a 2d or 3d vector
+    
+    // .... some initializations here
+    // A {0, 0, 0} - B {100, 100, 100}
+    
+    delta = A - B;  
+        w: 100      
+        l: 100
+        h: 100
+
+    // solve for k. 
+    // k is the limiting constant as A approaches B;
+    delta = k * steps ^ 2;
+        k = delta / (steps ^ 2)
+            w: 100 / (14400) = 0.0069444
+            l: 100 / (14400) = 0.0069444
+            h: 100 / (14400) = 0.0069444
+
+    // perform linear interpolation (lerp) per step (s)
+    for (point s = 0; s < delta; ++s)
+    {
+        start = get_ticks()
+        
+        A += k * s;
+
+        update(A);
+
+        // perform delayer
+        elapsed = get_ticks() - start;
+         if (elapsed < MSPF) SDL_Delay(MSPF - elapsed);
+    }
+    
+    // point A should reach point B at exactly 2 seconds at 60 FPS with acceleration effect 
+    // If you need decceleration just get the inverse.
+```
