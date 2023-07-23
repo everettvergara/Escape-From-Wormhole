@@ -35,7 +35,7 @@ namespace g80 {
                 ++head_step_;
             }
 
-            if (tail_step_++ >= 0)
+            if (++tail_step_ == 0)
                 tail_ += inc_;
 
             return true;
