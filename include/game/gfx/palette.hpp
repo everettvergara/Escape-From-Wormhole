@@ -7,7 +7,7 @@
 #include <optional>
 #include "game/engine/surface.hpp" 
 
-namespace g80::game::gfx {
+namespace eg::vidfeo {
 
     using namespace g80::game::engine;
 
